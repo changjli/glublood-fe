@@ -9,7 +9,7 @@ export type CustomButtonProps = PressableProps & {
   size?: 'sm' | 'md',
   type?: 'primary' | 'outline',
   textStyle?: TextProps['style']
-  loading?: string,
+  loading?: boolean,
 }
 
 export default function CustomButton({
@@ -29,7 +29,9 @@ export default function CustomButton({
       })}
       {...rest}
     >
-      {loading == null || loading == '' ?
+      {loading ?
+        <ActivityIndicator color='white' />
+        :
         <Text
           style={textStyle}
           className={textStyles({
@@ -40,8 +42,6 @@ export default function CustomButton({
         >
           {title}
         </Text>
-        :
-        <ActivityIndicator color='white' />
       }
     </Pressable>
   )
