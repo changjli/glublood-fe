@@ -1,11 +1,16 @@
 import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik } from 'formik'
-import { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
+import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
 import { StyledCustomButton } from '@/components/CustomButton'
 import { StyledCustomText } from '@/components/CustomText'
 import { object, string } from 'yup'
 import { router } from 'expo-router'
+import { useSession } from '../context/AuthenticationProvider'
+import apiClient from '@/configs/axios'
+import axios, { AxiosError } from 'axios'
+import useAuth from '@/hooks/api/auth/useAuth'
+import { loginRequest } from '@/hooks/api/auth/authTypes'
 
 const loginSchema = object({
     email: string().required(),
@@ -13,7 +18,28 @@ const loginSchema = object({
 })
 
 export default function Login() {
-    const user = { email: 'nicholas audric', password: 'password' }
+    const user = { email: 'nicholas@gmail.com', password: 'password' }
+
+    const { login } = useAuth()
+    const { signIn } = useSession()
+
+    const [loginLoading, setLoginLoading] = useState<boolean>(false);
+
+    const handleLogin = async (data: loginRequest) => {
+        try {
+            const res = await login(setLoginLoading, data)
+            if (res.status == 200) {
+                console.log(res.data)
+                Alert.alert('success', res.message)
+            } else if (res.status == 400) {
+                console.log(res.message)
+                Alert.alert('error', res.message)
+            }
+        } catch (err) {
+            console.log('Axios Error:', err)
+            Alert.alert('error', 'Error: Please try again later')
+        }
+    }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -21,11 +47,7 @@ export default function Login() {
                 <Formik
                     initialValues={{ email: '', password: '' }}
                     onSubmit={(values) => {
-                        if (values.email == user.email && values.password == values.password) {
-                            router.replace('(auth)/register')
-                        } else {
-                            Alert.alert('Error', 'Login failed!')
-                        }
+                        handleLogin(values)
                     }}
                     validationSchema={loginSchema}
                 >
@@ -57,9 +79,9 @@ export default function Login() {
                             </View>
                             <View>
                                 {/* bug */}
-                                <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' />
+                                <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
                                 <View className='flex flex-row justify-center'>
-                                    <StyledCustomText size='sm' weight='heavy' style='text-gray-500'>
+                                    <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
                                         Belum memiliki akun?
                                     </StyledCustomText>
                                     <Pressable onPress={() => router.replace('(auth)/register')}>

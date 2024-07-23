@@ -1,10 +1,11 @@
 import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
-import { Stack } from 'expo-router'
+import { Slot, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen';
 
 import "../global.css"
 import { useFonts } from 'expo-font';
+import { SessionProvider } from './context/AuthenticationProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,8 +27,8 @@ export default function RootLayout() {
     }
 
     return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='(auth)/login' />
-        </Stack>
+        <SessionProvider>
+            <Slot />
+        </SessionProvider>
     )
 }
