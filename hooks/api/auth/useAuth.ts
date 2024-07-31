@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import apiClient from '@/configs/axios'
-import { loginRequest, sendCodeRequest } from './authTypes'
+import { loginRequest, registerRequest, sendCodeRequest } from './authTypes'
 
 export default function useAuth() {
 
@@ -22,7 +22,7 @@ export default function useAuth() {
         return res
     }
 
-    const register = async (setLoading: (loading: boolean) => void, payload: loginRequest) => {
+    const register = async (setLoading: (loading: boolean) => void, payload: registerRequest) => {
         setLoading(true)
         const res = await apiClient.post(`${group}register`, payload)
             .then(res => {

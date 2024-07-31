@@ -11,7 +11,8 @@ const apiClient = axios.create({
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
         'ApiKey': `${process.env.PUBLIC_API_KEY}`,
-    }
+    },
+    timeout: 10000,
 })
 
 apiClient.interceptors.response.use(

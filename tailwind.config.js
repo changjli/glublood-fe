@@ -9,7 +9,11 @@ module.exports = {
         bg: '#FFF8E1',
         primary: '#EC8F5E',
         secondary: '#F3B764',
-        'dark-grey': '#969696',
+        success: '#2CDB79',
+        info: '#2e9cff',
+        warning: '#ecd706',
+        danger: '#fe3f11',
+        background: '#FFF8E1',
       },
       fontFamily: {
         'helvetica': ['Helvetica'],

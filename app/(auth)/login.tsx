@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable } from 'react-native'
+import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
@@ -31,6 +31,8 @@ export default function Login() {
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
+                signIn(res)
+                router.replace('/')
             } else if (res.status == 400) {
                 console.log(res.message)
                 Alert.alert('error', res.message)
@@ -42,16 +44,24 @@ export default function Login() {
     }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View className='flex-1 p-[16px]'>
-                <Formik
-                    initialValues={{ email: '', password: '' }}
-                    onSubmit={(values) => {
-                        handleLogin(values)
-                    }}
-                    validationSchema={loginSchema}
-                >
-                    {({ handleChange, handleSubmit, values, errors }) => (
+        <>
+            <View className='absolute'>
+                <Image source={require('../../assets/images/register/Vector1.png')} />
+            </View>
+            <StyledCustomText style={'text-[32px] text-primary font-helvetica-bold'}>Masuk</StyledCustomText>
+            <StyledCustomText size='md' style={'text-white mb-8'}>Selamat datang lanjutkan perjalananmu!</StyledCustomText>
+            <View className='flex flex-row justify-center mb-8'>
+                <Image source={require('../../assets/images/characters/IconLogin2.png')} />
+            </View>
+            <Formik
+                initialValues={{ email: '', password: '' }}
+                onSubmit={async (values) => {
+                    await handleLogin(values)
+                }}
+                validationSchema={loginSchema}
+            >
+                {({ handleChange, handleSubmit, values, errors }) => (
+                    <View className='flex-1 flex flex-col justify-between'>
                         <View className='flex flex-col gap-4'>
                             <StyledCustomTextInput
                                 label='Email'
@@ -77,26 +87,26 @@ export default function Login() {
                                     </StyledCustomText>
                                 </View>
                             </View>
-                            <View>
-                                {/* bug */}
-                                <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
-                                <View className='flex flex-row justify-center'>
-                                    <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
-                                        Belum memiliki akun?
+                        </View>
+                        <View>
+                            {/* bug */}
+                            <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
+                            <View className='flex flex-row justify-center'>
+                                <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
+                                    Belum memiliki akun?
+                                </StyledCustomText>
+                                <Pressable onPress={() => router.replace('(auth)/register')}>
+                                    <StyledCustomText size='sm' weight='heavy' style='text-primary'>
+                                        Daftar disini
                                     </StyledCustomText>
-                                    <Pressable onPress={() => router.replace('(auth)/register')}>
-                                        <StyledCustomText size='sm' weight='heavy' style='text-primary'>
-                                            Daftar disini
-                                        </StyledCustomText>
-                                    </Pressable>
+                                </Pressable>
 
-                                </View>
                             </View>
                         </View>
-                    )}
+                    </View>
+                )}
 
-                </Formik>
-            </View>
-        </TouchableWithoutFeedback>
+            </Formik>
+        </>
     )
 }
