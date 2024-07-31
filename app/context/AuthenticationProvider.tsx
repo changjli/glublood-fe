@@ -1,8 +1,9 @@
+import { loginResponse } from '@/hooks/api/auth/authTypes';
 import { useStorageState } from '@/hooks/useStorageState';
 import { useContext, createContext, type PropsWithChildren } from 'react';
 
 const AuthContext = createContext<{
-    signIn: () => void;
+    signIn: (data: loginResponse) => void;
     signOut: () => void;
     session?: string | null;
     isLoading: boolean;
@@ -31,9 +32,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return (
         <AuthContext.Provider
             value={{
-                signIn: () => {
+                signIn: (data) => {
                     // Perform sign-in logic here
-                    setSession('xxx');
+                    setSession(data.token);
                 },
                 signOut: () => {
                     setSession(null);

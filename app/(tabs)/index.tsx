@@ -4,7 +4,7 @@ import { useSession } from '../context/AuthenticationProvider'
 import CustomButton from '@/components/CustomButton'
 
 export default function index() {
-    const { signOut } = useSession()
+    const { signOut, session } = useSession()
 
     return (
         <View>
