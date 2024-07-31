@@ -81,6 +81,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
+                signIn(res)
             } else if (res.status == 400) {
                 console.log(res.message)
                 Alert.alert('error', res.message)
@@ -104,8 +105,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                 onSubmit={async (values) => {
                     await handleRegister(values)
                     await handleLogin()
-                    signIn()
-                    router.replace('/')
+                    router.push('/(auth)/UserProfile')
                 }}
             >
                 {({ handleChange, handleSubmit, values, errors }) => (

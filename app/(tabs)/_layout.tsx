@@ -13,7 +13,7 @@ export default function TabLayout() {
 
     // If not authenticated 
     if (!session) {
-        return <Redirect href="/UserProfile" />
+        return <Redirect href="/(auth)/login" />
     }
 
     return (

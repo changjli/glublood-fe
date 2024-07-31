@@ -5,8 +5,13 @@ import * as Yup from 'yup';
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput/userProfile'
 import StepIndicator from 'react-native-step-indicator';
 import { Ionicons } from '@expo/vector-icons';
+import { useSession } from '../context/AuthenticationProvider'
 
 export default function UserProfile() {
+
+    const { session } = useSession()
+    console.log(session)
+
     // Yup Validation
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('Nama lengkap wajib diisi!'),
@@ -39,15 +44,15 @@ export default function UserProfile() {
     // Selection button state (gender)
     const [gender, setGender] = useState('');
     const isGender = [
-        {label: 'Pria', value: 'pria'},
-        {label: 'Wanita', value: 'wanita'},
+        { label: 'Pria', value: 'pria' },
+        { label: 'Wanita', value: 'wanita' },
     ]
 
     // Selection button state (descendant)
     const [descendant, setDescendant] = useState('');
     const isDescendant = [
-        {label: 'Yes', value: 1},
-        {label: 'No', value: 0},
+        { label: 'Yes', value: 1 },
+        { label: 'No', value: 0 },
     ]
 
     // Selection button state (Diabetes Patient)
@@ -55,6 +60,24 @@ export default function UserProfile() {
 
     // Selection button state (Diabetes Type)
     const [selectedDiabetesType, setSelectedDiabetesType] = useState('');
+
+    const handleLogin = async (data) => {
+        try {
+            const res = await login(setLoginLoading, data)
+            if (res.status == 200) {
+                console.log(res.data)
+                Alert.alert('success', res.message)
+                signIn(res)
+                router.replace('/')
+            } else if (res.status == 400) {
+                console.log(res.message)
+                Alert.alert('error', res.message)
+            }
+        } catch (err) {
+            console.log('Axios Error:', err)
+            Alert.alert('error', 'Error: Please try again later')
+        }
+    }
 
     // UserProfile Pages (Personalization 1, 2, 3)
     const renderContent = () => {
@@ -127,7 +150,7 @@ export default function UserProfile() {
                                         />
                                     </View>
                                     <View className="mb-4">
-                                        <Text style={ styles.headerTextInput } >Jenis Kelamin</Text>
+                                        <Text style={styles.headerTextInput} >Jenis Kelamin</Text>
                                         <View className="flex-row justify-between">
                                             {isGender.map((item, index) => (
                                                 <TouchableOpacity
@@ -136,7 +159,7 @@ export default function UserProfile() {
                                                         styles.selectionButton,
                                                         { marginRight: index === 0 ? 8 : '' },
                                                         { marginLeft: index === 1 ? 8 : '' },
-                                                        {backgroundColor: gender === item.value ? '#EC8F5E' : 'transparent'},
+                                                        { backgroundColor: gender === item.value ? '#EC8F5E' : 'transparent' },
                                                     ]}
                                                     onPress={() => {
                                                         setGender(item.value)
@@ -154,7 +177,7 @@ export default function UserProfile() {
                                                 </TouchableOpacity>
                                             ))}
                                         </View>
-                                        { errors.gender && 
+                                        {errors.gender &&
                                             <View className='flex flex-row items-center gap-1'>
                                                 <Ionicons name='warning' size={16} color='red' />
                                                 <Text className='font-helvetica text-red-500'>
@@ -164,7 +187,7 @@ export default function UserProfile() {
                                         }
                                     </View>
                                     <View className="mb-4">
-                                        <Text style={ styles.headerTextInput } >Apakah Anda memiliki keturunan dengan riwayat penyakit diabetes?</Text>
+                                        <Text style={styles.headerTextInput} >Apakah Anda memiliki keturunan dengan riwayat penyakit diabetes?</Text>
                                         <View className="flex-row justify-between">
                                             {isDescendant.map((item, index) => (
                                                 <TouchableOpacity
@@ -173,7 +196,7 @@ export default function UserProfile() {
                                                         styles.selectionButton,
                                                         { marginRight: index === 0 ? 8 : '' },
                                                         { marginLeft: index === 1 ? 8 : '' },
-                                                        {backgroundColor: descendant === item.value ? '#EC8F5E' : 'transparent'},
+                                                        { backgroundColor: descendant === item.value ? '#EC8F5E' : 'transparent' },
                                                     ]}
                                                     onPress={() => {
                                                         setDescendant(item.value)
@@ -191,7 +214,7 @@ export default function UserProfile() {
                                                 </TouchableOpacity>
                                             ))}
                                         </View>
-                                        { errors.descendant && 
+                                        {errors.descendant &&
                                             <View className='flex flex-row items-center gap-1'>
                                                 <Ionicons name='warning' size={16} color='red' />
                                                 <Text className='font-helvetica text-red-500'>
@@ -218,13 +241,13 @@ export default function UserProfile() {
                         <Text style={styles.title}>Apakah Anda{'\n'}terkena diabetes?</Text>
                         <Text style={styles.subTitle}>Pilih yang sesuai dirimu</Text>
                         <Formik
-                            initialValues={{selectPatient: ''}}
+                            initialValues={{ selectPatient: '' }}
                             validationSchema={validationSchemaPage2}
                             onSubmit={values => {
                                 console.log(values);
                             }}
                         >
-                            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => ( 
+                            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                                 <View>
                                     <TouchableOpacity
                                         style={[
@@ -239,7 +262,7 @@ export default function UserProfile() {
                                     >
                                         <Image
                                             source={require('@/assets/svgs/userProfile/KarakterRisk.png')}
-                                            style={{ 
+                                            style={{
                                                 width: 100,
                                                 height: 100,
                                                 resizeMode: 'contain',
@@ -264,7 +287,7 @@ export default function UserProfile() {
                                     >
                                         <Image
                                             source={require('@/assets/svgs/userProfile/KarakterSehat.png')}
-                                            style={{ 
+                                            style={{
                                                 width: 100,
                                                 height: 100,
                                                 resizeMode: 'contain',
@@ -277,7 +300,7 @@ export default function UserProfile() {
                                             Pasien Non-Diabetes
                                         </Text>
                                     </TouchableOpacity>
-                                    { errors.selectPatient && 
+                                    {errors.selectPatient &&
                                         <View className='flex flex-row items-center gap-1'>
                                             <Ionicons name='warning' size={16} color='red' />
                                             <Text className='font-helvetica text-red-500'>
@@ -299,13 +322,13 @@ export default function UserProfile() {
                         <Text style={styles.title}>Diabetes apa yang{'\n'}diidap Anda?</Text>
                         <Text style={styles.subTitle}>Berkaitan dengan informasi pribadi Anda</Text>
                         <Formik
-                            initialValues={{selectDiabetesType: ''}}
+                            initialValues={{ selectDiabetesType: '' }}
                             validationSchema={validationSchemaPage3}
                             onSubmit={values => {
                                 console.log(values);
                             }}
                         >
-                            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => ( 
+                            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
                                 <View className='mt-6'>
                                     <TouchableOpacity
                                         style={[
@@ -358,7 +381,7 @@ export default function UserProfile() {
                                             Diabetes tipe 3
                                         </Text>
                                     </TouchableOpacity>
-                                    { errors.selectDiabetesType && 
+                                    {errors.selectDiabetesType &&
                                         <View className='flex flex-row items-center gap-1'>
                                             <Ionicons name='warning' size={16} color='red' />
                                             <Text className='font-helvetica text-red-500'>
@@ -389,7 +412,7 @@ export default function UserProfile() {
                 />
                 {renderContent()}
                 <View
-                    style={{ 
+                    style={{
                         marginTop: 'auto',
                         display: 'flex',
                         flexDirection: 'row',
@@ -398,16 +421,16 @@ export default function UserProfile() {
                     }}
                 >
                     <TouchableOpacity
-                        style={ styles.prevButton }
+                        style={styles.prevButton}
                         onPress={() => movePosition(-1)}
                     >
-                        <Ionicons name="arrow-back" color='#DA6E35' size={24} className='text-center'/>
+                        <Ionicons name="arrow-back" color='#DA6E35' size={24} className='text-center' />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={ styles.nextButton }
+                        style={styles.nextButton}
                         onPress={() => movePosition(1)}
                     >
-                        <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center'/>
+                        <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -489,7 +512,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 });
-  
+
 const customStyles = {
     stepIndicatorSize: 40,
     currentStepIndicatorSize: 40,
