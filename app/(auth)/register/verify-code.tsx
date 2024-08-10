@@ -1,5 +1,5 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, StyleSheet, GestureResponderEvent, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableWithoutFeedback, Keyboard, StyleSheet, GestureResponderEvent, Alert, Pressable } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import CustomText, { StyledCustomText } from '@/components/CustomText'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { router } from 'expo-router'
@@ -7,7 +7,7 @@ import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-
 import { Colors } from '@/constants/Colors'
 import CustomButton from '@/components/CustomButton'
 import { Formik } from 'formik'
-import { loginRequest, registerRequest } from '@/hooks/api/auth/authTypes'
+import { loginRequest, registerRequest, sendCodeRequest } from '@/hooks/api/auth/authTypes'
 import useAuth from '@/hooks/api/auth/useAuth'
 import { useSession } from '@/app/context/AuthenticationProvider'
 
@@ -18,10 +18,33 @@ type VerifyCodeProps = {
     }
 }
 
+const Timer = ({ time = 0 }) => {
+    const [timer, setTimer] = useState(time);
+    const timeOutCallback = useCallback(() => setTimer(currTimer => currTimer - 1), []);
+
+    useEffect(() => {
+        timer > 0 && setTimeout(timeOutCallback, 1000);
+    }, [timer, timeOutCallback]);
+
+    const minutes = Math.floor(timer / 60)
+    const seconds = timer - minutes * 60
+
+    return (
+        <View>
+            {minutes === 0 && seconds === 0
+                ? null
+                : <Text> {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
+            }
+        </View>
+    )
+}
+
 export default function VerifyCode({ credentials }: VerifyCodeProps) {
+    const [innerCredentials, setInnerCredentials] = useState(credentials)
+    const [minutes, setMinutes] = useState(180)
 
     // const { getObjectData } = useAsyncStorage()
-    const { register, login } = useAuth()
+    const { register, login, sendCode } = useAuth()
     const { signIn } = useSession()
 
     // const [credentials, setCredentials] = useState<{
@@ -53,7 +76,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
     const handleRegister = async (data: { code: string }) => {
         try {
             const payload = {
-                ...credentials,
+                ...innerCredentials,
                 ...data
             }
 
@@ -73,7 +96,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
 
     const handleLogin = async () => {
         const payload = {
-            ...credentials,
+            ...innerCredentials,
         }
 
         try {
@@ -92,9 +115,33 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
         }
     }
 
+    const handleSendCode = async (data: sendCodeRequest) => {
+        try {
+            const res = await sendCode(setRegisterLoading, data)
+            if (res.status == 200) {
+                console.log(res.data)
+                Alert.alert('success', res.message)
+                // await storeObjectData('credentials', data)
+                // router.replace('(auth)/verify-code')
+                setInnerCredentials(res.data)
+                setMinutes(3)
+            } else if (res.status == 400) {
+                console.log(res.message)
+                Alert.alert('error', res.message)
+            }
+        } catch (err) {
+            console.log('Axios Error:', err)
+            Alert.alert('error', 'Error: Please try again later')
+        }
+    }
+
     // useEffect(() => {
     //     handleGetCredentials()
     // }, [])
+
+    useEffect(() => {
+        setInnerCredentials(credentials)
+    }, [])
 
     return (
         <>
@@ -128,6 +175,15 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                                 </Text>
                             )}
                         />
+                        <View className='flex flex-row justify-end'>
+                            <Text>Batas Waktu</Text><Timer time={minutes} />
+                        </View>
+                        <View className='flex flex-row justify-center'>
+                            <Text>Tidak menerima kode?</Text>
+                            <Pressable onPress={() => handleSendCode(credentials)}>
+                                <Text className='text-primary font-helvetica-bold'> Kirim ulang</Text>
+                            </Pressable>
+                        </View>
                         <CustomButton title='Verifikasi Kode' onPress={handleSubmit as (e?: GestureResponderEvent) => void} loading={registerLoading} />
                     </View>
                 )}
