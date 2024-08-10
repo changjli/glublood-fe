@@ -6,7 +6,7 @@ import { cssInterop } from 'nativewind'
 
 export type CustomButtonProps = PressableProps & {
   title: string
-  size?: 'sm' | 'md',
+  size?: 'sm' | 'md' | 'lg',
   type?: 'primary' | 'outline',
   textStyle?: TextProps['style']
   loading?: boolean,
@@ -56,12 +56,13 @@ const buttonStyles = tv({
   base: 'flex flex-row justify-center items-center rounded-[8px]',
   variants: {
     size: {
-      sm: 'px-[20px] py-[12px]',
-      md: 'px-[30px] py-[16px]',
+      sm: 'px-[16px] py-[8px]',
+      md: 'px-[24px] py-[12px]',
+      lg: 'px-[30px] py-[16px]'
     },
     type: {
       primary: 'bg-primary border-2 border-primary',
-      outline: 'bg-white border-2 border-primary'
+      outline: 'bg-transparent border-2 border-primary'
     },
     disabled: {
       true: 'bg-secondary border-secondary',
@@ -79,6 +80,7 @@ const textStyles = tv({
     size: {
       sm: 'text-[12px]',
       md: 'text-[16x]',
+      lg: 'text-[20px]',
     },
     type: {
       primary: 'text-white',
