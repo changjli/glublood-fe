@@ -1,13 +1,11 @@
-import { View, Text } from 'react-native'
-import React, { Dispatch, SetStateAction, useState } from 'react'
 import WithToken from '@/configs/axios/withToken'
 import { storeProfileRequest } from './profileTypes'
 
-export default function useAuth() {
+export default function useProfile() {
 
     const group = 'api/user-profile'
 
-    const storeUserProfile = async (setLoading: (loading: boolean) => void, token: string, payload: storeProfileRequest) => {
+    const storeUserProfile = async (setLoading, payload, token) => {
         setLoading(true)
         const res = await WithToken(token).post(`${group}`, payload)
             .then(res => {

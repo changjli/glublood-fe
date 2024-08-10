@@ -1,14 +1,14 @@
-import { ActivityIndicator, Pressable, PressableProps, Text, TextProps, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Pressable, PressableProps, Text, TextProps, TouchableOpacity, TouchableOpacityProps, View, Image } from 'react-native'
 import React, { useState } from 'react'
 import { tv } from 'tailwind-variants'
 import { CustomTextProps, StyledCustomText } from '../CustomText'
 import { cssInterop } from 'nativewind'
 
-export type CustomButtonProps = PressableProps & {
-  title: string
+export type CustomButtonProps = TouchableOpacityProps & {
+  title: string,
   size?: 'sm' | 'md',
   type?: 'primary' | 'outline',
-  textStyle?: TextProps['style']
+  textStyle?: TextProps['style'],
   loading?: boolean,
 }
 
@@ -21,7 +21,7 @@ export default function CustomButton({
   ...rest
 }: CustomButtonProps) {
   return (
-    <Pressable
+    <TouchableOpacity
       className={buttonStyles({
         size,
         type,
@@ -43,7 +43,7 @@ export default function CustomButton({
           {title}
         </Text>
       }
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 
@@ -53,15 +53,16 @@ export const StyledCustomButton = cssInterop(CustomButton, {
 })
 
 const buttonStyles = tv({
-  base: 'flex flex-row justify-center items-center rounded-[8px]',
+  base: 'flex justify-center items-center rounded-[8px]',
   variants: {
     size: {
-      sm: 'px-[20px] py-[12px]',
-      md: 'px-[30px] py-[16px]',
+      sm: 'py-[3px]',
+      md: 'py-[15px]',
+      lg: 'px-[30px] py-[18px]',
     },
     type: {
       primary: 'bg-primary border-2 border-primary',
-      outline: 'bg-white border-2 border-primary'
+      outline: 'bg-tranparent border-2 border-primary',
     },
     disabled: {
       true: 'bg-secondary border-secondary',
@@ -78,7 +79,8 @@ const textStyles = tv({
   variants: {
     size: {
       sm: 'text-[12px]',
-      md: 'text-[16x]',
+      md: 'text-[18px]',
+      lg: 'text-[20px]',
     },
     type: {
       primary: 'text-white',
@@ -93,4 +95,3 @@ const textStyles = tv({
     type: 'primary',
   }
 })
-

@@ -105,7 +105,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                 onSubmit={async (values) => {
                     await handleRegister(values)
                     await handleLogin()
-                    router.push('/(auth)/UserProfile')
+                    router.push('/userProfile/first_time_setup')
                 }}
             >
                 {({ handleChange, handleSubmit, values, errors }) => (
