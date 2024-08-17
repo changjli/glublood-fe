@@ -14,12 +14,13 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
-    primary: '#EC8F5E',
+    primary: '#DA6E35',
     secondary: '#F3B764',
     success: '#2CDB79',
     info: '#2e9cff',
     warning: '#ecd706',
     danger: '#fe3f11',
+    transparent: 'rgba(52, 52, 52, alpha)'
   },
   dark: {
     text: '#ECEDEE',
