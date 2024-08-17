@@ -44,7 +44,7 @@ export default function FirstTimeSetup() {
         gender: Yup.string().required('Jenis Kelamin wajib diisi!'),
         descendant: Yup.string().required('Pertanyaan keturunan wajib diisi!'),
         diseaseHistory: Yup.string().required('Riwayat Penyakit wajib diis!'),
-        selectPatient: Yup.string().required('Wajib diisi!'),
+        selectPatient: Yup.number().required('Wajib diisi!'),
         selectDiabetesType: Yup.number().required('Wajib diisi!'),
     });
 
