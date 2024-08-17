@@ -14,17 +14,17 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                 <TouchableOpacity
                     style={[
                         styles.selectionButton,
-                        { backgroundColor: selectedPatient === 'Non-Diabetes' ? '#EC8F5E' : 'transparent' },
+                        { backgroundColor: selectedPatient == 0 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
-                        setSelectedPatient('Non-Diabetes');
-                        setFieldValue('selectPatient', 'Non-Diabetes');
+                        setSelectedPatient(0);
+                        setFieldValue('selectPatient', 0);
                     }}
                 >
                     <Text
                         style={[
                             styles.selectionButtonText,
-                            { color: selectedPatient === 'Non-Diabetes' ? '#ffffff' : '#EC8F5E' }
+                            { color: selectedPatient == 0 ? '#ffffff' : '#EC8F5E' }
                         ]}
                     >
                         Pasien Non-Diabetes
@@ -37,17 +37,17 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                 <TouchableOpacity
                     style={[
                         styles.selectionButton,
-                        { backgroundColor: selectedPatient === 'Diabetes' ? '#EC8F5E' : 'transparent' },
+                        { backgroundColor: selectedPatient == 1 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
-                        setSelectedPatient('Diabetes');
-                        setFieldValue('selectPatient', 'Diabetes');
+                        setSelectedPatient(1);
+                        setFieldValue('selectPatient', 1);
                     }}
                 >
                     <Text
                         style={[
                             styles.selectionButtonText,
-                            { color: selectedPatient === 'Diabetes' ? '#ffffff' : '#EC8F5E' }
+                            { color: selectedPatient == 1 ? '#ffffff' : '#EC8F5E' }
                         ]}
                     >
                         Pasien Diabetes
