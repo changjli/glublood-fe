@@ -1,5 +1,4 @@
 import WithToken from '@/configs/axios/withToken'
-import { storeProfileRequest } from './profileTypes'
 
 export default function useProfile() {
 
@@ -9,11 +8,11 @@ export default function useProfile() {
         setLoading(true)
         const res = await WithToken(token).post(`${group}`, payload)
             .then(res => {
-                console.log('[useAuth][storeUserProfile]', res.data)
+                console.log('[useProfile][storeUserProfile]', res.data)
                 setLoading(false)
                 return res.data
             }).catch(err => {
-                console.log('[useAuth][storeUserProfile]', err.response?.data)
+                console.log('[useProfile][storeUserProfile]', err.response?.data)
                 setLoading(false)
                 return err.response?.data
             })

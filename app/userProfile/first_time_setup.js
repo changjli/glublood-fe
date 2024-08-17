@@ -1,11 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native'
 import React, { useState } from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import StepIndicator from 'react-native-step-indicator';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../context/AuthenticationProvider';
-import { storeProfileRequest } from '@/hooks/api/auth/authProfile'
+import * as Yup from 'yup';
+import dayjs from 'dayjs';
+import StepIndicator from 'react-native-step-indicator';
 import useProfile from '../../hooks/api/profile/useProfile';
 import Personalization1 from './personalization_1';
 import Personalization2 from './personalization_2';
@@ -14,17 +14,16 @@ import Personalization3_2 from './personalization_3_2';
 
 export default function FirstTimeSetup() {
     const { session } = useSession()
-    const { storeUserProfile } = useProfile()
     console.log(session)
+    const { storeUserProfile } = useProfile()
+    const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreUserProfile = async (data) => {
         try {
-            const res = await storeUserProfile(setLoginLoading, data, session)
+            const res = await storeUserProfile(setStoreLoading, data, session)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
-                signIn(res)
-                router.replace('/')
             } else if (res.status == 400) {
                 console.log(res.message)
                 Alert.alert('error', res.message)
@@ -49,6 +48,7 @@ export default function FirstTimeSetup() {
         selectDiabetesType: Yup.number().required('Wajib diisi!'),
     });
 
+    // Validation Personalization 
     const validatePersonalization = async (formikProps, personalization) => {
         const personalization1 = ['name', 'weight', 'height', 'age', 'birthDate', 'gender', 'descendant', 'diseaseHistory'];
         const personalization2 = ['selectPatient'];
@@ -83,7 +83,8 @@ export default function FirstTimeSetup() {
 
     // Stepindicator state
     const [currentPosition, setCurrentPosition] = useState(0);
-
+    
+    // Pages
     const formikSteps = [
         { component: Personalization1 },
         { component: Personalization2 },
@@ -98,6 +99,29 @@ export default function FirstTimeSetup() {
         });
     }
 
+    // User Profile Handler
+    const userProfileHandler = (formikValues) => {
+        let descendant;
+        if(formikValues.descendant === 'yes') {
+            descendant = 1
+        } else {
+            descendant = 0
+        }
+        return {
+            firstname: formikValues.firstname,
+            lastname: formikValues.lastname,
+            weight: formikValues.weight,
+            height: formikValues.height,
+            age: formikValues.age,
+            DOB: formikValues.birthDate,
+            gender: formikValues.gender,
+            is_descendant_diabetes: descendant,
+            is_diabetes: formikValues.selectPatient, 
+            medical_history: formikValues.diseaseHistory, 
+            diabetes_type: formikValues.selectDiabetesType, 
+        };
+    };
+
     const pageController = async (step, formikProps) => {
         if (step > 0) {
             let errors;
@@ -108,9 +132,6 @@ export default function FirstTimeSetup() {
                     break;
                 case 1:
                     errors = await validatePersonalization(formikProps, 2);
-                    if (formikProps.values.selectPatient === 'Non-Diabetes') {
-                        step = 2;
-                    }
                     break;
                 case 2:
                     errors = await validatePersonalization(formikProps, 3);
@@ -119,8 +140,16 @@ export default function FirstTimeSetup() {
             if (Object.keys(errors).length === 0) {
                 console.log(formikProps.values);
 
+                if (currentPosition === 1 && formikProps.values.selectPatient === 'Non-Diabetes') {
+                    formikProps.setFieldValue('selectDiabetesType', '4');
+                    formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
+                    step = 2;
+                    pageMover(step);
+                    return;
+                }
+
                 if (currentPosition === 2) {
-                    pageMover(0);
+                    formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     return;
                 }
 
@@ -145,7 +174,7 @@ export default function FirstTimeSetup() {
                     weight: '',
                     height: '',
                     age: '',
-                    birthDate: '',
+                    birthDate: new Date(),
                     gender: '',
                     descendant: '',
                     diseaseHistory: '',
@@ -153,7 +182,7 @@ export default function FirstTimeSetup() {
                     selectDiabetesType: ''
                 }}
                 validationSchema={validationSchema}
-                onSubmit={(values) => console.log(values)}
+                onSubmit={(values) => console.log("VALUES: ", values)}
             >
                 {formikProps => (
                     <View className="px-5 py-16 bg-bg flex flex-1" style={{ height: '100%' }}>
@@ -168,14 +197,14 @@ export default function FirstTimeSetup() {
                                 marginTop: 'auto',
                                 display: 'flex',
                                 flexDirection: 'row',
-                                justifyContent: 'space-between',
+                                justifyContent: currentPosition==3 ? 'flex-end' : 'space-between',
                                 alignItems: 'flex-end',
                             }}
                         >
                             <TouchableOpacity
                                 style={[
                                     styles.prevButton,
-                                    {display: currentPosition==0? 'none' : 'flex'}
+                                    { display: currentPosition == 0 || currentPosition == 3 ? 'none' : 'flex' },
                                 ]}
                                 onPress={() => pageController(-1, formikProps)}
                             >

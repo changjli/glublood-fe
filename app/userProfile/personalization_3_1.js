@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const Personalization3_1 = ({ setFieldValue, values, errors }) => {
-    const [selectedDiabetesType, setSelectedDiabetesType] = useState('');
+    const [selectedDiabetesType, setSelectedDiabetesType] = useState(values.selectDiabetesType || '');
 
     return (
         <View className='mt-4'>
