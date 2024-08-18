@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image } from 'react-native'
+import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image, KeyboardAvoidingView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
@@ -55,6 +55,8 @@ export default function Login() {
             </View>
             <Formik
                 initialValues={{ email: '', password: '' }}
+                validateOnBlur={false}
+                validateOnChange={false}
                 onSubmit={async (values) => {
                     await handleLogin(values)
                 }}

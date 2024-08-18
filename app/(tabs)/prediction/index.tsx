@@ -1,7 +1,7 @@
 import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet, TouchableOpacity, Pressable, GestureResponderEvent, Alert, Image } from 'react-native'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Size, Weight } from '@/constants/Typography'
-import CustomButton, { CustomButtonProps } from '@/components/CustomButton'
+import CustomButton, { CustomButtonProps, StyledCustomButton } from '@/components/CustomButton'
 import { Ionicons } from '@expo/vector-icons'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
@@ -187,7 +187,7 @@ export default function Prediction() {
 
     const handleStorePrediction = async (data: predictionRequest) => {
         try {
-            const res = await storePrediction(setPredictionLoading, session!, data)
+            const res = await storePrediction(setPredictionLoading, data)
             if (res.status == 200) {
                 const data: predictionResponse = res.data
                 console.log(data)
@@ -248,14 +248,29 @@ export default function Prediction() {
                                 {
                                     qnas[page].group == 'bmi' &&
                                     <View>
-                                        <Text>{qnas[page].question}</Text>
-                                        <StyledCustomTextInput label='Berat badan (Kg)' value={String(values.weight)} onChangeText={handleChange('weight')} keyboardType='numeric' />
-                                        <StyledCustomTextInput label='Tinggi badan (Cm)' value={String(values.height)} onChangeText={handleChange('height')} keyboardType='numeric' />
-                                        <CustomButton title='Calculate' size='lg' onPress={() => {
+                                        <Text style={bmiStyles.question}>{qnas[page].question}</Text>
+                                        <View className='flex flex-row gap-4 mb-4'>
+                                            <View className='flex-1'>
+                                                <StyledCustomTextInput label='Berat badan (Kg)' value={String(values.weight)} onChangeText={handleChange('weight')} keyboardType='numeric' />
+                                            </View>
+                                            <View className='flex-1'>
+                                                <StyledCustomTextInput label='Tinggi badan (Cm)' value={String(values.height)} onChangeText={handleChange('height')} keyboardType='numeric' />
+                                            </View>
+                                        </View>
+                                        <StyledCustomButton title='Calculate' size='lg' onPress={() => {
                                             const bmi = handleCalculateBMI(values.weight, values.height)
                                             setFieldValue('bmi', String(bmi))
-                                        }} />
-                                        <StyledCustomTextInput label='Hasil BMI' value={String(values.bmi)} />
+                                        }} style={'mb-4'} />
+                                        <View style={bmiStyles.result}>
+                                            <View>
+                                                <Text style={{ textAlign: 'center', fontSize: Size.md, fontFamily: Weight.medium }}>
+                                                    Hasil BMI
+                                                </Text>
+                                                <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: Weight.heavy, color: Colors.light.primary }}>
+                                                    {String(values.bmi)}
+                                                </Text>
+                                            </View>
+                                        </View>
                                     </View>
                                 }
                                 {/* Diabetes pedigree */}
@@ -278,6 +293,8 @@ export default function Prediction() {
                                         <TouchableOpacity
                                             style={styles.nextButton}
                                             onPress={handleNextPage}
+                                            disabled={values[qnas[page].key as keyof prediction] == -1 ||
+                                                (qnas[page].group == 'bmi' && values[qnas[page].key as keyof prediction] == 0) ? true : false}
                                         >
                                             <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
                                         </TouchableOpacity> :
@@ -351,4 +368,22 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
     },
+})
+
+const bmiStyles = StyleSheet.create({
+    question: {
+        fontSize: Size.xl,
+        fontFamily: Weight.heavy,
+        marginBottom: 36,
+    },
+    result: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: Colors.light.primary,
+        borderRadius: 12,
+        paddingVertical: 20,
+    }
 })

@@ -10,7 +10,7 @@ export default function index() {
     return (
         <View>
             <CustomButton title='Sign out' onPress={() => signOut()} />
-            <CustomButton title='Predict' onPress={() => router.replace('dsadas')} />
+            <CustomButton title='Predict' onPress={() => router.replace('dassfsf')} />
         </View>
     )
 }

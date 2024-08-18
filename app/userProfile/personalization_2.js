@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StyledCustomButton } from '@/components/CustomButton';
 
 const Personalization2 = ({ setFieldValue, values, errors }) => {
     const [selectedPatient, setSelectedPatient] = useState(values.selectPatient || '');

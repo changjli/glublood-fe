@@ -12,14 +12,12 @@ import Personalization3_1 from './personalization_3_1';
 import Personalization3_2 from './personalization_3_2';
 
 export default function FirstTimeSetup() {
-    const { session } = useSession()
-    console.log(session)
     const { storeUserProfile } = useProfile()
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreUserProfile = async (data) => {
         try {
-            const res = await storeUserProfile(setStoreLoading, data, session)
+            const res = await storeUserProfile(setStoreLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
@@ -144,6 +142,7 @@ export default function FirstTimeSetup() {
                 console.log(formikProps.values);
 
                 if (currentPosition === 1 && formikProps.values.selectPatient === 0) {
+                    formikProps.setFieldValue('selectDiabetesType', 0);
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     step = 2;
                     pageMover(step);
