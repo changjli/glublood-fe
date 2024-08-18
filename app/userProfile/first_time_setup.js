@@ -11,6 +11,7 @@ import Personalization1 from './personalization_1';
 import Personalization2 from './personalization_2';
 import Personalization3_1 from './personalization_3_1';
 import Personalization3_2 from './personalization_3_2';
+import { router } from 'expo-router';
 
 export default function FirstTimeSetup() {
     const { session } = useSession()
@@ -69,7 +70,7 @@ export default function FirstTimeSetup() {
         }
 
         const errors = {};
-    
+
         for (const field of fieldsToValidate) {
             await formikProps.setFieldTouched(field, true);
             const formErrors = await formikProps.validateForm();
@@ -77,13 +78,13 @@ export default function FirstTimeSetup() {
                 errors[field] = formErrors[field];
             }
         }
-    
+
         return errors;
-    };    
+    };
 
     // Stepindicator state
     const [currentPosition, setCurrentPosition] = useState(0);
-    
+
     // Pages
     const formikSteps = [
         { component: Personalization1 },
@@ -102,7 +103,7 @@ export default function FirstTimeSetup() {
     // User Profile Handler
     const userProfileHandler = (formikValues) => {
         let descendant;
-        if(formikValues.descendant === 'yes') {
+        if (formikValues.descendant === 'yes') {
             descendant = 1
         } else {
             descendant = 0
@@ -116,9 +117,9 @@ export default function FirstTimeSetup() {
             DOB: formikValues.birthDate,
             gender: formikValues.gender,
             is_descendant_diabetes: descendant,
-            is_diabetes: formikValues.selectPatient, 
-            medical_history: formikValues.diseaseHistory, 
-            diabetes_type: formikValues.selectDiabetesType, 
+            is_diabetes: formikValues.selectPatient,
+            medical_history: formikValues.diseaseHistory,
+            diabetes_type: formikValues.selectDiabetesType,
         };
     };
 
@@ -126,7 +127,7 @@ export default function FirstTimeSetup() {
         if (step > 0) {
             let errors;
 
-            switch(currentPosition){
+            switch (currentPosition) {
                 case 0:
                     errors = await validatePersonalization(formikProps, 1);
                     break;
@@ -149,13 +150,14 @@ export default function FirstTimeSetup() {
                 }
 
                 if (currentPosition === 2) {
+                    router.replace('abc')
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     return;
                 }
 
                 pageMover(step);
             } else {
-                console.log(errors); 
+                console.log(errors);
             }
         } else {
             if (formikProps.values.selectPatient === 'Non-Diabetes') {
@@ -197,7 +199,7 @@ export default function FirstTimeSetup() {
                                 marginTop: 'auto',
                                 display: 'flex',
                                 flexDirection: 'row',
-                                justifyContent: currentPosition==3 ? 'flex-end' : 'space-between',
+                                justifyContent: currentPosition == 3 ? 'flex-end' : 'space-between',
                                 alignItems: 'flex-end',
                             }}
                         >
@@ -217,14 +219,14 @@ export default function FirstTimeSetup() {
                                     { width: currentPosition == 3 ? 175 : 55 }
                                 ]}
                                 onPress={() => pageController(1, formikProps)}
-                            >   
+                            >
                                 {
-                                    currentPosition === 3 ? 
+                                    currentPosition === 3 ?
                                         <Text className='font-helvetica-bold text-center text-white'>
                                             Mulai Pengecekkan
                                         </Text>
                                         :
-                                        <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />        
+                                        <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
                                 }
                             </TouchableOpacity>
                         </View>
