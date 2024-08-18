@@ -4,7 +4,6 @@ import { Formik } from 'formik';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../context/AuthenticationProvider';
 import * as Yup from 'yup';
-import dayjs from 'dayjs';
 import StepIndicator from 'react-native-step-indicator';
 import useProfile from '../../hooks/api/profile/useProfile';
 import Personalization1 from './personalization_1';
@@ -13,14 +12,12 @@ import Personalization3_1 from './personalization_3_1';
 import Personalization3_2 from './personalization_3_2';
 
 export default function FirstTimeSetup() {
-    const { session } = useSession()
-    console.log(session)
     const { storeUserProfile } = useProfile()
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreUserProfile = async (data) => {
         try {
-            const res = await storeUserProfile(setStoreLoading, data, session)
+            const res = await storeUserProfile(setStoreLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
@@ -140,7 +137,7 @@ export default function FirstTimeSetup() {
             if (Object.keys(errors).length === 0) {
                 console.log(formikProps.values);
 
-                if (currentPosition === 1 && formikProps.values.selectPatient === 'Non-Diabetes') {
+                if (currentPosition === 1 && formikProps.values.selectPatient === 0) {
                     formikProps.setFieldValue('selectDiabetesType', '4');
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     step = 2;
@@ -158,7 +155,7 @@ export default function FirstTimeSetup() {
                 console.log(errors); 
             }
         } else {
-            if (formikProps.values.selectPatient === 'Non-Diabetes') {
+            if (formikProps.values.selectPatient === 0) {
                 step = -2;
             }
             pageMover(step);

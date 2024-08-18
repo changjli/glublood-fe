@@ -1,12 +1,13 @@
-import WithToken from '@/configs/axios/withToken'
+import useWithToken from '@/configs/axios/withToken'
 
 export default function useProfile() {
+    const withToken = useWithToken()
 
     const group = 'api/user-profile'
 
-    const storeUserProfile = async (setLoading, payload, token) => {
+    const storeUserProfile = async (setLoading, payload) => {
         setLoading(true)
-        const res = await WithToken(token).post(`${group}`, payload)
+        const res = await withToken.post(`${group}`, payload)
             .then(res => {
                 console.log('[useProfile][storeUserProfile]', res.data)
                 setLoading(false)
