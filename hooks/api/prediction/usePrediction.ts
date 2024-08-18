@@ -1,13 +1,15 @@
-import withToken from '@/configs/axios/withToken'
 import { predictionRequest } from './predictionTypes'
+import useWithToken from '@/configs/axios/withToken'
 
 export default function usePrediction() {
 
+    const withToken = useWithToken()
+
     const group = 'api/diabetes-prediction'
 
-    const storePrediction = async (setLoading: (loading: boolean) => void, token: string, payload: predictionRequest) => {
+    const storePrediction = async (setLoading: (loading: boolean) => void, payload: predictionRequest) => {
         setLoading(true)
-        const res = await withToken(token).post(`${group}`, payload)
+        const res = await withToken.post(`${group}`, payload)
             .then(res => {
                 console.log('[usePrediction][store]', res.data)
                 setLoading(false)

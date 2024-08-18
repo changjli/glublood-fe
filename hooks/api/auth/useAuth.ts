@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import apiClient from '@/configs/axios'
 import { loginRequest, registerRequest, sendCodeRequest } from './authTypes'
+import useWithToken from '@/configs/axios/withToken'
 
 export default function useAuth() {
 
