@@ -14,7 +14,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                 <TouchableOpacity
                     style={[
                         styles.selectionButton,
-                        { backgroundColor: selectedPatient == 0 ? '#EC8F5E' : 'transparent' },
+                        { backgroundColor: selectedPatient === 0 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
                         setSelectedPatient(0);
@@ -24,7 +24,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     <Text
                         style={[
                             styles.selectionButtonText,
-                            { color: selectedPatient == 0 ? '#ffffff' : '#EC8F5E' }
+                            { color: selectedPatient === 0 ? '#ffffff' : '#EC8F5E' }
                         ]}
                     >
                         Pasien Non-Diabetes
@@ -37,7 +37,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                 <TouchableOpacity
                     style={[
                         styles.selectionButton,
-                        { backgroundColor: selectedPatient == 1 ? '#EC8F5E' : 'transparent' },
+                        { backgroundColor: selectedPatient === 1 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
                         setSelectedPatient(1);
@@ -47,7 +47,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     <Text
                         style={[
                             styles.selectionButtonText,
-                            { color: selectedPatient == 1 ? '#ffffff' : '#EC8F5E' }
+                            { color: selectedPatient === 1 ? '#ffffff' : '#EC8F5E' }
                         ]}
                     >
                         Pasien Diabetes
