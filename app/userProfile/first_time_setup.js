@@ -4,7 +4,6 @@ import { Formik } from 'formik';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../context/AuthenticationProvider';
 import * as Yup from 'yup';
-import dayjs from 'dayjs';
 import StepIndicator from 'react-native-step-indicator';
 import useProfile from '../../hooks/api/profile/useProfile';
 import Personalization1 from './personalization_1';
@@ -14,14 +13,12 @@ import Personalization3_2 from './personalization_3_2';
 import { router } from 'expo-router';
 
 export default function FirstTimeSetup() {
-    const { session } = useSession()
-    console.log(session)
     const { storeUserProfile } = useProfile()
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreUserProfile = async (data) => {
         try {
-            const res = await storeUserProfile(setStoreLoading, data, session)
+            const res = await storeUserProfile(setStoreLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
@@ -46,7 +43,11 @@ export default function FirstTimeSetup() {
         descendant: Yup.string().required('Pertanyaan keturunan wajib diisi!'),
         diseaseHistory: Yup.string().required('Riwayat Penyakit wajib diis!'),
         selectPatient: Yup.number().required('Wajib diisi!'),
-        selectDiabetesType: Yup.number().required('Wajib diisi!'),
+        selectDiabetesType: Yup.number().when('selectPatient', {
+            is: 1,
+            then: (schema) => schema.required('Wajib diisi!'),
+            otherwise: (schema) => schema,
+        }),
     });
 
     // Validation Personalization 
@@ -141,8 +142,8 @@ export default function FirstTimeSetup() {
             if (Object.keys(errors).length === 0) {
                 console.log(formikProps.values);
 
-                if (currentPosition === 1 && formikProps.values.selectPatient === 'Non-Diabetes') {
-                    formikProps.setFieldValue('selectDiabetesType', '4');
+                if (currentPosition === 1 && formikProps.values.selectPatient === 0) {
+                    formikProps.setFieldValue('selectDiabetesType', 0);
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     step = 2;
                     pageMover(step);
@@ -160,7 +161,7 @@ export default function FirstTimeSetup() {
                 console.log(errors);
             }
         } else {
-            if (formikProps.values.selectPatient === 'Non-Diabetes') {
+            if (formikProps.values.selectPatient === 0) {
                 step = -2;
             }
             pageMover(step);
@@ -181,7 +182,7 @@ export default function FirstTimeSetup() {
                     descendant: '',
                     diseaseHistory: '',
                     selectPatient: '',
-                    selectDiabetesType: ''
+                    selectDiabetesType: 0
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => console.log("VALUES: ", values)}
