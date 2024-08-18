@@ -42,7 +42,11 @@ export default function FirstTimeSetup() {
         descendant: Yup.string().required('Pertanyaan keturunan wajib diisi!'),
         diseaseHistory: Yup.string().required('Riwayat Penyakit wajib diis!'),
         selectPatient: Yup.number().required('Wajib diisi!'),
-        selectDiabetesType: Yup.number().required('Wajib diisi!'),
+        selectDiabetesType: Yup.number().when('selectPatient', {
+            is: 1,
+            then: (schema) => schema.required('Wajib diisi!'),
+            otherwise: (schema) => schema,
+        }),
     });
 
     // Validation Personalization 
@@ -138,7 +142,7 @@ export default function FirstTimeSetup() {
                 console.log(formikProps.values);
 
                 if (currentPosition === 1 && formikProps.values.selectPatient === 0) {
-                    formikProps.setFieldValue('selectDiabetesType', '4');
+                    formikProps.setFieldValue('selectDiabetesType', 0);
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     step = 2;
                     pageMover(step);
@@ -176,7 +180,7 @@ export default function FirstTimeSetup() {
                     descendant: '',
                     diseaseHistory: '',
                     selectPatient: '',
-                    selectDiabetesType: ''
+                    selectDiabetesType: 0
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => console.log("VALUES: ", values)}
