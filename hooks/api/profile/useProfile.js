@@ -3,8 +3,6 @@ import useWithToken from '@/configs/axios/withToken'
 export default function useProfile() {
     const withToken = useWithToken()
 
-    const withToken = useWithToken()
-
     const group = 'api/user-profile'
 
     const storeUserProfile = async (setLoading, payload) => {

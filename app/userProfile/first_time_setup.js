@@ -17,6 +17,7 @@ export default function FirstTimeSetup() {
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreUserProfile = async (data) => {
+        console.log("[handleStoreUserProfile]", data)
         try {
             const res = await storeUserProfile(setStoreLoading, data)
             if (res.status == 200) {
@@ -105,9 +106,9 @@ export default function FirstTimeSetup() {
     const userProfileHandler = (formikValues) => {
         let descendant;
         if (formikValues.descendant === 'yes') {
-            descendant = 1
+            descendant = true
         } else {
-            descendant = 0
+            descendant = false
         }
         return {
             firstname: formikValues.firstname,
