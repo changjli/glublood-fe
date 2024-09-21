@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, Button, Pressable } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, Button, Pressable, Image } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput/userProfile';
 import { Ionicons } from '@expo/vector-icons';
-// import DateTimePicker from 'react-native-ui-datepicker';
-// import DatePicker from 'react-native-date-picker'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import dayjs from 'dayjs';
 import { TextInput } from 'react-native-gesture-handler';
+import * as ImagePicker from 'expo-image-picker';
 
 // Selection button state (gender)
 const isGender = [
-    { label: 'Pria', value: 'pria' },
-    { label: 'Wanita', value: 'wanita' },
+    { label: 'Pria', value: 'male' },
+    { label: 'Wanita', value: 'female' },
 ];
 
 // Selection button state (descendant)
 const isDescendant = [
-    { label: 'Yes', value: 'yes' },
-    { label: 'No', value: 'no' },
+    { label: 'Yes', value: true },
+    { label: 'No', value: false },
 ];
 
 const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
@@ -29,6 +28,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
     const [date, setDate] = useState(new Date());
 
     const [focus, setFocus] = useState(false);
+    const [image, setImage] = useState();
 
     const handleOnPressDatePicker = () => {
         setOpenDatePicker(!openDatePicker)
@@ -217,7 +217,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
 
             {openDatePicker ? 
                 <DateTimePicker
-                    value={date}
+                    value={values.birthDate ? values.birthDate : date}
                     mode="date"
                     display="spinner"
                     minimumDate={new Date(1900, 1, 1)}
