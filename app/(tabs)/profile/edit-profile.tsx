@@ -44,16 +44,16 @@ export default function editProfile() {
             try {
                 const res = await fetchUserProfile(setFetchLoading);
                 if (res.status === 200) {
-                    console.log(res.data);
+                    console.log("Fetch Data:", res.data);
                     setInitialFormValues({
                         firstname: res.data.firstname || '',
                         lastname: res.data.lastname || '',
                         weight: res.data.weight ? String(res.data.weight) : '',
                         height: res.data.height ? String(res.data.height) : '',
                         age: res.data.age ? String(res.data.age) : '',
-                        birthDate: res.data.birthDate ? new Date(res.data.birthDate) : new Date(),
+                        birthDate: res.data.DOB ? new Date(res.data.DOB) : new Date(),
                         gender: res.data.gender ? String(res.data.gender) : '',
-                        descendant: res.data.descendant ? res.data.is_descendant_diabetes : '',
+                        descendant: res.data.is_descendant_diabetes ? res.data.is_descendant_diabetes : false,
                         diseaseHistory: String(res.data.medical_history) || '',
                     });
                     Alert.alert('Success', res.message);
@@ -74,7 +74,7 @@ export default function editProfile() {
         try {
             const res = await updateUserProfile(setUpdateLoading, data)
             if (res.status == 200) {
-                console.log(res.data)
+                console.log("Update Data:", res.data)
                 Alert.alert('success', res.message)
             } else if (res.status == 400) {
                 console.log(res.message)
@@ -110,18 +110,6 @@ export default function editProfile() {
         setOpenDatePicker(!openDatePicker)
     }
 
-    const handleOnChangeDatePicker = (
-        event: NativeSyntheticEvent<DateTimePickerEvent>, 
-        selectedDate?: Date | undefined
-    ) => {
-        handleOnPressDatePicker()
-        if (selectedDate) {
-            const dateFormat: string = dayjs(selectedDate).format('DD/MM/YYYY'); 
-            console.log(dateFormat); 
-            // setFieldValue('birthDate', selectedDate);
-        }
-    }
-    
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View
@@ -241,14 +229,6 @@ export default function editProfile() {
                                             {dayjs(values.birthDate).format('DD/MM/YYYY')}
                                         </Text>
                                     </Pressable>
-                                    {/* {errors.birthDate &&
-                                        <View className='flex flex-row items-center gap-1'>
-                                            <Ionicons name='warning' size={16} color='red' />
-                                            <Text className='font-helvetica text-red-500'>
-                                                {errors.birthDate}
-                                            </Text>
-                                        </View>
-                                    } */}
                                 </View>
                             </View>
                             <View className="mb-4">
@@ -258,18 +238,18 @@ export default function editProfile() {
                                         style={[
                                             styles.selectionButton,
                                             { marginRight: 8 },
-                                            { backgroundColor: gender === 'male' ? '#EC8F5E' : 'transparent' },
+                                            { backgroundColor: values.gender === 'male' ? '#EC8F5E' : 'transparent' },
                                         ]}
                                         onPress={() => {
-                                            setGender('male')
-                                            setFieldValue('gender', 'male')
+                                            setGender('male');
+                                            setFieldValue('gender', 'male');
+                                            setIsAnyFieldTouched(true);
                                         }}
-                                        onFocus={() => setIsAnyFieldTouched(true)}
                                     >
                                         <Text
                                             className="text-sm font-helvetica-bold text-center"
                                             style={{
-                                                color: gender === 'male' ? '#ffffff' : '#EC8F5E'
+                                                color: values.gender === 'male' ? '#ffffff' : '#EC8F5E'
                                             }}
                                         >
                                             Pria
@@ -279,56 +259,24 @@ export default function editProfile() {
                                         style={[
                                             styles.selectionButton,
                                             { marginRight: 8 },
-                                            { backgroundColor: gender === 'female' ? '#EC8F5E' : 'transparent' },
+                                            { backgroundColor: values.gender === 'female' ? '#EC8F5E' : 'transparent' },
                                         ]}
                                         onPress={() => {
-                                            setGender('female')
-                                            setFieldValue('gender', 'female')
+                                            setGender('female');
+                                            setFieldValue('gender', 'female');
+                                            setIsAnyFieldTouched(true);
                                         }}
-                                        onFocus={() => setIsAnyFieldTouched(true)}
                                     >
                                         <Text
                                             className="text-sm font-helvetica-bold text-center"
                                             style={{
-                                                color: gender === 'female' ? '#ffffff' : '#EC8F5E'
+                                                color: values.gender === 'female' ? '#ffffff' : '#EC8F5E'
                                             }}
                                         >
                                             Wanita
                                         </Text>
                                     </TouchableOpacity>
-                                    {/* {isGender.map((item, index) => (
-                                        <TouchableOpacity
-                                            key={item.value}
-                                            style={[
-                                                styles.selectionButton,
-                                                index === 0 ? { marginRight: 8 } : undefined,
-                                                index === 1 ? { marginLeft: 8 } : undefined, 
-                                                { backgroundColor: gender === item.value ? '#EC8F5E' : 'transparent' },
-                                            ]}
-                                            onPress={() => {
-                                                setGender(item.value)
-                                                setFieldValue('gender', item.value)
-                                            }}
-                                        >
-                                            <Text
-                                                className="text-sm font-helvetica-bold text-center"
-                                                style={{
-                                                    color: gender === item.value ? '#ffffff' : '#EC8F5E'
-                                                }}
-                                            >
-                                                {item.label}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    ))} */}
                                 </View>
-                                {errors.gender &&
-                                    <View className='flex flex-row items-center gap-1'>
-                                        <Ionicons name='warning' size={16} color='red' />
-                                        <Text className='font-helvetica text-red-500'>
-                                            {errors.gender}
-                                        </Text>
-                                    </View>
-                                }
                             </View>
                             <View className="mb-4">
                                 <Text style={styles.headerTextInput} >Apakah Anda memiliki keturunan dengan riwayat penyakit diabetes?</Text>
@@ -337,18 +285,18 @@ export default function editProfile() {
                                         style={[
                                             styles.selectionButton,
                                             { marginRight: 8 },
-                                            { backgroundColor: descendant ? '#EC8F5E' : 'transparent' },
+                                            { backgroundColor: values.descendant ? '#EC8F5E' : 'transparent' },
                                         ]}
                                         onPress={() => {
-                                            setDescendant(true)
-                                            setFieldValue('descendant', true)
+                                            setDescendant(true);
+                                            setFieldValue('descendant', true);
+                                            setIsAnyFieldTouched(true);
                                         }}
-                                        onFocus={() => setIsAnyFieldTouched(true)}
                                     >
                                         <Text
                                             className="text-sm font-helvetica-bold text-center"
                                             style={{
-                                                color: descendant ? '#ffffff' : '#EC8F5E'
+                                                color: values.descendant ? '#ffffff' : '#EC8F5E'
                                             }}
                                         >
                                             Yes
@@ -358,32 +306,24 @@ export default function editProfile() {
                                         style={[
                                             styles.selectionButton,
                                             { marginLeft: 8 },
-                                            { backgroundColor: descendant ? 'transparent' : '#EC8F5E' },
+                                            { backgroundColor: values.descendant ? 'transparent' : '#EC8F5E' },
                                         ]}
                                         onPress={() => {
-                                            setDescendant(false)
-                                            setFieldValue('descendant', false)
+                                            setDescendant(false);
+                                            setFieldValue('descendant', false);
+                                            setIsAnyFieldTouched(true);
                                         }}
-                                        onFocus={() => setIsAnyFieldTouched(true)}
                                     >
                                         <Text
                                             className="text-sm font-helvetica-bold text-center"
                                             style={{
-                                                color: descendant ? '#EC8F5E' : '#ffffff'
+                                                color: values.descendant ? '#EC8F5E' : '#ffffff'
                                             }}
                                         >
                                             No
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                {errors.descendant &&
-                                    <View className='flex flex-row items-center gap-1'>
-                                        <Ionicons name='warning' size={16} color='red' />
-                                        <Text className='font-helvetica text-red-500'>
-                                            {errors.descendant}
-                                        </Text>
-                                    </View>
-                                }
                             </View>
                             <StyledCustomTextInput
                                 label='Riwayat Penyakit'
@@ -434,21 +374,29 @@ export default function editProfile() {
                                     Batalkan
                                 </Text>
                             </TouchableOpacity>
+                            {openDatePicker ? 
+                                <DateTimePicker
+                                    value={values.birthDate? values.birthDate : date}
+                                    mode="date"
+                                    display="spinner"
+                                    minimumDate={new Date(1900, 1, 1)}
+                                    maximumDate={new Date()}
+                                    onChange={(event, selectedDate) => {
+                                        handleOnPressDatePicker()
+                                        if (selectedDate) {
+                                            const dateFormat: string = dayjs(selectedDate).format('DD/MM/YYYY'); 
+                                            console.log(dateFormat); 
+                                            setFieldValue('birthDate', selectedDate);
+                                            setIsAnyFieldTouched(true);
+                                        }
+                                    }}
+                                />
+                                :
+                                null
+                            }
                         </View>
                     )}
                 </Formik>
-                {openDatePicker ? 
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display="spinner"
-                        minimumDate={new Date(1900, 1, 1)}
-                        maximumDate={new Date()}
-                        // onChange={handleOnChangeDatePicker}
-                    />
-                    :
-                    null
-                }
             </View>
         </TouchableWithoutFeedback>
     )

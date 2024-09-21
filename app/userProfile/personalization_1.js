@@ -217,7 +217,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
 
             {openDatePicker ? 
                 <DateTimePicker
-                    value={date}
+                    value={values.birthDate ? values.birthDate : date}
                     mode="date"
                     display="spinner"
                     minimumDate={new Date(1900, 1, 1)}
