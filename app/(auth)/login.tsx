@@ -97,7 +97,7 @@ export default function Login() {
                                 <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
                                     Belum memiliki akun?
                                 </StyledCustomText>
-                                <Pressable onPress={() => router.replace('(auth)/register')}>
+                                <Pressable onPress={() => router.replace('/(auth)/register')}>
                                     <StyledCustomText size='sm' weight='heavy' style='text-primary'>
                                         Daftar disini
                                     </StyledCustomText>

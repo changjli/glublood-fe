@@ -13,6 +13,7 @@ export default function index() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
     const CITIES = 'Jakarta,Bandung,Sumbawa,Taliwang,Lombok,Bima'.split(',');
+
     return (
         <View style={{ padding: 16 }}>
             <CustomTimePicker />

@@ -15,7 +15,7 @@ export default function TabLayout() {
 
     // If not authenticated 
     if (!session) {
-        return <Redirect href="(auth)/login" />
+        return <Redirect href="/(auth)/login" />
     }
 
     return (
@@ -51,7 +51,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="notes"
+                name="(notes)"
                 options={{
                     title: 'Notes',
                     tabBarIcon: ({ color }) => <Ionicons name='clipboard' size={28} color={color} />,

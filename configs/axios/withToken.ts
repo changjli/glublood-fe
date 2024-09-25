@@ -7,7 +7,7 @@ export default function useWithToken() {
     const { session, signIn } = useSession()
 
     const instance = axios.create({
-        baseURL: `http://10.0.2.2:8000`,
+        baseURL: process.env.EXPO_PUBLIC_API_URL,
         headers: {
             'Access-Control-Allow-Origin': `*`,
             'Access-Control-Allow-Methods': 'GET, HEAD, POST, PATCH, PUT, DELETE, OPTIONS',

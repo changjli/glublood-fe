@@ -28,7 +28,12 @@ export default function RootLayout() {
 
     return (
         <SessionProvider>
-            <Slot />
+            <Stack
+                screenOptions={{
+                    headerShown: false,
+                }}>
+                <Stack.Screen name='(tabs)' />
+            </Stack>
         </SessionProvider>
     )
 }
