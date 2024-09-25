@@ -2,7 +2,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFe
 import React, { useState } from 'react';
 import { Formik } from 'formik';
 import { Ionicons } from '@expo/vector-icons';
-import { useSession } from '../context/AuthenticationProvider';
 import * as Yup from 'yup';
 import StepIndicator from 'react-native-step-indicator';
 import useProfile from '../../hooks/api/profile/useProfile';
@@ -104,12 +103,12 @@ export default function FirstTimeSetup() {
 
     // User Profile Handler
     const userProfileHandler = (formikValues) => {
-        let descendant;
-        if (formikValues.descendant === 'yes') {
-            descendant = true
-        } else {
-            descendant = false
-        }
+        // let descendant;
+        // if(formikValues.descendant === 'yes') {
+        //     descendant = 1
+        // } else {
+        //     descendant = 0
+        // }
         return {
             firstname: formikValues.firstname,
             lastname: formikValues.lastname,
@@ -118,7 +117,7 @@ export default function FirstTimeSetup() {
             age: formikValues.age,
             DOB: formikValues.birthDate,
             gender: formikValues.gender,
-            is_descendant_diabetes: descendant,
+            is_descendant_diabetes: formikValues.descendant,
             is_diabetes: formikValues.selectPatient,
             medical_history: formikValues.diseaseHistory,
             diabetes_type: formikValues.selectDiabetesType,
@@ -186,7 +185,7 @@ export default function FirstTimeSetup() {
                     selectDiabetesType: 0
                 }}
                 validationSchema={validationSchema}
-                onSubmit={(values) => console.log("VALUES: ", values)}
+                onSubmit={(values) => console.log("Values onSubmit Formik: ", values)}
             >
                 {formikProps => (
                     <View className="px-5 py-16 bg-bg flex flex-1" style={{ height: '100%' }}>
