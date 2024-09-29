@@ -8,12 +8,14 @@ export type CustomTextInputProps = TextInputProps & {
     label?: string,
     error?: string,
     labelStyle?: TextProps['style']
+    postfix?: React.ReactNode
 }
 
 export default function CustomTextInput({
     label,
     error,
     labelStyle,
+    postfix,
     ...rest
 }: CustomTextInputProps) {
     const isError = error != null && error != ''
@@ -29,14 +31,23 @@ export default function CustomTextInput({
                 </Text>
                 : null
             }
-            <TextInput
-                className={styles.inputContainerStyles({
-                    disabled: rest.readOnly,
-                    error: isError,
-                })}
-                placeholderTextColor='gray'
-                {...rest}
-            />
+            <View className='relative'>
+                <TextInput
+                    className={styles.inputContainerStyles({
+                        disabled: rest.readOnly,
+                        error: isError,
+                    })}
+                    placeholderTextColor='gray'
+                    {...rest}
+                />
+                {
+                    postfix ?
+                        <View className='absolute right-0 py-[12px] px-[16px]'>
+                            {postfix}
+                        </View>
+                        : null
+                }
+            </View>
             {
                 isError ?
                     <View className='flex flex-row items-center gap-1'>

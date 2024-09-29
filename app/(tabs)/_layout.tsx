@@ -34,6 +34,7 @@ export default function TabLayout() {
                 tabBarLabelStyle: {
                     fontFamily: Weight.heavy,
                 },
+                headerShown: false,
             }}
         >
             <Tabs.Screen
@@ -51,7 +52,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="notes"
+                name="(notes)"
                 options={{
                     title: 'Notes',
                     tabBarIcon: ({ color }) => <Ionicons name='clipboard' size={28} color={color} />,
