@@ -34,6 +34,7 @@ export default function TabLayout() {
                 tabBarLabelStyle: {
                     fontFamily: Weight.heavy,
                 },
+                headerShown: false,
             }}
         >
             <Tabs.Screen

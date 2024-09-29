@@ -1,10 +1,5 @@
 import { View, Text } from 'react-native'
 import React, { useState } from 'react'
-import WheelPickerExpo from 'react-native-wheel-picker-expo';
-import CustomTimePicker from './CustomTimePicker';
-import CustomCalendar from './CustomCalendar';
-import CustomMonthYearPicker from './CustomMonthYearPicker';
-import DatePicker from 'react-native-modern-datepicker';
 
 export default function index() {
 
@@ -16,8 +11,8 @@ export default function index() {
 
     return (
         <View style={{ padding: 16 }}>
-            <CustomTimePicker />
-            <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
+            {/* <CustomTimePicker />
+            <CustomCalendar value={selectedDate} onChange={setSelectedDate} /> */}
         </View>
     )
 }

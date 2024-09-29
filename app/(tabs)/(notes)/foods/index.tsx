@@ -1,24 +1,86 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import CustomTimePicker from '../CustomTimePicker';
 import CustomCalendar from '../CustomCalendar';
 import { Colors } from '@/constants/Colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Size, Weight } from '@/constants/Typography';
 import DailyCaloriesInput from './DailyCaloriesInput';
+import { Link } from 'expo-router';
+import useFoodLog from '@/hooks/api/food_log/useFoodLog';
+import axios, { AxiosError } from 'axios';
+import { string } from 'yup';
+import FoodLogList from './FoodLogList';
+import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 
 export default function Foods() {
-    const [city, setCity] = useState('')
+    const { getFoodLogByDate } = useFoodLog()
+    const { getDailyCaloriesByDate } = useDailyCalories()
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-    const CITIES = 'Jakarta,Bandung,Sumbawa,Taliwang,Lombok,Bima'.split(',');
-
     const [modalVisible, setModalVisible] = useState(false)
+
+    const [foodLogLoading, setFoodLogLoading] = useState(false)
+
+    const [foodLogs, setFoodLogs] = useState<GetFoodLogResponse[]>([])
+
+    const handleGetFoodLog = async (date: string) => {
+        try {
+            const res = await getFoodLogByDate(setFoodLogLoading, date)
+            const data: GetFoodLogResponse[] = res.data
+            setFoodLogs(data)
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                // Log detailed Axios error information
+                console.log('Axios Error:', err.message);
+                console.log('Error Response Data:', err.response?.data);
+
+                // Handle different status codes (e.g., 400, 401, 404, 500)
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 401) {
+                    Alert.alert('Unauthorized', 'You are not authorized to perform this action.');
+                } else if (status === 404) {
+                    Alert.alert('Not Found', 'Requested resource not found.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Fallback for any other status codes
+                    Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                // Handle non-Axios errors (e.g., network issues)
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+        }
+    }
+
+    useEffect(() => {
+        handleGetFoodLog("08/09/2024")
+    }, [])
+
+    useEffect(() => {
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const year = selectedDate.getFullYear();
+
+        const formattedDate = `${day}/${month}/${year}`;
+
+        console.log(formattedDate)
+
+        handleGetFoodLog(formattedDate)
+    }, [selectedDate])
 
     return (
         <>
-            <DailyCaloriesInput visible={modalVisible} onRequestClose={() => setModalVisible(false)} />
+            <DailyCaloriesInput
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            />
             <View style={{ padding: 16 }}>
                 <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
                 <View style={styles.dailyContainer}>
@@ -37,9 +99,14 @@ export default function Foods() {
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail log nutrisi</Text>
-                    <FontAwesome name='plus' style={styles.logHeaderIcon} />
+                    <Link href='/(notes)/foods/create' style={styles.logHeaderIcon}>
+                        <FontAwesome name='plus' />
+                    </Link>
                 </View>
-                <Image source={require('@/assets/images/characters/not-found.png')} />
+                {/* <Image source={require('@/assets/images/characters/not-found.png')} /> */}
+                <View className='w-full'>
+                    <FoodLogList data={foodLogs} />
+                </View>
             </View>
         </>
     )
@@ -83,5 +150,21 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.primary,
         padding: 8,
         borderRadius: 4,
+    },
+    foodLogContainer: {
+        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        borderRadius: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    foodLogHeaderText: {
+        fontSize: Size.md,
+        color: Colors.light.primary,
+        fontFamily: Weight.heavy,
+    },
+    foodLogBodyText: {
+        fontSize: Size.sm,
+        color: Colors.light.primary,
     }
 })
