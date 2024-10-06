@@ -1,13 +1,17 @@
-import { ActivityIndicator, Pressable, PressableProps, Text, TextInput, TextInputProps, TextProps, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { ActivityIndicator, Pressable, PressableProps, StyleSheet, Text, TextInput, TextInputProps, TextProps, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useState } from 'react'
 import { tv } from 'tailwind-variants'
 import { cssInterop } from 'nativewind'
 import { Ionicons } from '@expo/vector-icons'
+import { FontFamily, FontSize } from '@/constants/Typography'
+import { useTheme } from '@/app/context/ThemeProvider'
+import { Colors } from '@/constants/Colors'
 
 export type CustomTextInputProps = TextInputProps & {
     label?: string,
     error?: string,
     labelStyle?: TextProps['style']
+    prefix?: React.ReactNode
     postfix?: React.ReactNode
 }
 
@@ -15,48 +19,64 @@ export default function CustomTextInput({
     label,
     error,
     labelStyle,
+    prefix,
     postfix,
     ...rest
 }: CustomTextInputProps) {
     const isError = error != null && error != ''
 
+    const { colors } = useTheme()
+
+    const [isFocus, setIsFocus] = useState(false)
+
     return (
         <View>
-            {label ?
+            {label &&
                 <Text
-                    className='font-helvetica-bold text-[12px]'
-                    style={labelStyle}
+                    style={[
+                        styles.labelText,
+                        labelStyle,
+                    ]}
                 >
                     {label}
                 </Text>
-                : null
             }
-            <View className='relative'>
+            <View
+                style={[
+                    styles.inputContainer,
+                    isFocus && styles.focusInputContainer,
+                    rest.readOnly && styles.disabledInputContainer,
+                    isError && styles.errorInputContainer,
+                ]}
+            >
+                {
+                    prefix &&
+                    <View>
+                        {prefix}
+                    </View>
+                }
                 <TextInput
-                    className={styles.inputContainerStyles({
-                        disabled: rest.readOnly,
-                        error: isError,
-                    })}
                     placeholderTextColor='gray'
+                    onFocus={() => setIsFocus(!isFocus)}
+                    onBlur={() => setIsFocus(!isFocus)}
+                    style={styles.innerContainer}
                     {...rest}
                 />
                 {
-                    postfix ?
-                        <View className='absolute right-0 py-[12px] px-[16px]'>
-                            {postfix}
-                        </View>
-                        : null
+                    postfix &&
+                    <View>
+                        {postfix}
+                    </View>
                 }
             </View>
             {
-                isError ?
-                    <View className='flex flex-row items-center gap-1'>
-                        <Ionicons name='warning' size={16} color='red' />
-                        <Text className='font-helvetica text-red-500'>
-                            {error}
-                        </Text>
-                    </View>
-                    : null
+                isError &&
+                <View style={styles.errorContainer}>
+                    <Ionicons name='warning' size={16} color='red' />
+                    <Text style={styles.errorText}>
+                        {error}
+                    </Text>
+                </View>
             }
         </View >
     )
@@ -67,18 +87,60 @@ export const StyledCustomTextInput = cssInterop(CustomTextInput, {
     labelStyle: true,
 })
 
-const styles = {
-    inputContainerStyles: tv({
-        base: 'py-[12px] px-[16px] border-2 border-gray-300 rounded-[8px] font-helvetica text-[16px] focus:border-primary',
-        variants: {
-            disabled: {
-                true: 'bg-secondary border-secondary'
-            },
-            error: {
-                true: 'border-red-500'
-            }
-        }
-    }),
-}
+const styles = StyleSheet.create({
+    labelText: {
+        fontFamily: FontFamily.heavy,
+        fontSize: FontSize.sm,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+        paddingHorizontal: 12,
+        paddingVertical: 16,
+        borderWidth: 2,
+        borderRadius: 8,
+        borderColor: Colors.light.gray300,
+    },
+    focusInputContainer: {
+        borderColor: Colors.light.primary,
+    },
+    disabledInputContainer: {
+        backgroundColor: Colors.light.secondary,
+        borderColor: Colors.light.secondary,
+    },
+    errorInputContainer: {
+        borderColor: Colors.light.danger,
+    },
+    errorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4
+    },
+    errorText: {
+        fontFamily: FontFamily.medium,
+        color: Colors.light.danger,
+    },
+    innerContainer: {
+        flex: 1,
+        fontFamily: FontFamily.medium,
+        fontSize: FontSize.md,
+    },
+})
+
+// const styles = {
+//     inputContainerStyles: tv({
+//         base: 'py-[12px] px-[16px] border-2 border-gray-300 rounded-[8px] font-helvetica text-[16px] focus:border-primary',
+//         variants: {
+//             disabled: {
+//                 true: 'bg-secondary border-secondary'
+//             },
+//             error: {
+//                 true: 'border-red-500'
+//             }
+//         }
+//     }),
+// }
 
 

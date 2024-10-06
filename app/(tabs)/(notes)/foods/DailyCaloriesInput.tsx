@@ -2,7 +2,7 @@ import CustomButton, { StyledCustomButton } from '@/components/CustomButton';
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import CustomModal, { CustomModalProps } from '@/components/CustomModal';
 import { Colors } from '@/constants/Colors';
-import { Weight } from '@/constants/Typography';
+import { FontFamily } from '@/constants/Typography';
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
@@ -22,7 +22,8 @@ export default function DailyCaloriesInput({ ...rest }: DailyCaloriesInputProps)
         try {
             const payload: StoreDailyCaloriesRequest = {
                 date: "08/09/2024",
-                total_calories: Number(dailyCalories),
+                consumed_calories: 0,
+                target_calories: Number(dailyCalories),
             }
 
             const res = await storeDailyCalories(setStoreDailyCaloriesLoading, payload)
@@ -65,7 +66,7 @@ export default function DailyCaloriesInput({ ...rest }: DailyCaloriesInputProps)
                     <CustomTextInput
                         label='Target kalori'
                         placeholder='Contoh: 98'
-                        postfix={<Text style={{ color: Colors.light.primary, fontFamily: Weight.heavy }}>Kkal</Text>}
+                        postfix={<Text style={{ color: Colors.light.primary, fontFamily: FontFamily.heavy }}>Kkal</Text>}
                         value={dailyCalories}
                         onChangeText={setDailyCalories}
                         keyboardType='number-pad'

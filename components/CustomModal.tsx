@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import { Weight } from '@/constants/Typography';
+import { FontFamily } from '@/constants/Typography';
 import React, { useState } from 'react'
 import { Button, Modal, ModalProps, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import { Size, Weight } from '@/constants/Typography';
+import { FontSize, FontFamily } from '@/constants/Typography';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
@@ -94,12 +94,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     cardHeaderText: {
-        fontSize: Size.md,
+        fontSize: FontSize.md,
         color: Colors.light.primary,
-        fontFamily: Weight.heavy,
+        fontFamily: FontFamily.heavy,
     },
     cardBodyText: {
-        fontSize: Size.sm,
+        fontSize: FontSize.sm,
         color: Colors.light.primary,
     }
 });

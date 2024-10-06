@@ -4,7 +4,7 @@ import { useSession } from '../context/AuthenticationProvider'
 import { Redirect, Stack, Tabs } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
-import { Weight } from '@/constants/Typography'
+import { FontFamily } from '@/constants/Typography'
 
 export default function TabLayout() {
     const { session, isLoading } = useSession()
@@ -32,7 +32,7 @@ export default function TabLayout() {
                     paddingHorizontal: 16
                 },
                 tabBarLabelStyle: {
-                    fontFamily: Weight.heavy,
+                    fontFamily: FontFamily.heavy,
                 },
                 headerShown: false,
             }}

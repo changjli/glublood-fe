@@ -16,7 +16,7 @@ export default function useDailyCalories() {
             }).catch(err => {
                 console.log('[useDailyCalories][getDailyCaloriesByDate]', err.response?.data)
                 setLoading(false)
-                return err.response?.data
+                return Promise.reject(err)
             })
         return res
     }
@@ -31,7 +31,7 @@ export default function useDailyCalories() {
             }).catch(err => {
                 console.log('[useDailyCalories][storeDailyCalories]', err.response?.data)
                 setLoading(false)
-                return err.response?.data
+                return Promise.reject(err)
             })
         return res
     }

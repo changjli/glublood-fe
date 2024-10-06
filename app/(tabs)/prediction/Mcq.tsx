@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import CustomButton from '@/components/CustomButton'
-import { Size, Weight } from '@/constants/Typography'
+import { FontSize, FontFamily } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
 
 type McqProps = {
@@ -47,8 +47,8 @@ export default function Mcq({ question, answers, value, onChange }: McqProps) {
 
 const styles = StyleSheet.create({
     question: {
-        fontSize: Size.xl,
-        fontFamily: Weight.heavy,
+        fontSize: FontSize.xl,
+        fontFamily: FontFamily.heavy,
         marginBottom: 36,
     },
     answer: {

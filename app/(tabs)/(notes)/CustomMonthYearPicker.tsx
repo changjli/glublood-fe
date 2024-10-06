@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '@/constants/Colors'
-import { Size, Weight } from '@/constants/Typography'
+import { FontSize, FontFamily } from '@/constants/Typography'
 import { Ionicons } from '@expo/vector-icons'
 import DatePicker from 'react-native-modern-datepicker';
 
@@ -30,8 +30,8 @@ export default function CustomMonthYearPicker({ month, year, setMonth, setyear }
                         selectorStartingYear={2000}
                         options={{
                             mainColor: Colors.light.primary,
-                            headerFont: Weight.heavy,
-                            defaultFont: Weight.medium,
+                            headerFont: FontFamily.heavy,
+                            defaultFont: FontFamily.medium,
                             textDefaultColor: Colors.light.primary,
                         }}
                         onMonthYearChange={(e) => {
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     },
     inputText: {
         color: Colors.light.primary,
-        fontSize: Size.md,
-        fontFamily: Weight.heavy,
+        fontSize: FontSize.md,
+        fontFamily: FontFamily.heavy,
     },
     pickerContainer: {
         position: 'absolute',

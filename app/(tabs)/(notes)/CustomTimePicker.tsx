@@ -1,34 +1,61 @@
+import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { Colors } from '@/constants/Colors';
-import React, { useState } from 'react';
+import { FontSize } from '@/constants/Typography';
+import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import WheelPickerExpo from 'react-native-wheel-picker-expo';
 
-const CustomTimePicker = () => {
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectedHour, setSelectedHour] = useState('03');
-    const [selectedMinute, setSelectedMinute] = useState('41');
-    const [selectedPeriod, setSelectedPeriod] = useState('AM');
+type CustomTimePickerProps = {
+    value: string
+    onChange: (value: string) => void
+    error?: string
+}
 
-    const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedHour, setSelectedHour] = useState('01');
+    const [selectedMinute, setSelectedMinute] = useState('00');
+
+    const hours = Array.from({ length: 24 }, (_, i) => (i + 1).toString().padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
     const periods = ['AM', 'PM'];
 
+    const formatTime = () => {
+        return `${selectedHour}:${selectedMinute}`
+    }
+
+    const handleNext = () => {
+        onChange(formatTime())
+        setModalVisible(!modalVisible)
+    }
+
     return (
         <View>
-            <Button title="Select Time" onPress={() => setModalVisible(true)} />
+            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+                <CustomTextInput
+                    label='Pilih waktu'
+                    placeholder='Tekan untuk pilih waktu'
+                    postfix={(
+                        <FontAwesome name='clock-o' size={FontSize.lg} />
+                    )}
+                    value={value}
+                    readOnly
+                />
+            </TouchableOpacity>
             <Modal
                 visible={modalVisible}
                 transparent={true}
                 animationType="slide"
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => setModalVisible(!modalVisible)}
             >
                 <View style={styles.modalBackdrop}>
                     <View style={styles.modalContainer}>
                         <View style={styles.modalHeaderContainer}>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
                                 <Text style={{ color: 'red' }}>Batal</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <TouchableOpacity onPress={handleNext}>
                                 <Text style={{ color: 'orange' }}>Lanjut</Text>
                             </TouchableOpacity>
                         </View>
@@ -60,22 +87,6 @@ const CustomTimePicker = () => {
                                     <Text style={[
                                         styles.timePickerText,
                                         label == selectedMinute && styles.timePickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                )}
-                                selectedStyle={styles.timePickerSelected}
-                            />
-                            <WheelPickerExpo
-                                height={200}
-                                width={70}
-                                initialSelectedIndex={periods.indexOf(selectedPeriod)}
-                                items={periods.map(period => ({ label: period, value: period }))}
-                                onChange={({ index }) => setSelectedPeriod(periods[index])}
-                                renderItem={({ label }) => (
-                                    <Text style={[
-                                        styles.timePickerText,
-                                        label == selectedPeriod && styles.timePickerTextSelected
                                     ]}>
                                         {label}
                                     </Text>
