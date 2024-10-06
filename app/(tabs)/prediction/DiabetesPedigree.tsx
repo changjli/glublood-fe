@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native'
 import React from 'react'
 import CustomButton from '@/components/CustomButton'
-import { Size, Weight } from '@/constants/Typography'
+import { FontSize, FontFamily } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
 
 type DiabetesPedigreeProps = {
@@ -105,8 +105,8 @@ export default function DiabetesPedigree({ question, value, onChange }: Diabetes
 
 const styles = StyleSheet.create({
     question: {
-        fontSize: Size.xl,
-        fontFamily: Weight.heavy,
+        fontSize: FontSize.xl,
+        fontFamily: FontFamily.heavy,
         marginBottom: 36,
     },
     answerContainer: {
@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
     },
     answerText: {
-        fontSize: Size.md,
-        fontFamily: Weight.heavy,
+        fontSize: FontSize.md,
+        fontFamily: FontFamily.heavy,
     },
     answerTextActive: {
         color: 'white',

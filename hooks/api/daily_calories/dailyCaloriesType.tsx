@@ -1,9 +1,11 @@
 type GetDailyCaloriesResponse = {
     date: string
-    daily_calories: number
+    consumed_calories: number
+    target_calories: number
 }
 
 type StoreDailyCaloriesRequest = {
     date: string
-    total_calories: number
+    consumed_calories: number
+    target_calories: number
 }

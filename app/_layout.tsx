@@ -8,6 +8,7 @@ import { useFonts } from 'expo-font';
 import { SessionProvider } from './context/AuthenticationProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'nativewind';
+import ThemeProvider from './context/ThemeProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,14 +31,16 @@ export default function RootLayout() {
 
     return (
         <SessionProvider>
-            <SafeAreaView style={styles.safeArea}>
-                <Stack
-                    screenOptions={{
-                        headerShown: false,
-                    }}>
-                    <Stack.Screen name='(tabs)' />
-                </Stack>
-            </SafeAreaView>
+            <ThemeProvider>
+                <SafeAreaView style={styles.safeArea}>
+                    <Stack
+                        screenOptions={{
+                            headerShown: false,
+                        }}>
+                        <Stack.Screen name='(tabs)' />
+                    </Stack>
+                </SafeAreaView>
+            </ThemeProvider>
         </SessionProvider>
     )
 }

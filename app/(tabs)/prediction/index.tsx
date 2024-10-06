@@ -1,6 +1,6 @@
 import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet, TouchableOpacity, Pressable, GestureResponderEvent, Alert, Image } from 'react-native'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { Size, Weight } from '@/constants/Typography'
+import { FontSize, FontFamily } from '@/constants/Typography'
 import CustomButton, { CustomButtonProps, StyledCustomButton } from '@/components/CustomButton'
 import { Ionicons } from '@expo/vector-icons'
 import { Formik } from 'formik'
@@ -263,10 +263,10 @@ export default function Prediction() {
                                         }} style={'mb-4'} />
                                         <View style={bmiStyles.result}>
                                             <View>
-                                                <Text style={{ textAlign: 'center', fontSize: Size.md, fontFamily: Weight.medium }}>
+                                                <Text style={{ textAlign: 'center', fontSize: FontSize.md, fontFamily: FontFamily.medium }}>
                                                     Hasil BMI
                                                 </Text>
-                                                <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: Weight.heavy, color: Colors.light.primary }}>
+                                                <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: FontFamily.heavy, color: Colors.light.primary }}>
                                                     {String(values.bmi)}
                                                 </Text>
                                             </View>
@@ -321,8 +321,8 @@ export default function Prediction() {
                                         height: 264,
                                     }}
                                 />
-                                <Text style={{ fontSize: Size.md }}>Hasil prediksi menyatakan</Text>
-                                <Text style={{ fontSize: Size.xl, color: Colors.light.primary, fontFamily: Weight.heavy }}>TIDAK TERINDIKASI DIABETES</Text>
+                                <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
+                                <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TIDAK TERINDIKASI DIABETES</Text>
                             </View>
                             <CustomButton title='Lanjutkan' size='lg' />
                             <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
@@ -345,8 +345,8 @@ export default function Prediction() {
                                         height: 264,
                                     }}
                                 />
-                                <Text style={{ fontSize: Size.md }}>Hasil prediksi menyatakan</Text>
-                                <Text style={{ fontSize: Size.xl, color: Colors.light.primary, fontFamily: Weight.heavy }}>TERINDIKASI DIABETES</Text>
+                                <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
+                                <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TERINDIKASI DIABETES</Text>
                             </View>
                             <CustomButton title='Lanjutkan' size='lg' />
                             <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
@@ -372,8 +372,8 @@ const styles = StyleSheet.create({
 
 const bmiStyles = StyleSheet.create({
     question: {
-        fontSize: Size.xl,
-        fontFamily: Weight.heavy,
+        fontSize: FontSize.xl,
+        fontFamily: FontFamily.heavy,
         marginBottom: 36,
     },
     result: {

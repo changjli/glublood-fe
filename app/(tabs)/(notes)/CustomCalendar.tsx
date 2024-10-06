@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import { Size, Weight } from '@/constants/Typography';
+import { FontSize, FontFamily } from '@/constants/Typography';
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import CustomMonthYearPicker from './CustomMonthYearPicker';
@@ -65,12 +65,12 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
                 borderRadius: 10,
             },
             dayText: {
-                fontFamily: Weight.medium,
-                fontSize: Size.md,
+                fontFamily: FontFamily.medium,
+                fontSize: FontSize.md,
             },
             dateText: {
-                fontFamily: Weight.heavy,
-                fontSize: Size.lg,
+                fontFamily: FontFamily.heavy,
+                fontSize: FontSize.lg,
             }
         })
 
