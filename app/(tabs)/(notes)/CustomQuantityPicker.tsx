@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import WheelPickerExpo from 'react-native-wheel-picker-expo'
 import { FontAwesome } from '@expo/vector-icons'
 import { FontFamily, FontSize } from '@/constants/Typography'
@@ -10,11 +10,12 @@ type CustomQuantityPickerProps = {
     size: string
     onChangeQty: (qty: string) => void
     onChangeSize: (size: string) => void
+
 }
 
 export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeSize }: CustomQuantityPickerProps) {
     const qtyData = [1, 2, 3]
-    const sizeData = ['Piring', 'Gelas']
+    const sizeData = ["Piring", "Gelas"]
 
     return (
         <View style={styles.container}>
@@ -43,7 +44,7 @@ export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeS
             <WheelPickerExpo
                 initialSelectedIndex={0}
                 onChange={({ index }) => onChangeSize(sizeData[index])}
-                items={sizeData.map(data => ({ label: String(data), value: data }))}
+                items={sizeData.map(data => ({ label: data, value: data }))}
                 renderItem={({ label }) => (
                     <View style={[
                         styles.pickerContainer,

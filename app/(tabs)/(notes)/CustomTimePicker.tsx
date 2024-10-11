@@ -32,17 +32,15 @@ const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
 
     return (
         <View>
-            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                <CustomTextInput
-                    label='Pilih waktu'
-                    placeholder='Tekan untuk pilih waktu'
-                    postfix={(
-                        <FontAwesome name='clock-o' size={FontSize.lg} />
-                    )}
-                    value={value}
-                    readOnly
-                />
-            </TouchableOpacity>
+            <CustomTextInput
+                label='Pilih waktu'
+                placeholder='Tekan untuk pilih waktu'
+                postfix={(
+                    <FontAwesome name='clock-o' size={FontSize.lg} />
+                )}
+                value={value}
+                onPress={() => setModalVisible(true)}
+            />
             <Modal
                 visible={modalVisible}
                 transparent={true}

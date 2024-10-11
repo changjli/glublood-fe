@@ -3,22 +3,22 @@ import { FontSize, FontFamily } from '@/constants/Typography';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-type FoodLogListProps = {
-    data: GetFoodLogResponse[]
+interface ExerciseLogListProps {
+    data: GetExerciseLogRes[]
 }
 
-export default function FoodLogList({ data }: FoodLogListProps) {
+export default function ExerciseLogList({ data }: ExerciseLogListProps) {
     const renderItem = ({ item, index }: {
-        item: GetFoodLogResponse
+        item: GetExerciseLogRes
         index: number
     }) => {
-        const isSame = item.time == data[index - 1]?.time
+        const isSame = item.start_time == data[index - 1]?.start_time
 
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.timeSection}>
                     {!isSame && (
-                        <Text style={styles.timeText}>{item.time}</Text>
+                        <Text style={styles.timeText}>{item.start_time}</Text>
                     )}
                     {(index < data.length - 1 || isSame) && (
                         <View style={styles.verticalLine}>
@@ -31,10 +31,9 @@ export default function FoodLogList({ data }: FoodLogListProps) {
 
                 <View style={styles.cardContainer}>
                     <View>
-                        <Text style={styles.cardHeaderText}>{item.food_name}</Text>
+                        <Text style={styles.cardHeaderText}>{item.exercise_name}</Text>
                     </View>
-                    <Text style={styles.cardBodyText}>{item.calorie}</Text>
-                    <Text style={styles.cardBodyText}>{item.serving}</Text>
+                    <Text style={styles.cardBodyText}>{item.burned_calories}</Text>
                 </View>
             </View>
         );

@@ -1,12 +1,12 @@
 import { View, Text, Alert, StyleSheet, Image, ScrollView, GestureResponderEvent } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
-import CustomTimePicker from '../CustomTimePicker'
-import CustomQuantityPicker from '../CustomQuantityPicker'
+import CustomTimePicker from '../../CustomTimePicker'
+import CustomQuantityPicker from '../../CustomQuantityPicker'
 import { Colors } from '@/constants/Colors'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import CustomButton from '@/components/CustomButton'
@@ -29,17 +29,17 @@ export default function Detail() {
 
     const [food, setFood] = useState<GetMasterFoodDetailResponse | null>(null)
     const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
-        calorie: '',
-        carbohydrate: '',
+        calories: 0,
+        carbohydrate: 0,
         date: '',
-        fat: '',
+        fat: 0,
         food_name: '',
-        protein: '',
+        protein: 0,
         serving_qty: 0,
         serving_size: '',
         time: '',
         note: '',
-        type: 'fatsecrete',
+        type: 0,
     })
 
     const [getLoading, setGetLoading] = useState(false)
@@ -47,7 +47,6 @@ export default function Detail() {
     const handleGetMasterFoodDetail = async () => {
         try {
             const res = await getMasterFoodDetail(setGetLoading, id as string)
-            console.log("result", res.data)
             const data: GetMasterFoodDetailResponse = res.data
             setFood(data)
             handlePopulateFormValue(data)
@@ -74,7 +73,7 @@ export default function Detail() {
         try {
             console.log("payload", payload)
             const res = await storeFoodLog(setGetLoading, payload)
-            console.log(res.data)
+            router.navigate('/(notes)/food-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -97,7 +96,7 @@ export default function Detail() {
         const date = await getData('foodLogDate')
         setFormValue({
             ...formValue,
-            calorie: data.calorie,
+            calories: data.calories,
             carbohydrate: data.carbohydrate,
             fat: data.fat,
             protein: data.protein,
@@ -117,7 +116,7 @@ export default function Detail() {
                 <View style={[styles.nutrientContainer, { width: '100%' }]}>
                     <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientIcon} />
                     <Text style={styles.nutrientTitle}>Kalori</Text>
-                    <Text style={styles.nutrientText}>{`${food?.calorie}`} Kkal/Porsi</Text>
+                    <Text style={styles.nutrientText}>{food?.calories} Kkal/Porsi</Text>
                 </View>
                 <View style={[styles.nutrientContainer, { width: '30%' }]}>
                     <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientIcon} />

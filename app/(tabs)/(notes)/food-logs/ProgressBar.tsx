@@ -9,6 +9,11 @@ type ProgressBarProps = {
 export default function ProgressBar({ data }: ProgressBarProps) {
     const [progress, setProgress] = useState(data.consumed_calories / data.target_calories)
 
+    useEffect(() => {
+        setProgress(data.consumed_calories / data.target_calories)
+    }, [data])
+
+
     const animation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {

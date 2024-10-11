@@ -1,26 +1,29 @@
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, GestureResponderEvent, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
-import CustomTimePicker from '../CustomTimePicker'
+import CustomTimePicker from '../../CustomTimePicker'
 import { Formik } from 'formik'
-import CustomQuantityPicker from '../CustomQuantityPicker'
+import CustomQuantityPicker from '../../CustomQuantityPicker'
 import CustomText from '@/components/CustomText'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomButton from '@/components/CustomButton'
 import { Colors } from '@/constants/Colors'
-import Stepper from './Stepper'
+import Stepper from '../Stepper'
 import useFoodLog from '@/hooks/api/food_log/useFoodLog'
 import axios from 'axios'
+import useAsyncStorage from '@/hooks/useAsyncStorage'
+import { router } from 'expo-router'
 
 
 export default function Create() {
 
     const { storeFoodLog } = useFoodLog()
+    const { getData } = useAsyncStorage()
 
     const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
-        calorie: 0,
+        calories: 0,
         carbohydrate: 0,
-        date: '2024-10-06',
+        date: '',
         fat: 0,
         food_name: '',
         protein: 0,
@@ -37,7 +40,7 @@ export default function Create() {
         try {
             console.log("payload", payload)
             const res = await storeFoodLog(setStoreLoading, payload)
-            console.log(res.data)
+            router.navigate('/(notes)/food-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -56,6 +59,18 @@ export default function Create() {
         }
     }
 
+    const handlePopulateFormValue = async () => {
+        const date = await getData('foodLogDate')
+        setFormValue({
+            ...formValue,
+            date: date ?? '',
+        })
+    }
+
+    useEffect(() => {
+        handlePopulateFormValue()
+    }, [])
+
     return (
         <View>
             <Formik
@@ -63,6 +78,7 @@ export default function Create() {
                 onSubmit={async (values) => {
                     await handleStoreFoodLog(values)
                 }}
+                enableReinitialize
             >
                 {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
                     <ScrollView style={{
@@ -87,9 +103,9 @@ export default function Create() {
                                     </View>
                                 </View>
                                 <Stepper
-                                    value={values.calorie}
+                                    value={values.calories}
                                     onChange={v => {
-                                        setFieldValue('calorie', v)
+                                        setFieldValue('calories', v)
                                     }}
                                 />
                             </View>
