@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, PressableProps, StyleSheet, Text, TextInput, TextInputProps, TextProps, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Pressable, PressableProps, StyleProp, StyleSheet, Text, TextInput, TextInputProps, TextProps, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { tv } from 'tailwind-variants'
 import { cssInterop } from 'nativewind'
@@ -13,6 +13,8 @@ export type CustomTextInputProps = TextInputProps & {
     labelStyle?: TextProps['style']
     prefix?: React.ReactNode
     postfix?: React.ReactNode
+    containerStyle?: StyleProp<ViewStyle>
+    textStyle?: StyleProp<TextStyle>
 }
 
 export default function CustomTextInput({
@@ -21,6 +23,8 @@ export default function CustomTextInput({
     labelStyle,
     prefix,
     postfix,
+    containerStyle,
+    style,
     ...rest
 }: CustomTextInputProps) {
     const isError = error != null && error != ''
@@ -47,6 +51,7 @@ export default function CustomTextInput({
                     isFocus && styles.focusInputContainer,
                     rest.readOnly && styles.disabledInputContainer,
                     isError && styles.errorInputContainer,
+                    containerStyle,
                 ]}
             >
                 {
@@ -59,7 +64,7 @@ export default function CustomTextInput({
                     placeholderTextColor='gray'
                     onFocus={() => setIsFocus(!isFocus)}
                     onBlur={() => setIsFocus(!isFocus)}
-                    style={styles.innerContainer}
+                    style={[styles.innerContainer, style]}
                     {...rest}
                 />
                 {
@@ -102,6 +107,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 8,
         borderColor: Colors.light.gray300,
+        gap: 4,
     },
     focusInputContainer: {
         borderColor: Colors.light.primary,

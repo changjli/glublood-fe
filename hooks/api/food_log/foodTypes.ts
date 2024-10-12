@@ -3,7 +3,7 @@ type GetFoodLogResponse = {
     date: string
     time: string
     food_name: string
-    calorie: string
+    calories: string
     protein: string
     carbohydrate: string
     fat: string
@@ -14,7 +14,7 @@ type StoreFoodLogRequest = {
     date: string
     time: string
     food_name: string
-    calorie: number
+    calories: number
     protein: number
     carbohydrate: number
     fat: number

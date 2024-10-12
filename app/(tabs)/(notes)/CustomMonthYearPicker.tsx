@@ -20,7 +20,7 @@ export default function CustomMonthYearPicker({ month, year, setMonth, setyear }
     return (
         <>
             <TouchableOpacity style={styles.inputContainer} onPress={() => setPickerVisible(!pickerVisible)}>
-                <Text style={styles.inputText}>{months[month - 1]} {year}</Text>
+                <Text style={styles.inputText}>{months[month]} {year}</Text>
                 <Ionicons name='chevron-down-sharp' style={styles.inputText} />
             </TouchableOpacity>
             {pickerVisible &&
@@ -36,14 +36,12 @@ export default function CustomMonthYearPicker({ month, year, setMonth, setyear }
                         }}
                         onMonthYearChange={(e) => {
                             const monhtYear = e.split(' ')
-                            console.log(monhtYear)
                             setyear(Number(monhtYear[0]))
-                            setMonth(Number(monhtYear[1]))
+                            setMonth(Number(monhtYear[1]) - 1)
                         }}
-                        current={`${year}/${month}`}
+                        current={`${year}/${month + 1}`}
                     />
                 </View>
-
             }
         </>
     )

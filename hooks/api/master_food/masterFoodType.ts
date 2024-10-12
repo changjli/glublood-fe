@@ -6,17 +6,18 @@ type SearchMasterFoodResponse = {
 type GetMasterFoodDetailResponse = {
     id: number
     food_name: string
-    calorie: string
-    fat: string
-    carbohydrate: string
-    protein: string
+    calories: number
+    fat: number
+    carbohydrate: number
+    protein: number
     image: string | null
     brand: string
-    portion: string
-    cholestrol: string
-    fiber: string
-    sugar: string
-    sodium: string
-    kalium: string
+    serving_qty: number
+    serving_size: string
+    cholestrol: number
+    fiber: number
+    sugar: number
+    sodium: number
+    kalium: number
     categories: string
 }

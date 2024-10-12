@@ -30,9 +30,9 @@ export default function Stepper({ value, onChange }: StepperProps) {
         textAlign: 'center',
         color: 'black',
       }}
-        readOnly
         value={String(value)}
-
+        keyboardType='number-pad'
+        onChangeText={(v) => onChange(Number(v))}
       />
       <CustomButton
         title='+'

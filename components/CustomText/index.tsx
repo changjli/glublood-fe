@@ -11,6 +11,7 @@ export default function CustomText({
     size,
     weight,
     children,
+    style,
     ...rest
 }: CustomTextProps) {
 
@@ -51,10 +52,10 @@ export default function CustomText({
 
     return (
         <Text
-            style={{
+            style={[{
                 fontSize,
                 fontFamily,
-            }}
+            }, style]}
             {...rest}
         >
             {children}
