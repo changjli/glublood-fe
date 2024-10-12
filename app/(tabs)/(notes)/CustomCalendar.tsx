@@ -107,7 +107,7 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
     }, [selectedYear, selectedMonth - 1, selectedDay])
 
     return (
-        <View>
+        <View style={{ marginBottom: 20, }}>
             <CustomMonthYearPicker
                 month={selectedMonth}
                 year={selectedYear}

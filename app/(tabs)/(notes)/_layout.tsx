@@ -8,7 +8,7 @@ export default function _layout() {
             screenOptions={{
                 headerShown: false,
             }}>
-            <Stack.Screen name='foods'></Stack.Screen>
+            <Stack.Screen name='medicine'></Stack.Screen>
         </Stack>
     )
 }

@@ -18,7 +18,7 @@ const loginSchema = object({
 })
 
 export default function Login() {
-    const user = { email: 'nicholas@gmail.com', password: 'password' }
+    const user = { email: 'admin@gmail.com', password: 'password' }
 
     const { login } = useAuth()
     const { signIn } = useSession()
