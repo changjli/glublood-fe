@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import CustomMonthYearPicker from './CustomMonthYearPicker';
 
@@ -15,16 +15,40 @@ const dayInterpreter = (day: number) => {
 }
 
 const daysInMonth = (month: number, year: number) => {
-    const firstDay = new Date(year, month - 1, 1);
-    const lastDay = new Date(year, month, 0);
+    const lastDay = new Date(year, month + 1, 0).getDate();
 
     const days = []
 
-    for (let i = firstDay; i <= lastDay; i.setDate(i.getDate() + 1)) {
-        days.push(new Date(i))
+    for (let i = 1; i <= lastDay; i++) {
+        days.push(new Date(year, month, i))
     }
 
     return days
+}
+
+type DayItem = {
+    id: string,
+    day: Date,
+}
+
+type DayItemProps = {
+    item: DayItem
+    onPress: () => void
+    backgroundColor: string,
+    color: string,
+}
+
+const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={[styles.container, { backgroundColor }]}>
+            <Text style={[styles.dayText, { color }]}>
+                {dayInterpreter(item.day.getDay())}
+            </Text>
+            <Text style={[styles.dateText, { color }]}>
+                {item.day.getDate()}
+            </Text>
+        </TouchableOpacity>
+    )
 }
 
 type CustomCalendarProps = {
@@ -32,20 +56,11 @@ type CustomCalendarProps = {
     onChange: (param: Date) => void
 }
 
-const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
-    type DayItem = {
-        id: string,
-        day: Date,
-    }
+export default function CustomCalendar({ value, onChange }: CustomCalendarProps) {
 
-    type DayItemProps = {
-        item: DayItem
-        onPress: () => void
-        backgroundColor: string,
-        color: string,
-    }
+    const flatListRef = useRef<FlatList<DayItem>>(null)
 
-    const [days, setDays] = useState(daysInMonth(8, 2024))
+    const [days, setDays] = useState(daysInMonth(value.getMonth(), value.getFullYear()))
     const selectDays = days.map((day, i) => ({
         id: String(i),
         day,
@@ -55,39 +70,8 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
     const [selectedYear, setSelectedYear] = useState(value.getFullYear())
     const [selectedDay, setSelectedDay] = useState(value.getDate());
 
-    const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
-        const styles = StyleSheet.create({
-            container: {
-                alignItems: 'center',
-                margin: 2,
-                paddingHorizontal: 10,
-                paddingVertical: 2,
-                borderRadius: 10,
-            },
-            dayText: {
-                fontFamily: FontFamily.medium,
-                fontSize: FontSize.md,
-            },
-            dateText: {
-                fontFamily: FontFamily.heavy,
-                fontSize: FontSize.lg,
-            }
-        })
-
-        return (
-            <TouchableOpacity onPress={onPress} style={[styles.container, { backgroundColor }]}>
-                <Text style={[styles.dayText, { color }]}>
-                    {dayInterpreter(item.day.getDay())}
-                </Text>
-                <Text style={[styles.dateText, { color }]}>
-                    {item.day.getDate()}
-                </Text>
-            </TouchableOpacity>
-        )
-    }
-
     const renderDayItem = ({ item }: { item: DayItem }) => {
-        const backgroundColor = item.day.getDate() == selectedDay ? Colors.light.primary : ''
+        const backgroundColor = item.day.getDate() == selectedDay ? Colors.light.primary : 'transparent'
         const color = item.day.getDate() == selectedDay ? 'white' : Colors.light.primary
 
         return (<DayItem {...{
@@ -98,13 +82,24 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
         }} />)
     }
 
+    const handleScroll = (index: number) => {
+        if (flatListRef.current) {
+            try {
+                flatListRef.current.scrollToIndex({ index, animated: true });
+            } catch (error) {
+                console.warn('Index out of range', error);
+            }
+        }
+    }
+
     useEffect(() => {
         setDays(daysInMonth(selectedMonth, selectedYear))
+        setTimeout(() => handleScroll(selectedDay - 1), 500)
     }, [selectedMonth, selectedYear])
 
     useEffect(() => {
-        onChange(new Date(selectedYear, selectedMonth, selectedDay))
-    }, [selectedYear, selectedMonth - 1, selectedDay])
+        onChange(new Date(selectedYear, selectedMonth, selectedDay + 1))
+    }, [selectedDay])
 
     return (
         <View style={{ marginBottom: 20, }}>
@@ -115,6 +110,7 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
                 setyear={setSelectedYear}
             />
             <FlatList
+                ref={flatListRef}
                 data={selectDays}
                 renderItem={renderDayItem}
                 keyExtractor={item => item.id}
@@ -125,4 +121,20 @@ const CustomCalendar = ({ value, onChange }: CustomCalendarProps) => {
     );
 };
 
-export default CustomCalendar;
+const styles = StyleSheet.create({
+    container: {
+        alignItems: 'center',
+        margin: 2,
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+        borderRadius: 10,
+    },
+    dayText: {
+        fontFamily: FontFamily.medium,
+        fontSize: FontSize.md,
+    },
+    dateText: {
+        fontFamily: FontFamily.heavy,
+        fontSize: FontSize.lg,
+    }
+})

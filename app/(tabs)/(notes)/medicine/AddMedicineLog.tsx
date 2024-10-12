@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Formik, FormikValues } from 'formik';
 import useMedicine from '@/hooks/api/medicine_log/useMedicineLog';
 import * as Yup from 'yup';
+import CustomQuantityPicker from '../CustomQuantityPicker';
 
 export default function AddMedicineLog() {
     const { storeMedicineLog } = useMedicine()
@@ -20,6 +21,7 @@ export default function AddMedicineLog() {
                 console.log(res.data)
                 Alert.alert('success', res.message)
             } else if (res.status == 400) {
+                console.log(res)
                 console.log(res.message)
                 Alert.alert('error', res.message)
             }
@@ -31,25 +33,24 @@ export default function AddMedicineLog() {
 
     interface FormValues {
         date: Date,
-        medicineName: string,
-        timeConsumption: Date,
-        dose: number,
-        doseType: string,
-        note: string,
+        name: string,
+        time: string,
+        amount: number,
+        type: string,
+        notes: string,
     }
 
     const [namaObat, setNamaObat] = useState('');
     const [selectedTime, setSelectedTime] = useState<Date | undefined>(new Date());
     const [selectedDoseValue, setSelectedDoseValue] = useState(1);
     const [selectedDoseTypeValue, setSelectedDoseTypeValue] = useState(1);
-    const [unit, setUnit] = useState<'Tablet' | 'Kaplet'>('Tablet');
     const [catatan, setCatatan] = useState('');
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [initialFormValues, setInitialFormValues] = useState({
         date: '',
         medicineName: '',
-        timeConsumption: new Date(),
-        dose: '',
+        timeConsumption: '',
+        dose: 0,
         doseType: '',
         note: '',
     });
@@ -63,12 +64,6 @@ export default function AddMedicineLog() {
         note: Yup.string(),
     });
 
-    const handleTimeChange = (event: any, selectedDate?: Date) => {
-        const currentDate = selectedDate || selectedTime;
-        setShowTimePicker(false);
-        setSelectedTime(currentDate);
-    };
-
     const doses = Array.from({ length: 100 }, (_, i) => i + 1);
     const doseTypes = ["Tablet", "Kaplet", "Kapsul", "IU", "mL", "Tetes", "Sachet"];
 
@@ -78,20 +73,20 @@ export default function AddMedicineLog() {
 
             <Formik
                 initialValues={initialFormValues}
-                validationSchema={validationSchema}
+                // validationSchema={validationSchema}
                 onSubmit={async (values) => {
                     const mappedValues: FormValues = {
                         date: new Date(),
-                        medicineName: values.medicineName,
-                        timeConsumption: new Date(values.timeConsumption),
-                        dose: Number(values.dose),
-                        doseType: values.doseType,
-                        note: values.note,
+                        name: values.medicineName,
+                        time: values.timeConsumption,
+                        amount: Number(values.dose),
+                        type: values.doseType,
+                        notes: values.note,
                     };
 
                     await handleStoreUserProfile(mappedValues);
 
-                    console.log(mappedValues)
+                    console.log(values.timeConsumption)
                 }}
             >
                 {({ handleChange, handleBlur, handleSubmit, values, errors, setFieldValue }) => (
@@ -107,55 +102,38 @@ export default function AddMedicineLog() {
                         </View>
 
                         {/* Waktu Selection */}
-                        <View style={{ marginBottom:20 }}>
-                            <Text style={styles.labelText}>Pilih Waktu</Text>
+                        <View style={{ marginBottom: 20 }}>
+                            <CustomTimePicker
+                                value={values.timeConsumption}
+                                onChange={handleChange('timeConsumption')}
+                            />
+                            {/* <Text style={styles.labelText}>Pilih Waktu</Text>
                             <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.timePicker}>
                                 <Text style={styles.timeText}>
                                     {selectedTime ? selectedTime.toLocaleTimeString() : 'Tekan untuk pilih waktu'}
                                 </Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
-                        {showTimePicker && (
+                        {/* {showTimePicker && (
                             <DateTimePicker
                                 value={selectedTime || new Date(values.date)}
                                 mode="time"
                                 display="default"
                                 onChange={handleTimeChange}
                             />
-                        )}
+                        )} */}
 
                         {/* Scrollable Dosis Picker */}
                         <View style={{ marginBottom:20 }}>
                             <Text style={styles.labelText}>Dosis</Text>
-                            <View style={styles.scrollablePickerContainer}>
-                                <View style={styles.scrollablePickerContainer}>
-                                    <View style={{ width: 30, height: 40, }}>
-                                        <Text> {/* Pengganti play */}</Text>
-                                    </View>
-                                    <ScrollablePicker
-                                        selectedValue={selectedDoseValue}
-                                        fieldName='dose'
-                                        setFieldValue={setFieldValue}
-                                        type='number'
-                                        numberdata={doses}
-                                        stringData={doseTypes}
-                                    />
-                                </View>
-                                <View style={styles.scrollablePickerContainer}>
-                                    <View style={{ width: 30, height: 40, }}>
-                                        <Text> {/* Pengganti play */}</Text>
-                                    </View>
-                                    <ScrollablePicker
-                                        selectedValue={selectedDoseTypeValue}
-                                        fieldName='doseType'
-                                        setFieldValue={setFieldValue}
-                                        type='string'
-                                        numberdata={doses}
-                                        stringData={doseTypes}
-                                        pickerWidth={160}
-                                    />
-                                </View>
-                            </View>
+                            <CustomQuantityPicker
+                                qty={values.dose}
+                                size={values.doseType}
+                                onChangeQty={handleChange('dose')}
+                                onChangeSize={handleChange('doseType')}
+                                qtyData={doses}
+                                typeData={doseTypes}
+                            />
                         </View>
 
                         {/* Catatan Input */}

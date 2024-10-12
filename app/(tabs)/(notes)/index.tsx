@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { useState } from 'react'
+import { Link } from 'expo-router';
 
 export default function index() {
 
@@ -11,8 +12,9 @@ export default function index() {
 
     return (
         <View style={{ padding: 16 }}>
-            {/* <CustomTimePicker />
-            <CustomCalendar value={selectedDate} onChange={setSelectedDate} /> */}
+            <Link href="/(notes)/food-logs">food</Link>
+            <Link href="/(notes)/exercise-logs">exercise</Link>
+            <Link href="/(notes)/medicine">medicine</Link>
         </View>
     )
 }

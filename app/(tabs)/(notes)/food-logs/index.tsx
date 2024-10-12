@@ -15,11 +15,13 @@ import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import ProgressBar from './ProgressBar';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import formatDatetoString from '@/utils/formatDatetoString';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function Foods() {
     const { getFoodLogByDate } = useFoodLog()
     const { getDailyCaloriesByDate } = useDailyCalories()
     const { storeData } = useAsyncStorage()
+    const isFocused = useIsFocused()
 
     const [foodLogLoading, setFoodLogLoading] = useState(false)
     const [dailyCaloriesLoading, setDailyCaloriesLoading] = useState(false)
@@ -80,46 +82,27 @@ export default function Foods() {
 
     const handleNavigate = async () => {
         await storeData('foodLogDate', formatDatetoString(selectedDate))
-        router.navigate('/(notes)/foods/search')
+        router.navigate('/(notes)/food-logs/search')
     }
 
     useEffect(() => {
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const year = selectedDate.getFullYear();
-
-        const formattedDate = `${day}/${month}/${year}`;
-
-        console.log(formattedDate)
-
-        handleGetDailyCalories(formattedDate)
-        handleGetFoodLog(formattedDate)
-    }, [selectedDate])
+        if (isFocused) {
+            console.log("selected date", selectedDate)
+            handleGetDailyCalories(formatDatetoString(selectedDate))
+            handleGetFoodLog(formatDatetoString(selectedDate))
+        }
+    }, [selectedDate, isFocused])
 
     return (
         <>
-            <DailyCaloriesInput
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            />
             <View style={{ padding: 16 }}>
-                <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
-                <View style={styles.dailyContainer}>
-                    <TouchableOpacity onPress={() => setModalVisible(true)}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={styles.dailyHeader}>Kalori Harian Anda</Text>
-                            <Ionicons name='chevron-forward-outline' style={styles.dailyHeader} />
-                        </View>
-                    </TouchableOpacity>
-                    {dailyCalories ? (
-                        <ProgressBar data={dailyCalories} />
-                    ) : (
-                        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                            <Image source={require('@/assets/images/characters/body-blood.png')} />
-                            <Text>Belum ada target kalori anda</Text>
-                        </View>
-                    )}
-                </View>
+                <CustomCalendar
+                    value={selectedDate}
+                    onChange={setSelectedDate}
+                />
+                <DailyCaloriesInput
+                    selectedDate={selectedDate}
+                />
             </View >
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
