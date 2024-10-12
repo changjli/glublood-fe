@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { tv } from "tailwind-variants";
-import { CustomTextProps, StyledCustomText } from "../CustomText";
 import { cssInterop } from "nativewind";
 
 export type CustomButtonProps = TouchableOpacityProps & {

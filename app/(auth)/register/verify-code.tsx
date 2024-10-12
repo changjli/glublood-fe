@@ -1,6 +1,6 @@
 import { View, Text, TouchableWithoutFeedback, Keyboard, StyleSheet, GestureResponderEvent, Alert, Pressable } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import CustomText, { StyledCustomText } from '@/components/CustomText'
+import CustomText from '@/components/CustomText'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { router } from 'expo-router'
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field'
@@ -145,8 +145,8 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
 
     return (
         <>
-            <StyledCustomText style='text-[32px] text-primary' weight='heavy' >Verifikasi kode</StyledCustomText>
-            <StyledCustomText size='md' >Masukkan 6 kode yang telah dikirim ke {credentials.email}</StyledCustomText>
+            <CustomText size='xl' weight='heavy' style={{ color: Colors.light.primary }}>Verifikasi kode</CustomText>
+            <CustomText size='md' style={{ color: 'white', marginBottom: 10 }}>Masukkan 6 kode yang telah dikirim ke {credentials.email}</CustomText>
             <Formik
                 initialValues={{ code: '', }}
                 onSubmit={async (values) => {
