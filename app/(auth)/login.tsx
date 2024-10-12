@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
 import { StyledCustomButton } from '@/components/CustomButton'
-import { StyledCustomText } from '@/components/CustomText'
+import CustomText from '@/components/CustomText'
 import { object, string } from 'yup'
 import { router } from 'expo-router'
 import { useSession } from '../context/AuthenticationProvider'
@@ -11,6 +11,7 @@ import apiClient from '@/configs/axios'
 import axios, { AxiosError } from 'axios'
 import useAuth from '@/hooks/api/auth/useAuth'
 import { loginRequest } from '@/hooks/api/auth/authTypes'
+import { Colors } from '@/constants/Colors'
 
 const loginSchema = object({
     email: string().required(),
@@ -53,8 +54,8 @@ export default function Login() {
                 <View className='absolute'>
                     <Image source={require('../../assets/images/register/Vector1.png')} />
                 </View>
-                <StyledCustomText style={'text-[32px] text-primary font-helvetica-bold'}>Masuk</StyledCustomText>
-                <StyledCustomText size='md' style={'text-white mb-8'}>Selamat datang lanjutkan perjalananmu!</StyledCustomText>
+                <CustomText size='xl' weight='heavy' style={{ color: Colors.light.primary }}>Masuk</CustomText>
+                <CustomText size='md' style={{ color: 'white', marginBottom: 10 }}>Selamat datang lanjutkan perjalananmu!</CustomText>
                 <View className='flex flex-row justify-center mb-8'>
                     <Image source={require('../../assets/images/characters/IconLogin2.png')} />
                 </View>
@@ -89,9 +90,9 @@ export default function Login() {
                                         secureTextEntry
                                     />
                                     <View className='flex flex-row justify-end'>
-                                        <StyledCustomText size='sm' weight='heavy' style='text-primary'>
+                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
                                             Lupa kata sandi?
-                                        </StyledCustomText>
+                                        </CustomText>
                                     </View>
                                 </View>
                             </View>
@@ -99,13 +100,13 @@ export default function Login() {
                                 {/* bug */}
                                 <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
                                 <View className='flex flex-row justify-center'>
-                                    <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
+                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
                                         Belum memiliki akun?
-                                    </StyledCustomText>
+                                    </CustomText>
                                     <Pressable onPress={() => router.replace('/(auth)/register')}>
-                                        <StyledCustomText size='sm' weight='heavy' style='text-primary'>
+                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
                                             Daftar disini
-                                        </StyledCustomText>
+                                        </CustomText>
                                     </Pressable>
 
                                 </View>

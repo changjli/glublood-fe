@@ -7,6 +7,7 @@ export default function ExericseLogLayout() {
         <Stack>
             <Stack.Screen name='index'></Stack.Screen>
             <Stack.Screen name='create'></Stack.Screen>
+            <Stack.Screen name='[id]'></Stack.Screen>
         </Stack>
     )
 }

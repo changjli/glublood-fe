@@ -1,7 +1,7 @@
 import { View, Text, Pressable, Keyboard, GestureResponderEvent, TouchableWithoutFeedback, Alert, Image } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
-import CustomText, { StyledCustomText } from '@/components/CustomText'
+import CustomText from '@/components/CustomText'
 import { Formik } from 'formik'
 import { object, string } from 'yup'
 import { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
@@ -9,6 +9,7 @@ import { StyledCustomButton } from '@/components/CustomButton'
 import useAuth from '@/hooks/api/auth/useAuth'
 import { loginRequest, sendCodeRequest } from '@/hooks/api/auth/authTypes'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
+import { Colors } from '@/constants/Colors'
 
 type SendCodeProps = {
     setPage: (value: number) => void
@@ -55,8 +56,8 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
             <View className='absolute'>
                 <Image source={require('../../../assets/images/register/Vector1.png')} />
             </View>
-            <StyledCustomText style={'text-[32px] text-primary font-helvetica-bold'}>Daftar</StyledCustomText>
-            <StyledCustomText size='md' style={'text-white mb-8'}>Mulai perjalananmu dengan kami!</StyledCustomText>
+            <CustomText size='xl' weight='heavy' style={{ color: Colors.light.primary }}>Daftar</CustomText>
+            <CustomText size='md' style={{ color: 'white', marginBottom: 10 }}>Mulai perjalananmu dengan kami!</CustomText>
             <View className='flex flex-row justify-center mb-8'>
                 <Image source={require('../../../assets/images/characters/IconRegis1.png')} />
             </View>
@@ -105,15 +106,14 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                             {/* bug */}
                             <StyledCustomButton title='Daftar' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={sendCodeLoading} />
                             <View className='flex flex-row justify-center'>
-                                <StyledCustomText size='sm' weight='heavy' style='text-gray-500 mr-1'>
+                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
                                     Sudah memiliki akun?
-                                </StyledCustomText>
-                                <Pressable onPress={() => router.replace('(auth)/login')}>
-                                    <StyledCustomText size='sm' weight='heavy' style='text-primary'>
+                                </CustomText>
+                                <Pressable onPress={() => router.replace('/(auth)/login')}>
+                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
                                         Masuk disini
-                                    </StyledCustomText>
+                                    </CustomText>
                                 </Pressable>
-
                             </View>
                         </View>
                     </View>

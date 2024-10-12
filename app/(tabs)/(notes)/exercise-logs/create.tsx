@@ -14,7 +14,7 @@ export default function CreateExerciseLogPage() {
     const { getData } = useAsyncStorage()
 
     const [formValue, setFormValue] = useState<StoreExerciseLogReq>({
-        burned_calories: 300,
+        burned_calories: 0,
         date: '',
         end_time: '',
         exercise_name: '',
