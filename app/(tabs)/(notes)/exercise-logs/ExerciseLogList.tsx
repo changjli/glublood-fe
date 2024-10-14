@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
+import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
@@ -29,12 +30,12 @@ export default function ExerciseLogList({ data }: ExerciseLogListProps) {
                     )}
                 </View>
 
-                <View style={styles.cardContainer}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/(notes)/exercise-logs/${item.id}`)}>
                     <View>
                         <Text style={styles.cardHeaderText}>{item.exercise_name}</Text>
                     </View>
                     <Text style={styles.cardBodyText}>{item.burned_calories}</Text>
-                </View>
+                </TouchableOpacity>
             </View>
         );
     };

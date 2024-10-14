@@ -34,6 +34,7 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
                             value={values.exercise_name}
                             onChange={({ exerciseName, caloriesPerKg }) => {
                                 setFieldValue('exercise_name', exerciseName)
+                                setFieldValue('burned_calories', 100 * caloriesPerKg * 30 / 60)
                             }}
                         />
                         <CustomTimePicker

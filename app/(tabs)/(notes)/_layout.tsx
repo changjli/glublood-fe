@@ -10,7 +10,6 @@ export default function _layout() {
             }}
         >
             <Stack.Screen name="index"></Stack.Screen>
-            <Stack.Screen name="food-logs"></Stack.Screen>
         </Stack>
     );
 }
