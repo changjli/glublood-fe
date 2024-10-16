@@ -1,31 +1,33 @@
 import { Colors } from '@/constants/Colors';
 import { FontFamily } from '@/constants/Typography';
 import React, { useState } from 'react'
-import { Button, Modal, ModalProps, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import CustomText from './CustomText';
+import Modal, { ModalProps } from "react-native-modal";
 
-export type CustomModalProps = ModalProps & {
+export type CustomModalProps = Partial<ModalProps> & {
+    toggleModal: () => void
 }
 
-export default function CustomModal(props: CustomModalProps) {
+export default function CustomModal({ toggleModal, ...rest }: CustomModalProps) {
     return (
         <View>
             <Modal
-                {...props}
-                transparent={true}
-                animationType="fade"
+                {...rest}
+                style={styles.modalOuterContainer}
+                customBackdrop={(
+                    <TouchableWithoutFeedback onPress={toggleModal}>
+                        <View style={styles.modalBackdrop} />
+                    </TouchableWithoutFeedback>
+                )}
             >
-                <View style={styles.modalBackdrop}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalHeaderContainer}>
-                            <TouchableOpacity onPress={props.onRequestClose}>
-                                <Text style={{ color: 'red' }}>Batal</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={props.onRequestClose}>
-                                <Text style={{ color: 'orange' }}>Lanjut</Text>
-                            </TouchableOpacity>
-                        </View>
-                        {props.children}
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalHeaderContainer}>
+                        <TouchableOpacity onPress={toggleModal}>
+                            <CustomText size='sm' style={{ color: Colors.light.danger }}>Batal</CustomText>
+                        </TouchableOpacity>
                     </View>
+                    {rest.children}
                 </View>
             </Modal>
         </View>
@@ -35,19 +37,23 @@ export default function CustomModal(props: CustomModalProps) {
 const styles = StyleSheet.create({
     modalBackdrop: {
         flex: 1,
-        flexDirection: 'column',
+        backgroundColor: Colors.light.backdrop,
+    },
+    modalOuterContainer: {
+        margin: 0,
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
         width: '100%',
         height: '50%',
         backgroundColor: 'white',
         padding: 16,
+        borderTopLeftRadius: 28,
+        borderTopRightRadius: 28,
     },
     modalHeaderContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 20
+        marginBottom: 10,
     },
 })

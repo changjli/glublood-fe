@@ -10,45 +10,21 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProgressBar from './ProgressBar';
+import CustomText from '@/components/CustomText';
 
 type DailyCaloriesInputProps = {
-    selectedDate: Date
+    selectedDate: Date,
+    dailyCalories: GetDailyCaloriesResponse | null
+    fetchDailyCalories: () => void
 }
 
-export default function DailyCaloriesInput({ selectedDate }: DailyCaloriesInputProps) {
+export default function DailyCaloriesInput({ selectedDate, dailyCalories, fetchDailyCalories }: DailyCaloriesInputProps) {
     const [modalVisible, setModalVisible] = useState(false)
-    const [dailyCalories, setDailyCalories] = useState<GetDailyCaloriesResponse | null>(null)
     const [dailyCaloriesInput, setDailyCaloriesInput] = useState("")
 
-    const [dailyCaloriesLoading, setDailyCaloriesLoading] = useState(false)
     const [storeDailyCaloriesLoading, setStoreDailyCaloriesLoading] = useState(false)
 
-    const { getDailyCaloriesByDate, storeDailyCalories } = useDailyCalories()
-
-    const handleGetDailyCalories = async () => {
-        try {
-            const res = await getDailyCaloriesByDate(setDailyCaloriesLoading, formatDatetoString(selectedDate))
-            const data: GetDailyCaloriesResponse = res.data
-            setDailyCalories(data)
-            setDailyCaloriesInput(String(data.target_calories))
-        } catch (err) {
-            setDailyCalories(null)
-            if (axios.isAxiosError(err)) {
-                const status = err.response?.status;
-
-                if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
-                } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
-                } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
-                }
-            } else {
-                console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
-            }
-        }
-    }
+    const { storeDailyCalories } = useDailyCalories()
 
     const handleStoreDailyCalories = async () => {
         try {
@@ -59,7 +35,7 @@ export default function DailyCaloriesInput({ selectedDate }: DailyCaloriesInputP
             }
 
             const res = await storeDailyCalories(setStoreDailyCaloriesLoading, payload)
-            handleGetDailyCalories()
+            fetchDailyCalories()
             handleCloseModal()
         } catch (err) {
             handleCloseModal()
@@ -88,20 +64,20 @@ export default function DailyCaloriesInput({ selectedDate }: DailyCaloriesInputP
     }
 
     useEffect(() => {
-        setDailyCaloriesInput("")
-        handleGetDailyCalories()
-    }, [selectedDate])
+        setDailyCaloriesInput(String(dailyCalories?.target_calories ?? ''))
+    }, [dailyCalories])
 
 
     return (
         <>
+            {/* modal */}
             <CustomModal
-                visible={modalVisible}
-                onRequestClose={handleCloseModal}
+                isVisible={modalVisible}
+                toggleModal={() => setModalVisible(false)}
             >
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
                     <View>
-                        <Text>Atur kalori harian</Text>
+                        <CustomText size='xl' weight='heavy' style={{ marginBottom: 5 }}>Atur kalori harian</CustomText>
                         <CustomTextInput
                             label='Target kalori'
                             placeholder='Contoh: 98'
@@ -111,9 +87,16 @@ export default function DailyCaloriesInput({ selectedDate }: DailyCaloriesInputP
                             keyboardType='number-pad'
                         />
                     </View>
-                    <CustomButton title='Tambahkan target' size='md' onPress={handleStoreDailyCalories} />
+                    <CustomButton
+                        title='Tambahkan target'
+                        size='md'
+                        onPress={handleStoreDailyCalories}
+                        disabled={dailyCaloriesInput == ''}
+                        loading={storeDailyCaloriesLoading}
+                    />
                 </View>
             </CustomModal>
+            {/* view */}
             <View style={styles.dailyContainer}>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -131,7 +114,6 @@ export default function DailyCaloriesInput({ selectedDate }: DailyCaloriesInputP
                 )}
             </View>
         </>
-
     );
 }
 

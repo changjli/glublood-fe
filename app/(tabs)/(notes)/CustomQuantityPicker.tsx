@@ -37,7 +37,10 @@ export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeS
                     </View>
                 )}
                 flatListProps={{
-                    nestedScrollEnabled: true
+                    nestedScrollEnabled: true,
+                    style: {
+                        height: 200
+                    }
                 }}
             />
             <FontAwesome name='play' style={styles.arrow} />
@@ -58,7 +61,10 @@ export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeS
                     </View>
                 )}
                 flatListProps={{
-                    nestedScrollEnabled: true
+                    nestedScrollEnabled: true,
+                    style: {
+                        height: 200
+                    }
                 }}
             />
         </View>
