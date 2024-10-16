@@ -1,6 +1,7 @@
-import { Text, TextProps } from 'react-native'
+import { View, Text, TextProps } from 'react-native'
 import React from 'react'
-import { FontFamily, FontSize } from '@/constants/Typography'
+import { tv } from 'tailwind-variants'
+import { cssInterop } from 'nativewind'
 
 export type CustomTextProps = TextProps & {
     size?: 'sm' | 'md' | 'lg' | 'xl'
@@ -11,54 +12,41 @@ export default function CustomText({
     size,
     weight,
     children,
-    style,
     ...rest
 }: CustomTextProps) {
-
-    let fontSize
-    switch (size) {
-        case 'sm':
-            fontSize = FontSize.sm
-            break
-        case 'md':
-            fontSize = FontSize.md
-            break
-        case 'lg':
-            fontSize = FontSize.lg
-            break
-        case 'xl':
-            fontSize = FontSize.xl
-            break
-        default:
-            fontSize = FontSize.md
-            break
-    }
-
-    let fontFamily
-    switch (weight) {
-        case 'light':
-            fontFamily = FontFamily.light
-            break
-        case 'medium':
-            fontFamily = FontFamily.medium
-            break
-        case 'heavy':
-            fontFamily = FontFamily.heavy
-            break
-        default:
-            fontFamily = FontFamily.medium
-            break
-    }
-
     return (
         <Text
-            style={[{
-                fontSize,
-                fontFamily,
-            }, style]}
-            {...rest}
+            style={rest.style}
+            className={textStyles({
+                size,
+                weight,
+            })}
         >
             {children}
         </Text>
     )
 }
+
+export const StyledCustomText = cssInterop(CustomText, {
+    style: true
+})
+
+const textStyles = tv({
+    variants: {
+        size: {
+            sm: 'text-[12px]',
+            md: 'text-[16px]',
+            lg: 'text-[20px]',
+            xl: 'text-[24px]',
+        },
+        weight: {
+            light: 'font-helvetica-light',
+            medium: 'font-helvetica',
+            heavy: 'font-helvetica-bold',
+        }
+    },
+    defaultVariants: {
+        size: 'md',
+        weight: 'medium',
+    }
+})

@@ -8,15 +8,15 @@ import { Colors } from '@/constants/Colors'
 type CustomQuantityPickerProps = {
     qty: number
     size: string
+    qtyData?: number[]
+    typeData?: string[]
     onChangeQty: (qty: string) => void
     onChangeSize: (size: string) => void
 
+
 }
 
-export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeSize }: CustomQuantityPickerProps) {
-    const qtyData = [1, 2, 3]
-    const sizeData = ["Piring", "Gelas"]
-
+export default function CustomQuantityPicker({ qty, size, qtyData = [1,2,3], typeData = ['asu', 'lala'], onChangeQty, onChangeSize }: CustomQuantityPickerProps) {
     return (
         <View style={styles.container}>
             <FontAwesome name='play' style={styles.arrow} />
@@ -46,8 +46,8 @@ export default function CustomQuantityPicker({ qty, size, onChangeQty, onChangeS
             <FontAwesome name='play' style={styles.arrow} />
             <WheelPickerExpo
                 initialSelectedIndex={0}
-                onChange={({ index }) => onChangeSize(sizeData[index])}
-                items={sizeData.map(data => ({ label: data, value: data }))}
+                onChange={({ index }) => onChangeSize(typeData[index])}
+                items={typeData.map(data => ({ label: data, value: data }))}
                 renderItem={({ label }) => (
                     <View style={[
                         styles.pickerContainer,

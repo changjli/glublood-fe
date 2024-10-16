@@ -14,6 +14,7 @@ export default function index() {
         <View style={{ padding: 16 }}>
             <Link href="/(notes)/food-logs">food</Link>
             <Link href="/(notes)/exercise-logs">exercise</Link>
+            <Link href="/(notes)/medicine">medicine</Link>
         </View>
     )
 }
