@@ -1,9 +1,7 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps } from 'formik'
-import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import CustomTimePicker from '../CustomTimePicker'
-import CustomButton from '@/components/CustomButton'
 import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker'
 
@@ -72,7 +70,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     </View>
 
                     {/* Catatan Input */}
-                    <View style={{ marginBottom:20 }}>
+                    <View style={{ marginBottom:10 }}>
                         <Text style={styles.labelText}>Catatan</Text>
                         <TextInput
                             style={styles.catatanInput}
@@ -94,7 +92,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#EAF3F4', // Light background color similar to screenshot
+        backgroundColor: '#EAF3F4', 
     },
     header: {
         fontSize: 24,
@@ -173,14 +171,15 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     catatanInput: {
+        marginBottom: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        height: 100,
+        backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        marginBottom: 20,
-        backgroundColor: '#fff',
-        height: 100,
+        textAlignVertical: 'top', 
     },
     saveButton: {
         padding: 15,

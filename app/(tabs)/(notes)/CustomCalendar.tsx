@@ -98,7 +98,7 @@ export default function CustomCalendar({ value, onChange }: CustomCalendarProps)
     }, [selectedMonth, selectedYear])
 
     useEffect(() => {
-        onChange(new Date(selectedYear, selectedMonth, selectedDay + 1))
+        onChange(new Date(selectedYear, selectedMonth, selectedDay))
     }, [selectedDay])
 
     return (
