@@ -95,7 +95,7 @@ export const StyledCustomTextInput = cssInterop(CustomTextInput, {
 const styles = StyleSheet.create({
     labelText: {
         fontFamily: FontFamily.heavy,
-        fontSize: FontSize.sm,
+        fontSize: 16,
     },
     inputContainer: {
         flexDirection: 'row',
