@@ -1,5 +1,8 @@
+import CustomText from '@/components/CustomText';
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
+import { getDuration } from '@/utils/formatDatetoString';
+import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
@@ -34,7 +37,14 @@ export default function ExerciseLogList({ data }: ExerciseLogListProps) {
                     <View>
                         <Text style={styles.cardHeaderText}>{item.exercise_name}</Text>
                     </View>
-                    <Text style={styles.cardBodyText}>{item.burned_calories}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                        <FontAwesome name='clock-o' style={{ color: Colors.light.primary, fontSize: FontSize.md }} />
+                        <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{getDuration(item.start_time, item.end_time)}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                        <Text style={{ fontSize: FontSize.sm }}>Estimasi kalori terbakar</Text>
+                        <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{item.burned_calories} Kkal</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
         );

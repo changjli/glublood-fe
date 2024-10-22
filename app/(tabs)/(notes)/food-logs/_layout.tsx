@@ -17,7 +17,10 @@ export default function _layout() {
             }}>
             </Stack.Screen>
             <Stack.Screen name='create/index' options={{ headerTitle: '' }}></Stack.Screen>
-            <Stack.Screen name='create/[id]' options={{ headerTitle: '' }}></Stack.Screen>
+            <Stack.Screen name='create/[id]' options={{
+                headerTitle: '',
+                headerTransparent: true,
+            }}></Stack.Screen>
         </Stack>
     )
 }

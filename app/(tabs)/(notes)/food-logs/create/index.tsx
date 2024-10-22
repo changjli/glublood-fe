@@ -74,18 +74,23 @@ export default function Create() {
     }, [])
 
     return (
-        <Wrapper>
-            <FoodLogForm
-                formValue={formValue}
-            >
-                {({ values, handleSubmit }) => (
-                    <CustomButton title='Simpan catatan' size='md' onPress={() => {
+        <FoodLogForm
+            formValue={formValue}
+        >
+            {({ values, handleSubmit }) => (
+                <CustomButton
+                    title='Simpan catatan'
+                    size='md'
+                    onPress={() => {
                         handleSubmit()
                         handleStoreFoodLog(values)
-                    }} />
-                )}
-            </FoodLogForm>
-        </Wrapper>
+                    }}
+                    style={{
+                        marginTop: 20
+                    }}
+                />
+            )}
+        </FoodLogForm>
     )
 }
 

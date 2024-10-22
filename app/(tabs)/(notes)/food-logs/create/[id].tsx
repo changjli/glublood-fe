@@ -111,19 +111,21 @@ export default function Detail() {
     }, [])
 
     return (
-        <Wrapper>
-            <CustomText size='xl' weight='heavy'>{formValue.food_name}</CustomText>
-            <FoodLogForm
-                formValue={formValue}
-            >
-                {({ values, handleSubmit }) => (
-                    <CustomButton title='Simpan catatan' size='md' onPress={() => {
+        <FoodLogForm
+            formValue={formValue}
+        >
+            {({ values, handleSubmit }) => (
+                <CustomButton
+                    title='Simpan catatan'
+                    size='md'
+                    onPress={() => {
                         handleSubmit()
                         handleStoreFoodLog(values)
-                    }} />
-                )}
-            </FoodLogForm>
-        </Wrapper>
+                    }}
+                    style={{ marginTop: 20 }}
+                />
+            )}
+        </FoodLogForm>
     )
 }
 

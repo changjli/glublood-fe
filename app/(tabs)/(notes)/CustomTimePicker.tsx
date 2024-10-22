@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     timePickerText: {
         color: Colors.light.secondary,
         fontFamily: 'Helvetica-Bold',
-        fontSize: 28,
+        fontSize: 24,
     },
     timePickerSelected: {
         borderWidth: 2,
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     },
     timePickerTextSelected: {
         color: Colors.light.primary,
+        fontSize: 28,
     }
 })
 

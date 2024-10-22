@@ -120,34 +120,31 @@ export default function FoodLogDetailPage() {
     }, [])
 
     return (
-        <Wrapper>
-            <CustomText size='xl' weight='heavy'>{formValue.food_name}</CustomText>
-            <FoodLogForm
-                formValue={formValue}
-            >
-                {({ values, handleSubmit }) => (
-                    <>
-                        <CustomButton
-                            title='Simpan catatan'
-                            size='md'
-                            disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                            onPress={() => {
-                                handleSubmit()
-                                handleUpdateFoodLog(values as UpdateFoodLogReq)
-                            }}
-                        />
+        <FoodLogForm
+            formValue={formValue}
+        >
+            {({ values, handleSubmit }) => (
+                <>
+                    <CustomButton
+                        title='Simpan catatan'
+                        size='md'
+                        disabled={JSON.stringify(values) == JSON.stringify(formValue)}
+                        onPress={() => {
+                            handleSubmit()
+                            handleUpdateFoodLog(values as UpdateFoodLogReq)
+                        }}
+                    />
 
-                        <CustomButton
-                            title='Hapus log'
-                            size='md'
-                            onPress={() => {
-                                handleDeleteFoodLog(Number(id))
-                            }}
-                        />
-                    </>
-                )}
-            </FoodLogForm>
-        </Wrapper>
+                    <CustomButton
+                        title='Hapus log'
+                        size='md'
+                        onPress={() => {
+                            handleDeleteFoodLog(Number(id))
+                        }}
+                    />
+                </>
+            )}
+        </FoodLogForm>
     )
 }
 

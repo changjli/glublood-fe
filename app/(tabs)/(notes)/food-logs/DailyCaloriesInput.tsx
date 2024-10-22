@@ -4,13 +4,13 @@ import CustomModal, { CustomModalProps } from '@/components/CustomModal';
 import { Colors } from '@/constants/Colors';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
-import formatDatetoString from '@/utils/formatDatetoString';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProgressBar from './ProgressBar';
 import CustomText from '@/components/CustomText';
+import { formatDatetoString } from '@/utils/formatDatetoString';
 
 type DailyCaloriesInputProps = {
     selectedDate: Date,

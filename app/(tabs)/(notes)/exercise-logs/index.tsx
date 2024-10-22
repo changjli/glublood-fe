@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomTimePicker from '../CustomTimePicker';
 import CustomCalendar from '../CustomCalendar';
@@ -11,10 +11,12 @@ import axios, { AxiosError } from 'axios';
 import { string } from 'yup';
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
-import formatDatetoString from '@/utils/formatDatetoString';
 import { useIsFocused } from '@react-navigation/native';
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
 import ExerciseLogList from './ExerciseLogList';
+import DynamicTextComponent from '@/components/TrackingBackground';
+import Wrapper from '@/components/Layout';
+import { formatDatetoString } from '@/utils/formatDatetoString';
 
 export default function ExerciseLogPage() {
     const { getExerciseLogByDate } = useExerciseLog()
@@ -64,13 +66,14 @@ export default function ExerciseLogPage() {
     }, [selectedDate, isFocused])
 
     return (
-        <>
-            <View style={{ padding: 16 }}>
+        <ScrollView>
+            <DynamicTextComponent text="Obat" img='@/assets/images/top-bg.png' />
+            <Wrapper>
                 <CustomCalendar
                     value={selectedDate}
                     onChange={setSelectedDate}
                 />
-            </View >
+            </Wrapper>
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail log olahraga</Text>
@@ -91,7 +94,7 @@ export default function ExerciseLogPage() {
 
                 )}
             </View>
-        </>
+        </ScrollView>
     )
 }
 

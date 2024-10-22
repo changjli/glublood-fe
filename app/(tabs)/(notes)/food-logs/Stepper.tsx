@@ -1,5 +1,5 @@
 import { View, Text, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import CustomButton from '@/components/CustomButton'
 
 type StepperProps = {
@@ -8,6 +8,21 @@ type StepperProps = {
 }
 
 export default function Stepper({ value, onChange }: StepperProps) {
+
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const handleDecrement = () => {
+    intervalRef.current = setInterval(() => {
+      onChange(value - 1)
+    }, 1000)
+  }
+
+  const handlePressOut = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
   return (
     <View style={{
@@ -21,9 +36,11 @@ export default function Stepper({ value, onChange }: StepperProps) {
           height: 36,
         }}
         onPress={() => onChange(value - 1)}
+        onLongPress={handleDecrement}
+        onPressOut={handlePressOut}
       />
       <TextInput style={{
-        width: 36,
+        width: 72,
         height: 36,
         borderRadius: 4,
         borderWidth: 1,

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps } from 'formik'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
@@ -39,8 +39,8 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
             enableReinitialize
         >
             {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <View>
-                    <View style={{ marginBottom:20 }}>
+                <ScrollView>
+                    <View style={{ marginBottom: 20 }}>
                         <Text style={styles.labelText}>Nama Obat</Text>
                         <TextInput
                             style={styles.input}
@@ -59,7 +59,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     </View>
 
                     {/* Scrollable Dosis Picker */}
-                    <View style={{ marginBottom:20 }}>
+                    <View style={{ marginBottom: 20 }}>
                         <Text style={styles.labelText}>Dosis</Text>
                         <CustomQuantityPicker
                             qty={values.amount}
@@ -72,7 +72,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     </View>
 
                     {/* Catatan Input */}
-                    <View style={{ marginBottom:20 }}>
+                    <View style={{ marginBottom: 20 }}>
                         <Text style={styles.labelText}>Catatan</Text>
                         <TextInput
                             style={styles.catatanInput}
@@ -84,7 +84,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     </View>
 
                     {children({ values, handleSubmit })}
-                </View>
+                </ScrollView>
             )}
         </Formik>
     )
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dosisItem: {
-        height: 40, 
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
     },
