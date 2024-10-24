@@ -40,7 +40,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                 <ScrollView style={styles.formContainer}>
                     <Image
                         source={{
-                            uri: 'https://picsum.photos/300/400'
+                            uri: values.img ?? 'https://picsum.photos/300/400'
                         }}
                         style={{
                             flex: 1,

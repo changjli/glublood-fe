@@ -81,11 +81,27 @@ export default function useFoodLog() {
         return res
     }
 
+    const getFoodByBarcode = async (setLoading: (loading: boolean) => void, data: GetFoodByBarcodeReq) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/barcode`, data)
+            .then(res => {
+                console.log('[useFoodLog][getFoodByBarcode]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodLog][getFoodByBarcode]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getFoodLogByDate,
         storeFoodLog,
         getFoodLogDetail,
         updateFoodLog,
         deleteFoodLog,
+        getFoodByBarcode,
     }
 }

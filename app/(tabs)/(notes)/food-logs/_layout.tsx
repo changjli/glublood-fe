@@ -21,6 +21,10 @@ export default function _layout() {
                 headerTitle: '',
                 headerTransparent: true,
             }}></Stack.Screen>
+            <Stack.Screen name='create/barcode/[barcode]' options={{
+                headerTitle: '',
+                headerTransparent: true,
+            }}></Stack.Screen>
         </Stack>
     )
 }

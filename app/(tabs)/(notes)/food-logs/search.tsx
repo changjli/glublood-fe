@@ -74,10 +74,10 @@ export default function Search() {
                     placeholder='Cari menu makan'
                     value={search}
                     onChangeText={setSearch}
-                    postfix={search == '' ? (
-                        <FontAwesome name='search' size={FontSize.md} color={'white'} />
-                    ) : (
-                        <FontAwesome name='close' size={FontSize.md} color={'white'} />
+                    postfix={(
+                        <Link href={`/(notes)/food-logs/create/barcode`}>
+                            <FontAwesome name='barcode' size={FontSize.md} color={'white'} />
+                        </Link>
                     )}
                     containerStyle={{ borderColor: 'white' }}
                     style={{ color: 'white' }}

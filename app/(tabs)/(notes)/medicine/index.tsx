@@ -1,20 +1,51 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import CustomCalendar from '../CustomCalendar';
 import DynamicTextComponent from '../../../../components/TrackingBackground';
 import { Link, router } from 'expo-router';
+import MedicineLogList from './MedicineLogList';
+import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
+import axios from 'axios'
+import { useIsFocused } from '@react-navigation/native';
+import formatDatetoString from '@/utils/formatDatetoString';
 
 export default function Medicine() {
-  const [hasLog, setHasLog] = useState(false); // Assume no logs by default
-  const [medicineLog, setMedicineLog] = useState({
-    time: '09:41 AM',
-    name: 'Nodiabet',
-    dosage: '2 Tablet',
-    instructions: 'Dimakan sebelum sarapan',
-  });
-
+  const { getMedicineLogByDate } = useMedicine()
+  const [getMedicineLogLoading, setGetMedicineLogLoading] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [medicineLog, setMedicineLog] = useState<GetMedicineLogRes[]>([])
+  const isFocused = useIsFocused()
+
+  const handleGetMedicineLog = async (date: string) => {
+    try {
+      const res = await getMedicineLogByDate(setGetMedicineLogLoading, date)
+      setMedicineLog(res.data)
+      console.log("[index] -> Medicine Log by Date", res.data)
+    } catch (err) {
+      setMedicineLog([])
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 400) {
+          Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+        } else if (status === 500) {
+          Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+        } else {
+          // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+        }
+      } else {
+        console.log('Unexpected Error:', err);
+        Alert.alert('Network Error', 'Please check your internet connection.');
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (isFocused) {
+      handleGetMedicineLog(formatDatetoString(selectedDate))
+    }
+  }, [selectedDate, isFocused])
 
   useEffect(() => {
     const day = String(selectedDate.getDate()).padStart(2, '0');
@@ -22,16 +53,11 @@ export default function Medicine() {
     const year = selectedDate.getFullYear();
 
     const formattedDate = `${day}/${month}/${year}`;
-
-    console.log(formattedDate)
-
-    // handleGetDailyCalories(formattedDate)
-    // handleGetFoodLog(formattedDate)
   }, [selectedDate])
 
   return (
-    <View style={{ height: '100%' }}>
-      <DynamicTextComponent text="Obat" img='@/assets/images/top-bg.png' />
+    <ScrollView style={{ height: '100%' }}>
+      <DynamicTextComponent text="Obat" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
@@ -40,14 +66,20 @@ export default function Medicine() {
             <FontAwesome name='plus' size={16} color="white" />
           </TouchableOpacity>
         </View>
+        <View style={{ width: '100%' }}>
+          <MedicineLogList
+            data={medicineLog}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   logContainer: {
     width: '100%',
+    height: '100%',
     padding: 16,
     backgroundColor: '#FFF8E1',
     borderTopLeftRadius: 24,
