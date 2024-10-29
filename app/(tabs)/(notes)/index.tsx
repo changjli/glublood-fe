@@ -15,6 +15,7 @@ export default function index() {
             <Link href="/(notes)/food-logs">food</Link>
             <Link href="/(notes)/exercise-logs">exercise</Link>
             <Link href="/(notes)/medicine">medicine</Link>
+            <Link href="/(notes)/glucose-logs">glucose</Link>
         </View>
     )
 }

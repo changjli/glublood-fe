@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, FlatList, Alert, ScrollView } from 'react-native';
-import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker';
-import MedicineLogForm from './MedicineLogForm';
 import CustomButton from '@/components/CustomButton';
 import Wrapper from '@/components/Layout';
 import axios from 'axios'
 import { router } from 'expo-router'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
+import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog';
+import GlucoseLogForm from './GlucoseLogForm';
 
-export default function AddMedicineLog() {
-    const { storeMedicineLog } = useMedicine()
+export default function AddGlucoseLog() {
+    const { storeGlucoseLog } = useGlucoseLog()
     const { getData } = useAsyncStorage()
     const [storeLoading, setStoreLoading] = useState(false)
 
-    const handleStoreMedicineLog = async (data: StoreMedicineLogReq) => {
+    const handleStoreGlucoseLog = async (data: StoreGlucoseLogReq) => {
         try {
             console.log("Data: ", data)
-            const res = await storeMedicineLog(setStoreLoading, data)
-            router.navigate('/(notes)/medicine')
+            const res = await storeGlucoseLog(setStoreLoading, data)
+            router.navigate('/(notes)/glucose-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -38,17 +38,16 @@ export default function AddMedicineLog() {
         }
     }
 
-    const [formValue, setFormValue] = useState<StoreMedicineLogReq>({
+    const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: '',
-        name: '',
+        glucose_rate: 0,
         time: '',
-        amount: 1,
-        type: '',
+        time_selection: '',
         notes: '',
     })
 
     const handlePopulateFormValue = async () => {
-        const date = await getData('medicineLogDate')
+        const date = await getData('glucoseLogDate')
         setFormValue({
             ...formValue,
             date: date ?? '',
@@ -64,20 +63,19 @@ export default function AddMedicineLog() {
             <Wrapper style={styles.container}>
                 <Text style={styles.header}>Tambah log obat</Text>
             
-                <MedicineLogForm
+                <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
                     {({ values, handleSubmit }) => (
                         <CustomButton title='+ Simpan catatan' size='md' onPress={() => {
                             handleSubmit()
-                            handleStoreMedicineLog(values)
+                            handleStoreGlucoseLog(values)
                         }} />
                     )}
-                </MedicineLogForm>
+                </GlucoseLogForm>
             </Wrapper>
         </ScrollView>
-
     );
 };
 

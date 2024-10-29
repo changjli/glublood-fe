@@ -6,31 +6,30 @@ import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { FontFamily, FontSize } from '@/constants/Typography';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-interface MedicineLogFormRenderProps {
-    values: StoreMedicineLogReq
+interface GlucoseLogFormRenderProps {
+    values: StoreGlucoseLogReq
     handleSubmit: () => void
 }
 
-interface MedicineLogFormProps {
-    formValue: StoreMedicineLogReq
-    setFormValue: (formValue: StoreMedicineLogReq) => void
-    children: (props: MedicineLogFormRenderProps) => React.ReactNode
+interface GlucoseLogFormProps {
+    formValue: StoreGlucoseLogReq
+    setFormValue: (formValue: StoreGlucoseLogReq) => void
+    children: (props: GlucoseLogFormRenderProps) => React.ReactNode
 }
 
 const validationSchema = Yup.object().shape({
     date: Yup.date(),
-    medicineName: Yup.string().required('Nama obat wajib diisi!'),
-    timeConsumption: Yup.date().required('Waktu konsumsi wajib diisi!'),
-    dose: Yup.number(),
-    doseType: Yup.string(),
+    glucose_rate: Yup.number().required('Tekanan gula darah wajib diisi!'),
+    time: Yup.string().required('Waktu pengambilan wajib diisi!'),
+    timeSelection: Yup.string(),
     note: Yup.string(),
 });
 
-const doses = Array.from({ length: 100 }, (_, i) => i + 1);
-const doseTypes = ["Tablet", "Kaplet", "Kapsul", "IU", "mL", "Tetes", "Sachet"];
+const doseTypes = ["Sesudah Makan", "Sebelum Makan", "Puasa", "Sebelum Tidur"];
 
-export default function MedicineLogForm({ formValue, setFormValue, children, ...rest }: MedicineLogFormProps) {
+export default function GlucoseLogForm({ formValue, setFormValue, children, ...rest }: GlucoseLogFormProps) {
     return (
         <Formik
             initialValues={formValue}
@@ -42,14 +41,16 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                 <View>
                     <View style={{ marginBottom: 20 }}>
                         <CustomTextInput
-                            label='Nama Obat'
-                            placeholder='Cth: Insulin'
-                            value={values.name}
-                            onChangeText={handleChange('name')}
+                            label='Gula Darahmu'
+                            placeholder='Contoh: 98'
+                            postfix={(
+                                <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35'}}>mg/dL</Text>
+                            )}
+                            value={values.glucose_rate ? String(values.glucose_rate) : ''}
+                            onChangeText={handleChange('glucose_rate')}
                         />
                     </View>
 
-                    {/* Waktu Selection */}
                     <View style={{ marginBottom: 20 }}>
                         <CustomTimePicker
                             value={values.time}
@@ -57,20 +58,17 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                         />
                     </View>
 
-                    {/* Scrollable Dosis Picker */}
                     <View style={{ marginBottom:20 }}>
-                        <Text style={styles.labelText}>Dosis</Text>
+                        <Text style={styles.labelText}>Kondisi Pengambilan</Text>
                         <CustomQuantityPicker
-                            qty={values.amount}
-                            size={values.type}
-                            onChangeQty={handleChange('amount')}
-                            onChangeSize={handleChange('type')}
-                            qtyData={doses}
+                            widthSize={200}
+                            size={values.time_selection}
+                            onChangeSize={handleChange('time_selection')}
                             typeData={doseTypes}
+                            showQtyPicker={false}
                         />
                     </View>
 
-                    {/* Catatan Input */}
                     <View style={{ marginBottom: 10 }}>
                         <CustomTextInput
                             style={styles.catatanInput}
