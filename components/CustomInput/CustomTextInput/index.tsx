@@ -25,6 +25,7 @@ export default function CustomTextInput({
     postfix,
     containerStyle,
     style,
+    onChangeText,
     ...rest
 }: CustomTextInputProps) {
     const isError = error != null && error != ''
@@ -64,6 +65,7 @@ export default function CustomTextInput({
                     placeholderTextColor='gray'
                     onFocus={() => setIsFocus(!isFocus)}
                     onBlur={() => setIsFocus(!isFocus)}
+                    onChangeText={onChangeText}
                     style={[styles.innerContainer, style]}
                     {...rest}
                 />
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexWrap: 'nowrap',
         paddingHorizontal: 12,
-        paddingVertical: 16,
+        paddingVertical: 10,
         borderWidth: 2,
         borderRadius: 8,
         borderColor: Colors.light.gray300,

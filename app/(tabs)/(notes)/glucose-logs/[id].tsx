@@ -2,29 +2,28 @@ import { View, Text, Alert, ScrollView, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Wrapper from '@/components/Layout'
 import CustomText from '@/components/CustomText'
-import MedicineLogForm from './MedicineLogForm'
-import useMedicineLog from '@/hooks/api/logs/medicine/useMedicineLog'
 import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
+import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog'
+import GlucoseLogForm from './GlucoseLogForm'
 
-export default function MedicineLogDetailPage() {
+export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams()
-    const { getMedicineLogDetail, updateMedicineLog, deleteMedicineLog} = useMedicineLog()
+    const { getGlucoseLogDetail, updateGlucoseLog, deleteGlucoseLog} = useGlucoseLog()
 
-    const [formValue, setFormValue] = useState<StoreMedicineLogReq>({
+    const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: '',
-        name: '',
+        glucose_rate: 0,
         time: '',
-        amount: 0,
-        type: '',
+        time_selection: '',
         notes: '',
     })
     const [loading, setLoading] = useState(false)
 
-    const handleGetMedicineLogDetail = async (id: number) => {
+    const handleGetGlucoseLogDetail = async (id: number) => {
         try {
-            const res = await getMedicineLogDetail(setLoading, id)
+            const res = await getGlucoseLogDetail(setLoading, id)
             setFormValue(res.data)
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -44,10 +43,10 @@ export default function MedicineLogDetailPage() {
         }
     }
 
-    const handleUpdateMedicineLog = async (payload: UpdateMEdicineLogReq) => {
+    const handleUpdateGlucoseLog = async (payload: UpdateGlucoseLogReq) => {
         try {
-            const res = await updateMedicineLog(setLoading, payload)
-            router.navigate('/(notes)/medicine')
+            const res = await updateGlucoseLog(setLoading, payload)
+            router.navigate('/(notes)/glucose-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -66,10 +65,10 @@ export default function MedicineLogDetailPage() {
         }
     }
 
-    const handleDeleteMedicineLog = async (id: number) => {
+    const handleDeleteGlucoseLog = async (id: number) => {
         try {
-            const res = await deleteMedicineLog(setLoading, id)
-            router.navigate('/(notes)/medicine')
+            const res = await deleteGlucoseLog(setLoading, id)
+            router.navigate('/(notes)/glucose-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -89,14 +88,14 @@ export default function MedicineLogDetailPage() {
     }
 
     useEffect(() => {
-        handleGetMedicineLogDetail(Number(id))
+        handleGetGlucoseLogDetail(Number(id))
     }, [])
 
     return (
         <ScrollView>
             <Wrapper style={ styles.container }>
                 <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
-                <MedicineLogForm
+                <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
@@ -110,7 +109,7 @@ export default function MedicineLogDetailPage() {
                                 loading={loading}
                                 onPress={() => {
                                     handleSubmit()
-                                    handleUpdateMedicineLog({
+                                    handleUpdateGlucoseLog({
                                         id: Number(id),
                                         ...values,
                                     })
@@ -120,11 +119,11 @@ export default function MedicineLogDetailPage() {
                                 title='Hapus log'
                                 size='md'
                                 loading={loading}
-                                onPress={() => handleDeleteMedicineLog(Number(id))}
+                                onPress={() => handleDeleteGlucoseLog(Number(id))}
                             />
                         </View>
                     )}
-                </MedicineLogForm>
+                </GlucoseLogForm>
             </Wrapper>
         </ScrollView>
     )

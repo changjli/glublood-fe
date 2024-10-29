@@ -4,28 +4,28 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import CustomCalendar from '../CustomCalendar';
 import DynamicTextComponent from '../../../../components/TrackingBackground';
 import { Link, router } from 'expo-router';
-import MedicineLogList from './MedicineLogList';
-import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
+import useGlucose from '@/hooks/api/logs/glucose/useGlucoseLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
 import formatDatetoString from '@/utils/formatDatetoString';
+import GlucoseLogList from './GlucoseLogList';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 
-export default function Medicine() {
-  const { getMedicineLogByDate } = useMedicine()
+export default function Glucose() {
+  const { getGlucoseLogByDate } = useGlucose()
   const { storeData } = useAsyncStorage()
-  const [getMedicineLogLoading, setGetMedicineLogLoading] = useState(false)
+  const [glucoseLogLoading, setGlucoseLogLoading] = useState(false)
+  const [glucoseLog, setGlucoseLog] = useState<GetGlucoseLogRes[]>([])
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [medicineLog, setMedicineLog] = useState<GetMedicineLogRes[]>([])
   const isFocused = useIsFocused()
 
-  const handleGetMedicineLog = async (date: string) => {
+  const handleGetGlucoseLog = async (date: string) => {
     try {
-        const res = await getMedicineLogByDate(setGetMedicineLogLoading, date)
-        setMedicineLog(res.data)
-        console.log("[index] -> Medicine Log by Date", res.data)
+        const res = await getGlucoseLogByDate(setGlucoseLogLoading, date)
+        setGlucoseLog(res.data)
+        console.log("[index] -> Glucose Log by Date", res.data)
     } catch (err) {
-        setMedicineLog([])
+      setGlucoseLog([])
         if (axios.isAxiosError(err)) {
             const status = err.response?.status;
 
@@ -44,13 +44,13 @@ export default function Medicine() {
   }
 
   const handleNavigate = async () => {
-    await storeData('medicineLogDate', formatDatetoString(selectedDate))
-    router.navigate('/(notes)/medicine/AddMedicineLog')
+    await storeData('glucoseLogDate', formatDatetoString(selectedDate))
+    router.navigate('/(notes)/glucose-logs/AddGlucoseLog')
   }
 
   useEffect(() => {
     if (isFocused) {
-        handleGetMedicineLog(formatDatetoString(selectedDate))
+      handleGetGlucoseLog(formatDatetoString(selectedDate))
     }
   }, [selectedDate, isFocused])
     
@@ -59,23 +59,23 @@ export default function Medicine() {
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const year = selectedDate.getFullYear();
 
-    const formattedDate = `${day}/${month}/${year}`;
+      const formattedDate = `${day}/${month}/${year}`;
   }, [selectedDate])
 
   return (
     <ScrollView style={{ height: '100%' }}>
-      <DynamicTextComponent text="Obat" />
+      <DynamicTextComponent text="Gula Darah" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
-          <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold'}}>Detail Log Obat</Text>
+          <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold'}}>Detail Log Gula Darah</Text>
           <TouchableOpacity style={styles.headerAddButton} onPress={handleNavigate}>
             <FontAwesome name='plus' size={16} color="white" />
           </TouchableOpacity>
         </View>
         <View style={{ width: '100%'}}>
-          <MedicineLogList
-              data={medicineLog}
+          <GlucoseLogList
+              data={glucoseLog}
           />
         </View>
       </View>
