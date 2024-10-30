@@ -1,6 +1,5 @@
 import { View, Text, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
 import CustomText from '@/components/CustomText'
 import ExerciseLogForm from './ExerciseLogForm'
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog'
@@ -8,6 +7,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
+import Wrapper from '@/components/Layout/Wrapper'
 
 export default function ExerciseLogDetailPage() {
     const { id } = useLocalSearchParams()

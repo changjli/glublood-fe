@@ -17,10 +17,7 @@ export default function AuthLayout() {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View className='flex-1 px-[16px] py-[22px] bg-background'>
-                <Slot />
-            </View>
+            <Slot />
         </TouchableWithoutFeedback>
-
     )
 }

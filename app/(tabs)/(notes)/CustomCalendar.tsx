@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import CustomMonthYearPicker from './CustomMonthYearPicker';
 
 const today = new Date()
@@ -54,9 +54,10 @@ const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
 type CustomCalendarProps = {
     value: Date,
     onChange: (param: Date) => void
+    style?: StyleProp<ViewStyle>
 }
 
-export default function CustomCalendar({ value, onChange }: CustomCalendarProps) {
+export default function CustomCalendar({ value, onChange, style }: CustomCalendarProps) {
 
     const flatListRef = useRef<FlatList<DayItem>>(null)
 
@@ -102,7 +103,7 @@ export default function CustomCalendar({ value, onChange }: CustomCalendarProps)
     }, [selectedDay])
 
     return (
-        <View style={{ marginBottom: 20, }}>
+        <View style={style}>
             <CustomMonthYearPicker
                 month={selectedMonth}
                 year={selectedYear}

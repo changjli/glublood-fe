@@ -15,6 +15,8 @@ import { Formik } from 'formik'
 import { number, object, string } from 'yup'
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
+import Wrapper from '@/components/Layout/Wrapper'
+import FoodLogForm from '../FoodLogForm'
 
 const storeFoodLogSchema = object({
 
@@ -27,7 +29,6 @@ export default function Detail() {
     const { getMasterFoodDetail } = useMasterFood()
     const { storeFoodLog } = useFoodLog()
 
-    const [food, setFood] = useState<GetMasterFoodDetailResponse | null>(null)
     const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
         calories: 0,
         carbohydrate: 0,
@@ -39,19 +40,17 @@ export default function Detail() {
         serving_size: '',
         time: '',
         note: '',
-        type: 0,
+        type: 'auto',
     })
 
     const [getLoading, setGetLoading] = useState(false)
 
-    const handleGetMasterFoodDetail = async () => {
+    const handleGetMasterFoodDetail = async (id: string) => {
         try {
-            const res = await getMasterFoodDetail(setGetLoading, id as string)
+            const res = await getMasterFoodDetail(setGetLoading, id)
             const data: GetMasterFoodDetailResponse = res.data
-            setFood(data)
-            handlePopulateFormValue(data)
+            return res.data
         } catch (err) {
-            setFood(null)
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
 
@@ -66,6 +65,7 @@ export default function Detail() {
                 console.log('Unexpected Error:', err);
                 Alert.alert('Network Error', 'Please check your internet connection.');
             }
+            return null
         }
     }
 
@@ -92,83 +92,42 @@ export default function Detail() {
         }
     }
 
-    const handlePopulateFormValue = async (data: GetMasterFoodDetailResponse) => {
+    const handlePopulateFormValue = async () => {
         const date = await getData('foodLogDate')
+        const food = await handleGetMasterFoodDetail(String(id))
         setFormValue({
             ...formValue,
-            calories: data.calories,
-            carbohydrate: data.carbohydrate,
-            fat: data.fat,
-            protein: data.protein,
-            food_name: data.food_name,
+            calories: food.calories,
+            carbohydrate: food.carbohydrate,
+            fat: food.fat,
+            protein: food.protein,
+            food_name: food.food_name,
             date: date ?? '',
+            serving_qty: food.serving_qty,
+            serving_size: food.serving_size,
         })
     }
 
     useEffect(() => {
-        handleGetMasterFoodDetail()
+        handlePopulateFormValue()
     }, [])
 
     return (
-        <ScrollView style={{ flex: 1, padding: 16 }}>
-            <CustomText size='xl' weight='heavy'>{food?.food_name}</CustomText>
-            <View style={styles.nutrientOuterContainer}>
-                <View style={[styles.nutrientContainer, { width: '100%' }]}>
-                    <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientIcon} />
-                    <Text style={styles.nutrientTitle}>Kalori</Text>
-                    <Text style={styles.nutrientText}>{food?.calories} Kkal/Porsi</Text>
-                </View>
-                <View style={[styles.nutrientContainer, { width: '30%' }]}>
-                    <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientIcon} />
-                    <CustomText size='sm' weight='heavy'>Protein</CustomText>
-                    <CustomText size='sm'>{food?.protein} g</CustomText>
-                </View>
-                <View style={[styles.nutrientContainer, { width: '30%' }]}>
-                    <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientIcon} />
-                    <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
-                    <CustomText size='sm'>{food?.carbohydrate} g</CustomText>
-                </View>
-                <View style={[styles.nutrientContainer, { width: '30%' }]}>
-                    <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientIcon} />
-                    <CustomText size='sm' weight='heavy'>Lemak</CustomText>
-                    <CustomText size='sm'>{food?.fat} g</CustomText>
-                </View>
-            </View>
-            <Formik
-                initialValues={formValue}
-                onSubmit={async (values) => {
-                    await handleStoreFoodLog(values)
-                }}
-                enableReinitialize
-                validationSchema={storeFoodLogSchema}
-            >
-                {({ handleChange, handleSubmit, values, errors }) => (
-                    <View style={styles.formContainer}>
-                        <CustomTimePicker
-                            value={values.time}
-                            onChange={handleChange('time')}
-                            error={errors.time}
-                        />
-                        <CustomQuantityPicker
-                            qty={values.serving_qty}
-                            size={values.serving_size}
-                            onChangeQty={handleChange('serving_qty')}
-                            onChangeSize={handleChange('serving_size')}
-                        />
-                        <CustomTextInput
-                            label='Catatan'
-                            placeholder='Masukkan catatan di bagian ini'
-                            multiline={true}
-                            numberOfLines={4}
-                            textAlignVertical='top'
-                            value={values.note}
-                            onChangeText={handleChange('note')}
-                        />
-                        <CustomButton title='Submit' onPress={handleSubmit as (e?: GestureResponderEvent) => void} />
-                    </View>
-                )}
-            </Formik>
-        </ScrollView>
+        <FoodLogForm
+            formValue={formValue}
+        >
+            {({ values, handleSubmit }) => (
+                <CustomButton
+                    title='Simpan catatan'
+                    size='md'
+                    onPress={() => {
+                        handleSubmit()
+                        handleStoreFoodLog(values)
+                    }}
+                    style={{ marginTop: 20 }}
+                />
+            )}
+        </FoodLogForm>
     )
 }
 

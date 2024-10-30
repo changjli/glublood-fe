@@ -1,8 +1,8 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
+import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
-import { StyledCustomButton } from '@/components/CustomButton'
+import CustomButton, { StyledCustomButton } from '@/components/CustomButton'
 import CustomText from '@/components/CustomText'
 import { object, string } from 'yup'
 import { router } from 'expo-router'
@@ -12,17 +12,20 @@ import axios, { AxiosError } from 'axios'
 import useAuth from '@/hooks/api/auth/useAuth'
 import { loginRequest } from '@/hooks/api/auth/authTypes'
 import { Colors } from '@/constants/Colors'
+import Wrapper from '@/components/Layout/Wrapper'
+import WithKeyboard from '@/components/Layout/WithKeyboard'
 
 const loginSchema = object({
     email: string().required(),
     password: string().required(),
 })
 
-export default function Login() {
+export default function LoginPage() {
     const user = { email: 'admin@gmail.com', password: 'password' }
 
     const { login } = useAuth()
     const { signIn } = useSession()
+    const { width } = Dimensions.get('window')
 
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
@@ -45,79 +48,74 @@ export default function Login() {
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={30}
-        >
-            <ScrollView>
-                <View className='absolute'>
-                    <Image source={require('../../assets/images/register/Vector1.png')} />
-                </View>
-                <CustomText size='xl' weight='heavy' style={{ color: Colors.light.primary }}>Masuk</CustomText>
-                <CustomText size='md' style={{ color: 'white', marginBottom: 10 }}>Selamat datang lanjutkan perjalananmu!</CustomText>
-                <View className='flex flex-row justify-center mb-8'>
-                    <Image source={require('../../assets/images/characters/IconLogin2.png')} />
+        <View style={{ flex: 1 }}>
+            <View className='absolute'>
+                <Image source={require('../../assets/images/backgrounds/wave-1.png')} style={{ width: width, height: 375 }} />
+            </View>
+            <Wrapper>
+                <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Masuk</CustomText>
+                <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Selamat datang lanjutkan perjalananmu!</CustomText>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                    <Image source={require('../../assets/images/characters/icon-login.png')} style={{ width: 277, height: 250 }} />
                 </View>
                 <Formik
-                    initialValues={{ email: '', password: '' }}
-                    validateOnBlur={false}
-                    validateOnChange={false}
+                    initialValues={{
+                        email: '',
+                        password: ''
+                    }}
                     onSubmit={async (values) => {
                         await handleLogin(values)
                     }}
                     validationSchema={loginSchema}
                 >
                     {({ handleChange, handleSubmit, values, errors }) => (
-                        <View style={{ height: 300, flexDirection: 'column', justifyContent: 'space-between' }}>
-                            <View className='flex flex-col gap-4'>
-                                <StyledCustomTextInput
-                                    label='Email'
-                                    placeholder='Masukkan emailmu'
-                                    labelStyle='text-primary'
-                                    value={values.email}
-                                    onChangeText={handleChange('email')}
-                                    error={errors.email}
-                                />
-                                <View>
-                                    <StyledCustomTextInput
-                                        label='Kata sandi'
-                                        placeholder='Masukkan kata sandimu'
-                                        labelStyle='text-primary'
-                                        value={values.password}
-                                        onChangeText={handleChange('password')}
-                                        error={errors.password}
-                                        secureTextEntry
+                        <WithKeyboard>
+                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                                <View style={{ flexDirection: 'column', gap: errors && 5 }}>
+                                    <CustomTextInput
+                                        label='Email'
+                                        placeholder='Masukkan emailmu'
+                                        labelStyle={{ color: Colors.light.primary }}
+                                        value={values.email}
+                                        onChangeText={handleChange('email')}
+                                        error={errors.email}
                                     />
-                                    <View className='flex flex-row justify-end'>
-                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
-                                            Lupa kata sandi?
+                                    <View>
+                                        <CustomTextInput
+                                            label='Kata sandi'
+                                            placeholder='Masukkan kata sandimu'
+                                            labelStyle={{ color: Colors.light.primary }}
+                                            value={values.password}
+                                            onChangeText={handleChange('password')}
+                                            error={errors.password}
+                                            secureTextEntry
+                                        />
+                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                            <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
+                                                Lupa kata sandi?
+                                            </CustomText>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View>
+                                    {/* bug */}
+                                    <CustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
+                                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
+                                            Belum memiliki akun?
                                         </CustomText>
+                                        <Pressable onPress={() => router.replace('/(auth)/register')}>
+                                            <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
+                                                Daftar disini
+                                            </CustomText>
+                                        </Pressable>
                                     </View>
                                 </View>
                             </View>
-                            <View>
-                                {/* bug */}
-                                <StyledCustomButton title='Masuk' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={loginLoading} />
-                                <View className='flex flex-row justify-center'>
-                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
-                                        Belum memiliki akun?
-                                    </CustomText>
-                                    <Pressable onPress={() => router.replace('/(auth)/register')}>
-                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
-                                            Daftar disini
-                                        </CustomText>
-                                    </Pressable>
-
-                                </View>
-                            </View>
-                        </View>
+                        </WithKeyboard>
                     )}
-
                 </Formik>
-            </ScrollView>
-
-
-        </KeyboardAvoidingView>
+            </Wrapper>
+        </View>
     )
 }   

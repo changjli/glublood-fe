@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomTimePicker from '../CustomTimePicker';
 import CustomCalendar from '../CustomCalendar';
@@ -14,8 +14,11 @@ import FoodLogList from './FoodLogList';
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import ProgressBar from './ProgressBar';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
-import formatDatetoString from '@/utils/formatDatetoString';
 import { useIsFocused } from '@react-navigation/native';
+import Wrapper from '@/components/Layout/Wrapper'
+import Header from '../../Header';
+import DynamicTextComponent from '@/components/TrackingBackground';
+import { formatDatetoString } from '@/utils/formatDatetoString';
 
 export default function Foods() {
     const { getFoodLogByDate } = useFoodLog()
@@ -94,16 +97,20 @@ export default function Foods() {
     }, [selectedDate, isFocused])
 
     return (
-        <>
-            <View style={{ padding: 16 }}>
+        <ScrollView>
+            <DynamicTextComponent text="Obat" img='@/assets/images/top-bg.png' />
+            <Wrapper>
                 <CustomCalendar
                     value={selectedDate}
                     onChange={setSelectedDate}
+                    style={{ marginBottom: 10 }}
                 />
                 <DailyCaloriesInput
                     selectedDate={selectedDate}
+                    dailyCalories={dailyCalories}
+                    fetchDailyCalories={() => handleGetDailyCalories(formatDatetoString(selectedDate))}
                 />
-            </View >
+            </Wrapper>
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail log nutrisi</Text>
@@ -122,23 +129,11 @@ export default function Foods() {
 
                 )}
             </View>
-        </>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    dailyContainer: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: Colors.light.primary,
-        borderRadius: 4,
-        paddingHorizontal: 8,
-        paddingVertical: 16,
-    },
-    dailyHeader: {
-        fontFamily: FontFamily.heavy,
-        fontSize: FontSize.md,
-    },
     logContainer: {
         width: '100%',
         padding: 16,

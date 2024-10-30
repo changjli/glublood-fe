@@ -246,6 +246,7 @@ export const Colors = {
     warning: '#ecd706',
     danger: '#fe3f11',
     transparent: 'rgba(52, 52, 52, alpha)',
+    backdrop: 'rgba(0, 0, 0, 0.7)',
   },
   dark: {
     ...tailwind,

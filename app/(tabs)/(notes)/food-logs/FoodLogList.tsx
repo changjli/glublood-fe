@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
+import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
@@ -29,13 +30,13 @@ export default function FoodLogList({ data }: FoodLogListProps) {
                     )}
                 </View>
 
-                <View style={styles.cardContainer}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/(notes)/food-logs/${item.id}`)}>
                     <View>
                         <Text style={styles.cardHeaderText}>{item.food_name}</Text>
                     </View>
-                    <Text style={styles.cardBodyText}>{item.calories}</Text>
-                    <Text style={styles.cardBodyText}>{item.serving}</Text>
-                </View>
+                    <Text style={styles.cardBodyText}>{item.calories} Kkal</Text>
+                    <Text style={styles.cardBodyText}>{item.serving_qty} {item.serving_size}</Text>
+                </TouchableOpacity>
             </View>
         );
     };
@@ -67,6 +68,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#333',
         marginBottom: 5,
+        fontFamily: FontFamily.heavy,
     },
     verticalLine: {
         flex: 1,

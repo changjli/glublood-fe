@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -53,6 +54,7 @@ export default function BarcodeScanner() {
                 setScanned(true);
                 alert(`Barcode with type ${type} and data ${data} has been scanned!`);
                 // Do something with the scanned data
+                router.navigate(`/(notes)/food-logs/create/barcode/${data}`)
             }
         }
     }

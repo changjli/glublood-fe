@@ -8,7 +8,7 @@ import { Link } from 'expo-router'
 import { FontAwesome } from '@expo/vector-icons'
 import { FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import { Colors } from '@/constants/Colors'
 
 export default function Search() {
@@ -74,10 +74,10 @@ export default function Search() {
                     placeholder='Cari menu makan'
                     value={search}
                     onChangeText={setSearch}
-                    postfix={search == '' ? (
-                        <FontAwesome name='search' size={FontSize.md} color={'white'} />
-                    ) : (
-                        <FontAwesome name='close' size={FontSize.md} color={'white'} />
+                    postfix={(
+                        <Link href={`/(notes)/food-logs/create/barcode`}>
+                            <FontAwesome name='barcode' size={FontSize.md} color={'white'} />
+                        </Link>
                     )}
                     containerStyle={{ borderColor: 'white' }}
                     style={{ color: 'white' }}

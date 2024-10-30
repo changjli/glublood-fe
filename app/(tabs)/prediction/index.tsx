@@ -12,6 +12,7 @@ import DiabetesPedigree from './DiabetesPedigree'
 import usePrediction from '@/hooks/api/prediction/usePrediction'
 import { predictionRequest, predictionResponse } from '@/hooks/api/prediction/predictionTypes'
 import { useSession } from '@/app/context/AuthenticationProvider'
+import { router } from 'expo-router'
 
 export type prediction = {
     pregnancies: number,
@@ -324,7 +325,7 @@ export default function Prediction() {
                                 <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
                                 <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TIDAK TERINDIKASI DIABETES</Text>
                             </View>
-                            <CustomButton title='Lanjutkan' size='lg' />
+                            <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
                             <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
                         </View>
                     </>
@@ -348,7 +349,7 @@ export default function Prediction() {
                                 <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
                                 <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TERINDIKASI DIABETES</Text>
                             </View>
-                            <CustomButton title='Lanjutkan' size='lg' />
+                            <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
                             <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
                         </View>
                     </>

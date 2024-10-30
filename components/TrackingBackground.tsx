@@ -11,11 +11,13 @@ import { cssInterop } from 'nativewind';
 import { tv } from 'tailwind-variants';
 
 export type DynamicTextComponentProps = ImageBackgroundProps & {
-    text: string;
+    text: string
+    img: string
 };
 
 export default function DynamicTextComponent({
     text,
+    img,
     ...rest
 }: DynamicTextComponentProps) {
     return (
@@ -28,7 +30,7 @@ export default function DynamicTextComponent({
                 <Text style={styles.textStyle}>Tracking</Text>
                 <Text style={[
                     styles.textStyle,
-                    {marginTop: -15},
+                    { marginTop: -15 },
                 ]}>
                     {text}
                 </Text>
@@ -50,7 +52,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     imgBackground: {
-        marginBottom: 20,
         width: '100%',
         height: 260,
         display: 'flex',

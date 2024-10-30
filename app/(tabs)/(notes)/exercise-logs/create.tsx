@@ -1,6 +1,6 @@
 import { View, Text, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import ExerciseLogForm from './ExerciseLogForm'
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog'
@@ -59,7 +59,7 @@ export default function CreateExerciseLogPage() {
 
     return (
         <Wrapper>
-            <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
+            <CustomText size='xl' weight='heavy'>Tambah log olahraga</CustomText>
             <ExerciseLogForm
                 formValue={formValue}
                 setFormValue={setFormValue}

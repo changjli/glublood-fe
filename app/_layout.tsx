@@ -32,22 +32,16 @@ export default function RootLayout() {
     return (
         <SessionProvider>
             <ThemeProvider>
-                <SafeAreaView style={styles.safeArea}>
+                <SafeAreaView style={{ flex: 1 }}>
                     <Stack
                         screenOptions={{
                             headerShown: false,
                         }}>
                         <Stack.Screen name='(tabs)' />
+                        <Stack.Screen name='(auth)' />
                     </Stack>
                 </SafeAreaView>
             </ThemeProvider>
         </SessionProvider>
     )
 }
-
-const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-});
