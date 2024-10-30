@@ -9,9 +9,11 @@ import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
 import formatDatetoString from '@/utils/formatDatetoString';
+import useAsyncStorage from '@/hooks/useAsyncStorage';
 
 export default function Medicine() {
   const { getMedicineLogByDate } = useMedicine()
+  const { storeData } = useAsyncStorage()
   const [getMedicineLogLoading, setGetMedicineLogLoading] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [medicineLog, setMedicineLog] = useState<GetMedicineLogRes[]>([])
@@ -41,6 +43,11 @@ export default function Medicine() {
     }
   }
 
+  const handleNavigate = async () => {
+    await storeData('medicineLogDate', formatDatetoString(selectedDate))
+    router.navigate('/(notes)/medicine/AddMedicineLog')
+  }
+
   useEffect(() => {
     if (isFocused) {
       handleGetMedicineLog(formatDatetoString(selectedDate))
@@ -62,7 +69,7 @@ export default function Medicine() {
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
           <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold' }}>Detail Log Obat</Text>
-          <TouchableOpacity style={styles.headerAddButton} onPress={() => router.navigate('/(notes)/medicine/AddMedicineLog')}>
+          <TouchableOpacity style={styles.headerAddButton} onPress={handleNavigate}>
             <FontAwesome name='plus' size={16} color="white" />
           </TouchableOpacity>
         </View>

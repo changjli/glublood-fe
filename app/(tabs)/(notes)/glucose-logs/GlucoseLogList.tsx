@@ -4,18 +4,12 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, LayoutAnimation } from 'react-native';
 
-interface MedicineLogListProps {
-    data: GetMedicineLogRes[];
+interface GlucoseLogListProps {
+    data: GetGlucoseLogRes[];
 }
 
-export default function MedicineLogList({ data }: MedicineLogListProps) {
-    const [selectedButton, setSelectedButton] = useState<string | null>(null);
-    const handlePress = (buttonType: 'missed' | 'taken') => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); // For smooth animation
-        setSelectedButton(buttonType);
-    };
-
-    const renderItem = ({ item, index }: { item: GetMedicineLogRes, index: number }) => {
+export default function GlucoseLogList({ data }: GlucoseLogListProps) {
+    const renderItem = ({ item, index }: { item: GetGlucoseLogRes, index: number }) => {
         const isSameTime = item.time === data[index - 1]?.time;
 
         return (
@@ -33,18 +27,17 @@ export default function MedicineLogList({ data }: MedicineLogListProps) {
                     )}
                 </View>
 
-                {/* Medicine Card Section */}
                 <View style={styles.cardContainer}>
                     <View style={styles.cardHeader}>
-                        <Text style={styles.doseText}>{item.amount} {item.type}</Text>
+                        <Text style={styles.doseText}>{item.glucose_rate} mg/dL</Text>
                         <TouchableOpacity
                             style={styles.editButton}
-                            onPress={() => router.navigate(`/(notes)/medicine/${item.id}`)}
+                            onPress={() => router.navigate(`/(notes)/glucose-logs/${item.id}`)}
                         >
                             <Text style={styles.editText}>✎ Edit</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.medicineName}>{item.name}</Text>
+                    <Text style={styles.timeSelection}>{item.time_selection}</Text>
                     <Text style={styles.notes}>{item.notes}</Text>
                 </View>
             </View>
@@ -100,6 +93,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         padding: 10,
         flex: 1,
+        height: 100,
         justifyContent: 'center',
         borderWidth: 1,
         borderColor: Colors.light.primary,
@@ -127,7 +121,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'bold',
     },
-    medicineName: {
+    timeSelection: {
         marginBottom: 5,
         color: Colors.light.primary,
         fontSize: FontSize.md,
@@ -137,5 +131,36 @@ const styles = StyleSheet.create({
         marginBottom: 7,
         color: '#666',
         fontSize: FontSize.sm,
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    missedButton: {
+        marginRight: 10,
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#F08080',
+        flex: 1,
+        alignItems: 'center',
+    },
+    missedText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
+    takenButton: {
+        padding: 10,
+        backgroundColor: '#4CAF50',
+        borderRadius: 5,
+        flex: 1,
+        alignItems: 'center',
+    },
+    takenText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
+    fullWidthButton: {
+        width: '100%', 
+        marginHorizontal: 0, 
     },
 });

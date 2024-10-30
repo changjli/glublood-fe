@@ -7,17 +7,33 @@ import { Colors } from '@/constants/Colors'
 import CustomText from '@/components/CustomText'
 
 type CustomQuantityPickerProps = {
-    qty: number
+    widthQty?: number
+    widthSize?: number
+    qty?: number
     size: string
     qtyData?: number[]
     typeData?: string[]
-    onChangeQty: (qty: string) => void
+    onChangeQty?: (qty: string) => void
     onChangeSize: (size: string) => void
     label?: string
-}
+    showQtyPicker?: boolean
+} & (
+        | { showFirstPicker: true; qty: number; onChangeQty: (qty: string) => void }
+        | { showFirstPicker?: false }
+    )
 
-export default function CustomQuantityPicker({ qty, size, qtyData = [1, 2, 3], typeData = ['a', 'b', 'c'], onChangeQty, onChangeSize, label }: CustomQuantityPickerProps) {
-
+export default function CustomQuantityPicker({
+    widthQty,
+    widthSize,
+    qty,
+    size,
+    qtyData = [1, 2, 3],
+    typeData = ['asu', 'lala'],
+    onChangeQty = () => { },
+    onChangeSize,
+    label,
+    showQtyPicker = true
+}: CustomQuantityPickerProps) {
     return (
         <View>
             {label &&
@@ -25,56 +41,58 @@ export default function CustomQuantityPicker({ qty, size, qtyData = [1, 2, 3], t
                     {label}
                 </CustomText>
             }
-            <View style={styles.container}>
-                {/* left */}
-                <FontAwesome name='play' style={styles.arrow} />
-                <WheelPickerExpo
-                    initialSelectedIndex={0}
-                    onChange={({ index }) => onChangeQty(String(qtyData[index]))}
-                    items={qtyData.map(data => ({ label: String(data), value: data }))}
-                    renderItem={({ label }) => (
-                        <View style={[
-                            styles.pickerContainer,
-                            label == String(qty) && styles.pickerSelected,
-                        ]}>
-                            <Text style={[
-                                styles.pickerText,
-                                label == String(qty) && styles.pickerTextSelected
+            {showQtyPicker && (
+                <View style={styles.container}>
+                    {/* left */}
+                    <FontAwesome name='play' style={styles.arrow} />
+                    <WheelPickerExpo
+                        initialSelectedIndex={0}
+                        onChange={({ index }) => onChangeQty(String(qtyData[index]))}
+                        items={qtyData.map(data => ({ label: String(data), value: data }))}
+                        renderItem={({ label }) => (
+                            <View style={[
+                                styles.pickerContainer,
+                                label == String(qty) && styles.pickerSelected,
                             ]}>
-                                {label}
-                            </Text>
-                        </View>
-                    )}
-                    flatListProps={{
-                        nestedScrollEnabled: true,
-                    }}
-                    width={75}
-                />
-                {/* right */}
-                <FontAwesome name='play' style={styles.arrow} />
-                <WheelPickerExpo
-                    initialSelectedIndex={0}
-                    onChange={({ index }) => onChangeSize(typeData[index])}
-                    items={typeData.map(data => ({ label: data, value: data }))}
-                    renderItem={({ label }) => (
-                        <View style={[
-                            styles.pickerContainer,
-                            label == String(size) && styles.pickerSelected,
-                        ]}>
-                            <Text style={[
-                                styles.pickerText,
-                                label == String(size) && styles.pickerTextSelected
+                                <Text style={[
+                                    styles.pickerText,
+                                    label == String(qty) && styles.pickerTextSelected
+                                ]}>
+                                    {label}
+                                </Text>
+                            </View>
+                        )}
+                        flatListProps={{
+                            nestedScrollEnabled: true,
+                        }}
+                        width={75}
+                    />
+                    {/* right */}
+                    <FontAwesome name='play' style={styles.arrow} />
+                    <WheelPickerExpo
+                        initialSelectedIndex={0}
+                        onChange={({ index }) => onChangeSize(typeData[index])}
+                        items={typeData.map(data => ({ label: data, value: data }))}
+                        renderItem={({ label }) => (
+                            <View style={[
+                                styles.pickerContainer,
+                                label == String(size) && styles.pickerSelected,
                             ]}>
-                                {label}
-                            </Text>
-                        </View>
-                    )}
-                    flatListProps={{
-                        nestedScrollEnabled: true,
-                    }}
-                    width={175}
-                />
-            </View>
+                                <Text style={[
+                                    styles.pickerText,
+                                    label == String(size) && styles.pickerTextSelected
+                                ]}>
+                                    {label}
+                                </Text>
+                            </View>
+                        )}
+                        flatListProps={{
+                            nestedScrollEnabled: true,
+                        }}
+                        width={175}
+                    />
+                </View>
+            )}
         </View>
     )
 }

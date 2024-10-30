@@ -1,5 +1,5 @@
 type StoreMedicineLogReq = {
-    date: Date,
+    date: string,
     name: string,
     time: string,
     amount: number,
@@ -9,7 +9,7 @@ type StoreMedicineLogReq = {
 
 type GetMedicineLogRes = {
     id: number,
-    date: Date,
+    date: string,
     name: string,
     time: string,
     amount: number,
@@ -19,7 +19,7 @@ type GetMedicineLogRes = {
 
 type UpdateMEdicineLogReq = {
     id: number,
-    date: Date,
+    date: string,
     name: string,
     time: string,
     amount: number,
