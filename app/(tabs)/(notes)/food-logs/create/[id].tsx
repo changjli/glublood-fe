@@ -15,7 +15,7 @@ import { Formik } from 'formik'
 import { number, object, string } from 'yup'
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../FoodLogForm'
 
 const storeFoodLogSchema = object({
@@ -103,6 +103,8 @@ export default function Detail() {
             protein: food.protein,
             food_name: food.food_name,
             date: date ?? '',
+            serving_qty: food.serving_qty,
+            serving_size: food.serving_size,
         })
     }
 

@@ -3,7 +3,7 @@ import React from 'react'
 import { FontFamily, FontSize } from '@/constants/Typography'
 
 export type CustomTextProps = TextProps & {
-    size?: 'sm' | 'md' | 'lg' | 'xl'
+    size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
     weight?: 'light' | 'medium' | 'heavy'
 }
 
@@ -28,6 +28,12 @@ export default function CustomText({
             break
         case 'xl':
             fontSize = FontSize.xl
+            break
+        case '2xl':
+            fontSize = FontSize['2xl']
+            break
+        case '3xl':
+            fontSize = FontSize['3xl']
             break
         default:
             fontSize = FontSize.md

@@ -13,7 +13,7 @@ import useFoodLog from '@/hooks/api/food_log/useFoodLog'
 import axios from 'axios'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { router } from 'expo-router'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../FoodLogForm'
 
 

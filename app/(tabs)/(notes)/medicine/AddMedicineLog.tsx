@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker';
 import MedicineLogForm from './MedicineLogForm';
 import CustomButton from '@/components/CustomButton';
-import Wrapper from '@/components/Layout';
+import Wrapper from '@/components/Layout/Wrapper'
 import axios from 'axios'
 import { router } from 'expo-router'
 
@@ -49,7 +49,7 @@ export default function AddMedicineLog() {
         <ScrollView>
             <Wrapper style={styles.container}>
                 <Text style={styles.header}>Tambah log obat</Text>
-            
+
                 <MedicineLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4', 
+        backgroundColor: '#EAF3F4',
     },
     header: {
         fontSize: 24,

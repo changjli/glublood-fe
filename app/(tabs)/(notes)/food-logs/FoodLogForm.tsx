@@ -1,4 +1,4 @@
-import { View, Text, Alert, StyleSheet, Image, ScrollView, GestureResponderEvent } from 'react-native'
+import { View, Text, Alert, StyleSheet, Image, ScrollView, GestureResponderEvent, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import useMasterFood from '@/hooks/api/master_food/useMasterFood'
@@ -16,7 +16,8 @@ import useAsyncStorage from '@/hooks/useAsyncStorage'
 import CustomTimePicker from '../CustomTimePicker'
 import CustomQuantityPicker from '../CustomQuantityPicker'
 import Stepper from './Stepper'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
+import CustomImagePicker from '@/components/CustomImagePicker'
 
 interface FoodLogFormRenderProps {
     values: StoreFoodLogRequest | UpdateFoodLogReq
@@ -29,6 +30,15 @@ interface FoodLogFormProps {
 }
 
 export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFormProps) {
+
+    const getSizeData = () => {
+        const sizeData = []
+        for (let i = formValue.serving_qty; i < formValue.serving_qty * 100; i += formValue.serving_qty) {
+            sizeData.push(i)
+        }
+        return sizeData
+    }
+
     return (
         <Formik
             initialValues={formValue}
@@ -36,156 +46,174 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
             }}
             enableReinitialize
         >
-            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <ScrollView style={styles.formContainer}>
-                    <Image
-                        source={{
-                            uri: values.img ?? 'https://picsum.photos/300/400'
-                        }}
-                        style={{
-                            flex: 1,
-                            height: 300,
-                        }}
-                    />
+            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => {
 
-                    <Wrapper style={{ gap: 10 }}>
-                        {/* manual */}
-                        {values.type == 'manual' && (
-                            <>
-                                <CustomTextInput
-                                    label='Nama makanan'
-                                    placeholder='Contoh: Nasi goreng'
-                                    value={values.food_name}
-                                    onChangeText={handleChange('food_name')}
-                                />
-                                <CustomText size='sm' weight='heavy'>Niali gizi makanan</CustomText>
-                                <View style={styles.nutrientOuterContainer}>
-                                    <View style={styles.nutrientContainer}>
-                                        <View style={styles.nutrientInnerLeftContainer}>
-                                            <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientIcon} />
-                                            <View style={{
-                                                flexDirection: 'column',
-                                            }}>
-                                                <CustomText size='sm' weight='heavy'>Kalori</CustomText>
-                                                <CustomText size='sm'>Kkal</CustomText>
-                                            </View>
-                                        </View>
-                                        <Stepper
-                                            value={values.calories}
-                                            onChange={v => {
-                                                setFieldValue('calories', v)
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.nutrientContainer}>
-                                        <View style={styles.nutrientInnerLeftContainer}>
-                                            <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientIcon} />
-                                            <View style={{
-                                                flexDirection: 'column',
-                                            }}>
-                                                <CustomText size='sm' weight='heavy'>Protein</CustomText>
-                                                <CustomText size='sm'>Gram</CustomText>
-                                            </View>
-                                        </View>
-                                        <Stepper
-                                            value={values.protein}
-                                            onChange={v => {
-                                                setFieldValue('protein', v)
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.nutrientContainer}>
-                                        <View style={styles.nutrientInnerLeftContainer}>
-                                            <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientIcon} />
-                                            <View style={{
-                                                flexDirection: 'column',
-                                            }}>
-                                                <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
-                                                <CustomText size='sm'>Gram</CustomText>
-                                            </View>
-                                        </View>
-                                        <Stepper
-                                            value={values.carbohydrate}
-                                            onChange={v => {
-                                                setFieldValue('carbohydrate', v)
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={styles.nutrientContainer}>
-                                        <View style={styles.nutrientInnerLeftContainer}>
-                                            <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientIcon} />
-                                            <View style={{
-                                                flexDirection: 'column',
-                                            }}>
-                                                <CustomText size='sm' weight='heavy'>Lemak</CustomText>
-                                                <CustomText size='sm'>Gram</CustomText>
-                                            </View>
-                                        </View>
-                                        <Stepper
-                                            value={values.fat}
-                                            onChange={v => {
-                                                setFieldValue('fat', v)
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                            </>
-                        )}
+                useEffect(() => {
+                    setTimeout(() => {
+                        setFieldValue('calories', values.calories * values.serving_qty)
+                        setFieldValue('protein', values.protein * values.serving_qty)
+                        setFieldValue('carbohydrate', values.carbohydrate * values.serving_qty)
+                        setFieldValue('fat', values.fat * values.serving_qty)
+                    }, 1000)
+                }, [values.serving_qty])
 
-                        {/* auto */}
-                        {values.type == 'auto' && (
-                            <>
-                                <CustomText size='xl' weight='heavy'>{formValue.food_name}</CustomText>
-                                <View style={styles.nutrientAutoOuterContainer}>
-                                    <View style={[styles.nutrientAutoContainer, { width: '100%' }]}>
-                                        <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientAutoIcon} />
-                                        <Text style={styles.nutrientAutoTitle}>Kalori</Text>
-                                        <Text style={styles.nutrientAutoText}>{values.calories} Kkal/Porsi</Text>
-                                    </View>
-                                    <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
-                                        <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientAutoIcon} />
-                                        <CustomText size='sm' weight='heavy'>Protein</CustomText>
-                                        <CustomText size='sm'>{values.protein} g</CustomText>
-                                    </View>
-                                    <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
-                                        <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientAutoIcon} />
-                                        <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
-                                        <CustomText size='sm'>{values.carbohydrate} g</CustomText>
-                                    </View>
-                                    <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
-                                        <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientAutoIcon} />
-                                        <CustomText size='sm' weight='heavy'>Lemak</CustomText>
-                                        <CustomText size='sm'>{values.fat} g</CustomText>
-                                    </View>
-                                </View>
-                            </>
-                        )}
+                return (
+                    <ScrollView style={styles.formContainer}>
 
-                        <CustomTimePicker
-                            value={values.time}
-                            onChange={handleChange('time')}
-                            error={errors.time}
-                        />
-                        <CustomQuantityPicker
-                            qty={values.serving_qty}
-                            size={values.serving_size}
-                            onChangeQty={handleChange('serving_qty')}
-                            onChangeSize={handleChange('serving_size')}
-                            label='Pilih porsi'
-                        />
-                        <CustomTextInput
-                            label='Catatan'
-                            placeholder='Masukkan catatan di bagian ini'
-                            multiline={true}
-                            numberOfLines={4}
-                            textAlignVertical='top'
-                            value={values.note}
-                            onChangeText={handleChange('note')}
-                        />
-                        {children({ values, handleSubmit })}
-                    </Wrapper>
-                </ScrollView>
-            )}
+                        <CustomImagePicker image={values.img ?? ''} onChange={v => setFieldValue('img', v)}>
+                            <Image
+                                source={{
+                                    uri: values.img ?? 'https://placehold.jp/300x400.png'
+                                }}
+                                style={{
+                                    flex: 1,
+                                    height: 300,
+                                }}
+                            />
+                        </CustomImagePicker>
+
+
+                        <Wrapper style={{ gap: 10 }}>
+                            {/* manual */}
+                            {values.type == 'manual' && (
+                                <>
+                                    <CustomTextInput
+                                        label='Nama makanan'
+                                        placeholder='Contoh: Nasi goreng'
+                                        value={values.food_name}
+                                        onChangeText={handleChange('food_name')}
+                                    />
+                                    <CustomText size='sm' weight='heavy'>Niali gizi makanan</CustomText>
+                                    <View style={styles.nutrientOuterContainer}>
+                                        <View style={styles.nutrientContainer}>
+                                            <View style={styles.nutrientInnerLeftContainer}>
+                                                <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientIcon} />
+                                                <View style={{
+                                                    flexDirection: 'column',
+                                                }}>
+                                                    <CustomText size='sm' weight='heavy'>Kalori</CustomText>
+                                                    <CustomText size='sm'>Kkal</CustomText>
+                                                </View>
+                                            </View>
+                                            <Stepper
+                                                value={values.calories}
+                                                onChange={v => {
+                                                    setFieldValue('calories', v)
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.nutrientContainer}>
+                                            <View style={styles.nutrientInnerLeftContainer}>
+                                                <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientIcon} />
+                                                <View style={{
+                                                    flexDirection: 'column',
+                                                }}>
+                                                    <CustomText size='sm' weight='heavy'>Protein</CustomText>
+                                                    <CustomText size='sm'>Gram</CustomText>
+                                                </View>
+                                            </View>
+                                            <Stepper
+                                                value={values.protein}
+                                                onChange={v => {
+                                                    setFieldValue('protein', v)
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.nutrientContainer}>
+                                            <View style={styles.nutrientInnerLeftContainer}>
+                                                <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientIcon} />
+                                                <View style={{
+                                                    flexDirection: 'column',
+                                                }}>
+                                                    <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
+                                                    <CustomText size='sm'>Gram</CustomText>
+                                                </View>
+                                            </View>
+                                            <Stepper
+                                                value={values.carbohydrate}
+                                                onChange={v => {
+                                                    setFieldValue('carbohydrate', v)
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={styles.nutrientContainer}>
+                                            <View style={styles.nutrientInnerLeftContainer}>
+                                                <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientIcon} />
+                                                <View style={{
+                                                    flexDirection: 'column',
+                                                }}>
+                                                    <CustomText size='sm' weight='heavy'>Lemak</CustomText>
+                                                    <CustomText size='sm'>Gram</CustomText>
+                                                </View>
+                                            </View>
+                                            <Stepper
+                                                value={values.fat}
+                                                onChange={v => {
+                                                    setFieldValue('fat', v)
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                </>
+                            )}
+
+                            {/* auto */}
+                            {values.type == 'auto' && (
+                                <>
+                                    <CustomText size='xl' weight='heavy'>{formValue.food_name}</CustomText>
+                                    <View style={styles.nutrientAutoOuterContainer}>
+                                        <View style={[styles.nutrientAutoContainer, { width: '100%' }]}>
+                                            <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientAutoIcon} />
+                                            <Text style={styles.nutrientAutoTitle}>Kalori</Text>
+                                            <Text style={styles.nutrientAutoText}>{values.calories} Kkal/Porsi</Text>
+                                        </View>
+                                        <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
+                                            <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientAutoIcon} />
+                                            <CustomText size='sm' weight='heavy'>Protein</CustomText>
+                                            <CustomText size='sm'>{values.protein} g</CustomText>
+                                        </View>
+                                        <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
+                                            <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientAutoIcon} />
+                                            <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
+                                            <CustomText size='sm'>{values.carbohydrate} g</CustomText>
+                                        </View>
+                                        <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
+                                            <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientAutoIcon} />
+                                            <CustomText size='sm' weight='heavy'>Lemak</CustomText>
+                                            <CustomText size='sm'>{values.fat} g</CustomText>
+                                        </View>
+                                    </View>
+                                </>
+                            )}
+
+                            <CustomTimePicker
+                                value={values.time}
+                                onChange={handleChange('time')}
+                                error={errors.time}
+                            />
+                            <CustomQuantityPicker
+                                qty={values.serving_qty}
+                                size={values.serving_size}
+                                qtyData={getSizeData()}
+                                typeData={formValue.serving_size != '' ? [formValue.serving_size] : []}
+                                onChangeQty={handleChange('serving_qty')}
+                                onChangeSize={handleChange('serving_size')}
+                                label='Pilih porsi'
+                            />
+                            <CustomTextInput
+                                label='Catatan'
+                                placeholder='Masukkan catatan di bagian ini'
+                                multiline={true}
+                                numberOfLines={4}
+                                textAlignVertical='top'
+                                value={values.note}
+                                onChangeText={handleChange('note')}
+                            />
+                            {children({ values, handleSubmit })}
+                        </Wrapper>
+                    </ScrollView>
+                )
+            }}
         </Formik>
     )
 }

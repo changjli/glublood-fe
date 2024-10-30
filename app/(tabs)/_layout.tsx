@@ -35,6 +35,7 @@ export default function TabLayout() {
                     fontFamily: FontFamily.heavy,
                 },
                 headerShown: false,
+                tabBarHideOnKeyboard: true,
             }}
         >
             <Tabs.Screen

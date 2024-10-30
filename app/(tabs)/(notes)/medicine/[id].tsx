@@ -1,6 +1,6 @@
 import { View, Text, Alert, ScrollView, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import MedicineLogForm from './MedicineLogForm'
 import useMedicineLog from '@/hooks/api/logs/medicine/useMedicineLog'
@@ -10,7 +10,7 @@ import CustomButton from '@/components/CustomButton'
 
 export default function ExerciseLogDetailPage() {
     const { id } = useLocalSearchParams()
-    const { getMedicineLogDetail, updateMedicineLog, deleteMedicineLog} = useMedicineLog()
+    const { getMedicineLogDetail, updateMedicineLog, deleteMedicineLog } = useMedicineLog()
 
     const [formValue, setFormValue] = useState<StoreMedicineLogReq>({
         date: new Date(),
@@ -94,7 +94,7 @@ export default function ExerciseLogDetailPage() {
 
     return (
         <ScrollView>
-            <Wrapper style={ styles.container }>
+            <Wrapper style={styles.container}>
                 <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
                 <MedicineLogForm
                     formValue={formValue}
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4', 
+        backgroundColor: '#EAF3F4',
     },
 });

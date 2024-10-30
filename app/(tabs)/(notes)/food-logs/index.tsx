@@ -15,7 +15,7 @@ import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import ProgressBar from './ProgressBar';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
-import Wrapper from '@/components/Layout';
+import Wrapper from '@/components/Layout/Wrapper'
 import Header from '../../Header';
 import DynamicTextComponent from '@/components/TrackingBackground';
 import { formatDatetoString } from '@/utils/formatDatetoString';

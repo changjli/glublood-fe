@@ -1,6 +1,6 @@
 import { View, Text, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import ExerciseLogForm from './ExerciseLogForm'
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog'

@@ -223,7 +223,7 @@ export default function FirstTimeSetup() {
                             >
                                 {
                                     currentPosition === 3 ?
-                                        <Text className='font-helvetica-bold text-center text-white'>
+                                        <Text className='font-helvetica-bold text-center text-white' onPress={() => router.navigate('/(tabs)/prediction')}>
                                             Mulai Pengecekkan
                                         </Text>
                                         :

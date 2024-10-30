@@ -15,7 +15,7 @@ import { useIsFocused } from '@react-navigation/native';
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
 import ExerciseLogList from './ExerciseLogList';
 import DynamicTextComponent from '@/components/TrackingBackground';
-import Wrapper from '@/components/Layout';
+import Wrapper from '@/components/Layout/Wrapper'
 import { formatDatetoString } from '@/utils/formatDatetoString';
 
 export default function ExerciseLogPage() {

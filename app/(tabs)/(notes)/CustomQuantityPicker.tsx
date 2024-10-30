@@ -16,7 +16,8 @@ type CustomQuantityPickerProps = {
     label?: string
 }
 
-export default function CustomQuantityPicker({ qty, size, qtyData = [0, 1, 2, 3], typeData = ['asu', 'lala'], onChangeQty, onChangeSize, label }: CustomQuantityPickerProps) {
+export default function CustomQuantityPicker({ qty, size, qtyData = [1, 2, 3], typeData = ['a', 'b', 'c'], onChangeQty, onChangeSize, label }: CustomQuantityPickerProps) {
+
     return (
         <View>
             {label &&
@@ -98,7 +99,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 4,
     },
     pickerText: {
         fontSize: FontSize.md,

@@ -8,7 +8,7 @@ import { Link } from 'expo-router'
 import { FontAwesome } from '@expo/vector-icons'
 import { FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import { Colors } from '@/constants/Colors'
 
 export default function Search() {
