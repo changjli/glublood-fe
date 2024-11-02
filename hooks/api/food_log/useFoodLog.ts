@@ -21,9 +21,9 @@ export default function useFoodLog() {
         return res
     }
 
-    const storeFoodLog = async (setLoading: (loading: boolean) => void, data: StoreFoodLogRequest) => {
+    const storeFoodLog = async (setLoading: (loading: boolean) => void, data: FormData) => {
         setLoading(true)
-        const res = await withToken.post(`${group}`, data)
+        const res = await withToken.post(`${group}`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(res => {
                 console.log('[useFoodLog][storeFoodLog]', res.data)
                 setLoading(false)
@@ -51,9 +51,9 @@ export default function useFoodLog() {
         return res
     }
 
-    const updateFoodLog = async (setLoading: (loading: boolean) => void, payload: UpdateFoodLogReq) => {
+    const updateFoodLog = async (setLoading: (loading: boolean) => void, id: number, data: FormData) => {
         setLoading(true)
-        const res = await withToken.put(`${group}/${payload.id}`, payload)
+        const res = await withToken.post(`${group}/${id}?_method=PUT`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then(res => {
                 console.log('[useFoodLog][updateFoodLog]', res.data)
                 setLoading(false)

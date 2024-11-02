@@ -1,7 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import CustomTimePicker from '../CustomTimePicker';
-import CustomCalendar from '../CustomCalendar';
 import { Colors } from '@/constants/Colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FontSize, FontFamily } from '@/constants/Typography';
@@ -18,6 +16,7 @@ import { useIsFocused } from '@react-navigation/native';
 import Wrapper from '@/components/Layout/Wrapper'
 import DynamicTextComponent from '@/components/TrackingBackground';
 import { formatDatetoString } from '@/utils/formatDatetoString';
+import CustomCalendar from '@/components/CustomCalendar';
 
 export default function Foods() {
     const navigation = useNavigation();

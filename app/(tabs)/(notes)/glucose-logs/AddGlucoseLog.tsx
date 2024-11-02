@@ -3,12 +3,12 @@ import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, FlatList, 
 import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker';
 import CustomButton from '@/components/CustomButton';
-import Wrapper from '@/components/Layout';
 import axios from 'axios'
 import { router } from 'expo-router'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog';
 import GlucoseLogForm from './GlucoseLogForm';
+import Wrapper from '@/components/Layout/Wrapper';
 
 export default function AddGlucoseLog() {
     const { storeGlucoseLog } = useGlucoseLog()
@@ -62,7 +62,7 @@ export default function AddGlucoseLog() {
         <ScrollView>
             <Wrapper style={styles.container}>
                 <Text style={styles.header}>Tambah log obat</Text>
-            
+
                 <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4', 
+        backgroundColor: '#EAF3F4',
     },
     header: {
         fontSize: 24,

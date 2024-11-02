@@ -5,6 +5,8 @@ import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
+import CustomTimePicker from '../../CustomTimePicker'
+import CustomQuantityPicker from '../../CustomQuantityPicker'
 import { Colors } from '@/constants/Colors'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import CustomButton from '@/components/CustomButton'
@@ -14,19 +16,20 @@ import { number, object, string } from 'yup'
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
-import FoodLogForm from './FoodLogForm'
+import FoodLogForm from '../FoodLogForm'
 
 const storeFoodLogSchema = object({
 
 })
 
-export default function FoodLogDetailPage() {
+export default function Detail() {
     const { id } = useLocalSearchParams()
+    const { getData } = useAsyncStorage()
 
-    const { getFoodLogDetail, updateFoodLog, deleteFoodLog } = useFoodLog()
+    const { getMasterFoodDetail } = useMasterFood()
+    const { storeFoodLog } = useFoodLog()
 
-    const emptyFormValue = {
-        id: Number(id),
+    const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
         calories: 0,
         carbohydrate: 0,
         date: '',
@@ -37,20 +40,16 @@ export default function FoodLogDetailPage() {
         serving_size: '',
         time: '',
         note: '',
-        type: '',
-    }
-    const [formValue, setFormValue] = useState<UpdateFoodLogReq>(emptyFormValue)
+        type: 'auto',
+    })
 
     const [getLoading, setGetLoading] = useState(false)
 
-    const handleGetFoodLogDetail = async (id: number) => {
+    const handleGetMasterFoodDetail = async (id: string) => {
         try {
-            const res = await getFoodLogDetail(setGetLoading, id)
-            const data: GetFoodLogResponse = res.data
-            setFormValue({
-                ...formValue,
-                ...data,
-            })
+            const res = await getMasterFoodDetail(setGetLoading, id)
+            const data: GetMasterFoodDetailResponse = res.data
+            return res.data
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -70,23 +69,10 @@ export default function FoodLogDetailPage() {
         }
     }
 
-    const handleUpdateFoodLog = async (payload: UpdateFoodLogReq) => {
+    const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
         try {
-            const formData = new FormData()
-            formData.append('payload', JSON.stringify(payload))
-            if (payload.img) {
-                const fileResponse = await fetch(payload.img);
-                const fileBlob = await fileResponse.blob();
-
-                formData.append('food_image', {
-                    uri: payload.img,
-                    name: 'filename.jpeg',
-                    type: fileBlob.type || 'image/jpeg',
-                } as any);
-            }
-
-            console.log("payload", formData)
-            const res = await updateFoodLog(setGetLoading, Number(id), formData)
+            console.log("payload", payload)
+            const res = await storeFoodLog(setGetLoading, payload)
             router.navigate('/(notes)/food-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -106,30 +92,24 @@ export default function FoodLogDetailPage() {
         }
     }
 
-    const handleDeleteFoodLog = async (id: number) => {
-        try {
-            const res = await deleteFoodLog(setGetLoading, id)
-            router.navigate('/(notes)/food-logs')
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                const status = err.response?.status;
-
-                if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
-                } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
-                } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
-                }
-            } else {
-                console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
-            }
-        }
+    const handlePopulateFormValue = async () => {
+        const date = await getData('foodLogDate')
+        const food = await handleGetMasterFoodDetail(String(id))
+        setFormValue({
+            ...formValue,
+            calories: food.calories,
+            carbohydrate: food.carbohydrate,
+            fat: food.fat,
+            protein: food.protein,
+            food_name: food.food_name,
+            date: date ?? '',
+            serving_qty: food.serving_qty,
+            serving_size: food.serving_size,
+        })
     }
 
     useEffect(() => {
-        handleGetFoodLogDetail(Number(id))
+        handlePopulateFormValue()
     }, [])
 
     return (
@@ -137,25 +117,15 @@ export default function FoodLogDetailPage() {
             formValue={formValue}
         >
             {({ values, handleSubmit }) => (
-                <>
-                    <CustomButton
-                        title='Simpan catatan'
-                        size='md'
-                        disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                        onPress={() => {
-                            handleSubmit()
-                            handleUpdateFoodLog(values as UpdateFoodLogReq)
-                        }}
-                    />
-
-                    <CustomButton
-                        title='Hapus log'
-                        size='md'
-                        onPress={() => {
-                            handleDeleteFoodLog(Number(id))
-                        }}
-                    />
-                </>
+                <CustomButton
+                    title='Simpan catatan'
+                    size='md'
+                    onPress={() => {
+                        handleSubmit()
+                        handleStoreFoodLog(values)
+                    }}
+                    style={{ marginTop: 20 }}
+                />
             )}
         </FoodLogForm>
     )

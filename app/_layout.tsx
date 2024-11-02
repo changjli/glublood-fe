@@ -39,6 +39,7 @@ export default function RootLayout() {
                         }}>
                         <Stack.Screen name='(tabs)' />
                         <Stack.Screen name='(auth)' />
+                        <Stack.Screen name='food-logs' />
                     </Stack>
                 </SafeAreaView>
             </ThemeProvider>

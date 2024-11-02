@@ -13,11 +13,11 @@ import { Formik } from 'formik'
 import { number, object, string } from 'yup'
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
-import CustomTimePicker from '../CustomTimePicker'
-import CustomQuantityPicker from '../CustomQuantityPicker'
 import Stepper from './Stepper'
 import Wrapper from '@/components/Layout/Wrapper'
 import CustomImagePicker from '@/components/CustomImagePicker'
+import CustomTimePicker from '@/components/CustomTimePicker'
+import CustomQuantityPicker from '@/components/CustomQuantityPicker'
 
 interface FoodLogFormRenderProps {
     values: StoreFoodLogRequest | UpdateFoodLogReq

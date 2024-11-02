@@ -1,16 +1,16 @@
 import { View, Text, Alert, ScrollView, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
 import CustomText from '@/components/CustomText'
 import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog'
 import GlucoseLogForm from './GlucoseLogForm'
+import Wrapper from '@/components/Layout/Wrapper'
 
 export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams()
-    const { getGlucoseLogDetail, updateGlucoseLog, deleteGlucoseLog} = useGlucoseLog()
+    const { getGlucoseLogDetail, updateGlucoseLog, deleteGlucoseLog } = useGlucoseLog()
 
     const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: '',
@@ -93,7 +93,7 @@ export default function GlucoseLogDetailPage() {
 
     return (
         <ScrollView>
-            <Wrapper style={ styles.container }>
+            <Wrapper style={styles.container}>
                 <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
                 <GlucoseLogForm
                     formValue={formValue}
@@ -133,6 +133,6 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4', 
+        backgroundColor: '#EAF3F4',
     },
 });
