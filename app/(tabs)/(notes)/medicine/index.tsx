@@ -8,7 +8,7 @@ import MedicineLogList from './MedicineLogList';
 import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
-import formatDatetoString from '@/utils/formatDatetoString';
+import { formatDatetoString } from '@/utils/formatDatetoString';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 
 export default function Medicine() {
@@ -64,7 +64,7 @@ export default function Medicine() {
 
   return (
     <ScrollView style={{ height: '100%' }}>
-      <DynamicTextComponent text="Obat" />
+      <DynamicTextComponent img="" text="Obat" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
