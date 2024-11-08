@@ -2,12 +2,12 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } fr
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import CustomCalendar from '../CustomCalendar';
-import DynamicTextComponent from '../../../../components/TrackingBackground';
+import DynamicTextComponent from '@/components/TrackingBackground';
 import { Link, router } from 'expo-router';
 import useGlucose from '@/hooks/api/logs/glucose/useGlucoseLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
-import formatDatetoString from '@/utils/formatDatetoString';
+import { formatDatetoString } from '@/utils/formatDatetoString';
 import GlucoseLogList from './GlucoseLogList';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 
@@ -64,7 +64,7 @@ export default function Glucose() {
 
   return (
     <ScrollView style={{ height: '100%' }}>
-      <DynamicTextComponent text="Gula Darah" />
+      <DynamicTextComponent img="" text="Gula Darah" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>

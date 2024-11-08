@@ -1,6 +1,6 @@
 import { View, Text, Alert, ScrollView, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Wrapper from '@/components/Layout'
+import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'

@@ -15,7 +15,7 @@ export default function index() {
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/food-logs')}>
                     <Text>Tracking nutrisi</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/medicine')}>
+                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/glucose-logs')}>
                     <Text>Tracking gula darah</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/exercise-logs')}>

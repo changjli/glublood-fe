@@ -39,7 +39,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
             enableReinitialize
         >
             {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <View>
+                <ScrollView>
                     <View style={{ marginBottom: 20 }}>
                         <CustomTextInput
                             label='Nama Obat'

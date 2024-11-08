@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, FlatList, 
 import * as Yup from 'yup';
 import CustomQuantityPicker from '../CustomQuantityPicker';
 import CustomButton from '@/components/CustomButton';
-import Wrapper from '@/components/Layout';
+import Wrapper from '@/components/Layout/Wrapper';
 import axios from 'axios'
 import { router } from 'expo-router'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
