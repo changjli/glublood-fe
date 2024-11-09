@@ -18,6 +18,9 @@ export default function index() {
             <TouchableOpacity onPress={() => router.navigate('/(statistic)/exercise-logs')}>
                 <Text>Statistik olahraga</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.navigate('/(statistic)/glucose-logs')}>
+                <Text>Statistik glukosa</Text>
+            </TouchableOpacity>
         </View>
     )
 }

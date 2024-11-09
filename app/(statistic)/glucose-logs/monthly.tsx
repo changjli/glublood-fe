@@ -79,7 +79,8 @@ export default function MonthlyGlucoseLogStatisticPage() {
                 <CustomBarChart
                     data={glucoseLogReport}
                     x='week_range'
-                    y='avg_calories'
+                    y='avg_glucose_rate'
+                    average={averageGlucoseRate}
                     renderLabel={(value, index) => {
                         const dateRange = value.split('~')
 
@@ -95,7 +96,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}</CustomText>
+                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{`Minggu ${resolveNumberToString(index)}`}</CustomText>
                         </View>
                     </View>

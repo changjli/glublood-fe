@@ -74,14 +74,17 @@ type GetFoodByBarcodeRes = {
 type GetFoodLogReportByDateRes = {
     date: string
     avg_calories: number
+    log_count: number
 }
 
 type GetFoodLogReportByMonthRes = {
     week_range: string
     avg_calories: number
+    log_count: number
 }
 
 type GetFoodLogReportByYearhRes = {
     month: string
     avg_calories: number
+    log_count: number
 }

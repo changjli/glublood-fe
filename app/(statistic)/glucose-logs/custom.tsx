@@ -84,7 +84,8 @@ export default function CustomGlucoseLogStatisticPage() {
                 <CustomBarChart
                     data={glucoseLogReport}
                     x='date'
-                    y='avg_calories'
+                    y='avg_glucose_rate'
+                    average={averageGlucoseRate}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
                 />) : (
                 <Wrapper>
@@ -105,7 +106,7 @@ export default function CustomGlucoseLogStatisticPage() {
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}</CustomText>
+                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateIntl(glucoseLog.date)}</CustomText>
                         </View>
                     </View>

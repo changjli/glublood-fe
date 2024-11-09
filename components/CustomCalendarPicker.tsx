@@ -26,7 +26,7 @@ export default function CustomCalendarPicker({ value, setValue, enableRangeInput
                 prefix={(
                     <Ionicons name='calendar' size={FontSize.lg} />
                 )}
-                value={enableRangeInput ? `${value[0] ?? 'YYYY-MM-dd'} ~ ${value[1] ?? 'YYYY-MM-dd'}` : value}
+                value={enableRangeInput ? `${value[0] ?? 'YYYY-MM-dd'} ~ ${value[1] ?? 'YYYY-MM-dd'}` : value == '' ? 'YYYY-MM-dd' : value}
                 onPress={() => setModalVisible(true)}
             />
             <CustomModal

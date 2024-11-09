@@ -85,6 +85,7 @@ export default function CustomFoodLogStatisticPage() {
                     data={foodLogReport}
                     x='date'
                     y='avg_calories'
+                    average={averageCalories}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
                 />) : (
                 <Wrapper>
@@ -105,7 +106,7 @@ export default function CustomFoodLogStatisticPage() {
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: 3x</CustomText>
+                            <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateIntl(foodLog.date)}</CustomText>
                         </View>
                     </View>

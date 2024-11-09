@@ -1,16 +1,16 @@
 import { View, Text, ScrollView } from 'react-native'
 import React from 'react'
 import SegmentedControl from '@/components/SegmentedControl'
-import CustomFoodLogStatisticPage from './custom'
-import MonthlyFoodLogStatisticPage from './monthly'
-import YearlyFoodLogStatisticPage from './yearly'
-import WeeklyFoodLogStatisticPage from './weekly'
+import WeeklyGlucoseLogStatisticPage from './weekly'
+import MonthlyGlucoseLogStatisticPage from './monthly'
+import YearlyGlucoseLogStatisticPage from './yearly'
+import CustomGlucoseLogStatisticPage from './custom'
 
 const data = [
-    { title: 'Mingguan', page: WeeklyFoodLogStatisticPage },
-    { title: 'Bulanan', page: MonthlyFoodLogStatisticPage },
-    { title: 'Tahunan', page: YearlyFoodLogStatisticPage },
-    { title: 'Custom', page: CustomFoodLogStatisticPage },
+    { title: 'Mingguan', page: WeeklyGlucoseLogStatisticPage },
+    { title: 'Bulanan', page: MonthlyGlucoseLogStatisticPage },
+    { title: 'Tahunan', page: YearlyGlucoseLogStatisticPage },
+    { title: 'Custom', page: CustomGlucoseLogStatisticPage },
 ]
 
 export default function FoodLogStatisticPage() {

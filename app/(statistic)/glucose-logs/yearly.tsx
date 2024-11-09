@@ -82,7 +82,8 @@ export default function YearlyGlucoseLogStatisticPage() {
                 <CustomBarChart
                     data={glucoseLogReport}
                     x='month'
-                    y='avg_calories'
+                    y='avg_glucose_rate'
+                    average={averageGlucoseRate}
                     renderLabel={(value, index) => [resolveMonthAbbreviation(index as number)]}
                 />
             }
@@ -94,7 +95,7 @@ export default function YearlyGlucoseLogStatisticPage() {
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}</CustomText>
+                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{resolveMonthAbbreviation(index)}</CustomText>
                         </View>
                     </View>

@@ -83,6 +83,7 @@ export default function YearlyFoodLogStatisticPage() {
                     data={foodLogReport}
                     x='month'
                     y='avg_calories'
+                    average={averageCalories}
                     renderLabel={(value, index) => [resolveMonthAbbreviation(index as number)]}
                 />
             }
@@ -94,7 +95,7 @@ export default function YearlyFoodLogStatisticPage() {
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: 3x</CustomText>
+                            <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
                             <CustomText size='sm'>{resolveMonthAbbreviation(index)}</CustomText>
                         </View>
                     </View>

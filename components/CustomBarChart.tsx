@@ -8,15 +8,13 @@ interface CustomBarChartProps {
     data: any,
     x: string,
     y: string,
+    average: number,
     renderLabel: (value: string, index?: number) => string[]
 }
 
-const CustomBarChart = ({ data, x, y, renderLabel }: CustomBarChartProps) => {
+const CustomBarChart = ({ data, x, y, average, renderLabel }: CustomBarChartProps) => {
 
     const { width } = Dimensions.get('window')
-
-    const total = data.reduce((sum, item) => sum + item.avg_calories, 0);
-    const average = total / data.length;
 
     const chartWidth = data.length * 30 + 200
 
