@@ -3,12 +3,12 @@ import {
     View,
     Text,
     ImageBackground,
-    TextProps,
     ImageBackgroundProps,
     StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
-import { cssInterop } from 'nativewind';
-import { tv } from 'tailwind-variants';
+import { useNavigation } from 'expo-router';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 export type DynamicTextComponentProps = ImageBackgroundProps & {
     text: string
@@ -20,42 +20,39 @@ export default function DynamicTextComponent({
     img,
     ...rest
 }: DynamicTextComponentProps) {
+    const navigation = useNavigation()
+
     return (
         <ImageBackground
-            source={require('@/assets/images/top-bg.png')} // path to your image
+            source={require('@/assets/images/backgrounds/tracking-nutrisi.png')} // path to your image
             style={styles.imgBackground}
             {...rest}
         >
             <View style={styles.container}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name='arrow-back' style={styles.iconStyle} />
+                </TouchableOpacity>
                 <Text style={styles.textStyle}>Tracking</Text>
-                <Text style={[
-                    styles.textStyle,
-                    { marginTop: -15 },
-                ]}>
-                    {text}
-                </Text>
+                <Text style={[styles.textStyle, { marginTop: -15 },]}>{text}</Text>
             </View>
         </ImageBackground>
     );
 }
 
-export const StyledDynamicTextComponent = cssInterop(DynamicTextComponent, {
-    style: true,
-    textStyle: true,
-});
-
 const styles = StyleSheet.create({
+    imgBackground: {
+        width: '100%',
+        height: 260,
+    },
     container: {
-        marginTop: 55,
+        marginTop: 50,
         marginLeft: 20,
         display: 'flex',
         flexDirection: 'column'
     },
-    imgBackground: {
-        width: '100%',
-        height: 260,
-        display: 'flex',
-        flexDirection: 'row',
+    iconStyle: {
+        color: 'white',
+        fontSize: 24,
     },
     textStyle: {
         color: 'white',

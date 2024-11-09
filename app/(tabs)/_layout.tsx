@@ -21,6 +21,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
+                tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)',
                 tabBarActiveTintColor: 'white',
                 tabBarStyle: {
                     height: 76,

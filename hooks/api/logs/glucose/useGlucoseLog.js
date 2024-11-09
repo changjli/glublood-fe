@@ -78,11 +78,67 @@ export default function useGlucoseLog() {
         return res
     }
 
+    const getGlucoseLogReportByDate = async (setLoading, startDate, endDate) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/date`, {
+            start_date: startDate,
+            end_date: endDate,
+        })
+            .then(res => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByDate]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByDate]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getGlucoseLogReportByMonth = async (setLoading, month, year) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/month`, {
+            month,
+            year,
+        })
+            .then(res => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByMonth]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByMonth]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getGlucoseLogReportByYear = async (setLoading, year) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/year`, {
+            year,
+        })
+            .then(res => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByYear]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useGlucoseLog][getGlucoseLogReportByYear]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getGlucoseLogByDate,
         storeGlucoseLog,
         getGlucoseLogDetail,
         updateGlucoseLog,
-        deleteGlucoseLog
+        deleteGlucoseLog,
+        getGlucoseLogReportByDate,
+        getGlucoseLogReportByMonth,
+        getGlucoseLogReportByYear,
     }
 }

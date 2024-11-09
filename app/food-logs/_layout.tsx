@@ -6,7 +6,10 @@ import { Colors } from '@/constants/Colors'
 export default function _layout() {
     return (
         <Stack>
-            <Stack.Screen name='index' options={{ headerShown: false }}></Stack.Screen>
+            <Stack.Screen name='index' options={{
+                headerShown: false,
+            }}>
+            </Stack.Screen>
             <Stack.Screen name='search' options={{
                 headerTitle: '',
                 headerStyle: {

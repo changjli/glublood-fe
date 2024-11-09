@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } fr
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import CustomCalendar from '../CustomCalendar';
-import DynamicTextComponent from '../../../../components/TrackingBackground';
+import DynamicTextComponent from '../../../../components/DynamicText';
 import { Link, router } from 'expo-router';
 import useGlucose from '@/hooks/api/logs/glucose/useGlucoseLog';
 import axios from 'axios'

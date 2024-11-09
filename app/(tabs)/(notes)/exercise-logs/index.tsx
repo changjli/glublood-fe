@@ -14,7 +14,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
 import ExerciseLogList from './ExerciseLogList';
-import DynamicTextComponent from '@/components/TrackingBackground';
+import DynamicTextComponent from '@/components/DynamicText';
 import Wrapper from '@/components/Layout/Wrapper'
 import { formatDatetoString } from '@/utils/formatDatetoString';
 

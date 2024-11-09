@@ -30,7 +30,7 @@ export default function FoodLogList({ data }: FoodLogListProps) {
                     )}
                 </View>
 
-                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/(notes)/food-logs/${item.id}`)}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/food-logs/${item.id}`)}>
                     <View>
                         <Text style={styles.cardHeaderText}>{item.food_name}</Text>
                     </View>
@@ -53,20 +53,18 @@ export default function FoodLogList({ data }: FoodLogListProps) {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        backgroundColor: '#FFF4E6', // Light background color
+        paddingVertical: 20,
     },
     itemContainer: {
         flexDirection: 'row',
         gap: 10,
     },
     timeSection: {
-        width: 80, // Fixed width for time section
+        width: '20%',
         alignItems: 'center',
     },
     timeText: {
         fontSize: 14,
-        color: '#333',
         marginBottom: 5,
         fontFamily: FontFamily.heavy,
     },
@@ -74,8 +72,8 @@ const styles = StyleSheet.create({
         flex: 1,
         width: 1,
         borderStyle: 'dashed',
-        borderColor: '#E85C32',
-        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        borderWidth: 1.5,
     },
     dot: {
         height: 10,

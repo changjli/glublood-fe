@@ -96,6 +96,59 @@ export default function useFoodLog() {
         return res
     }
 
+    const getFoodLogReportByDate = async (setLoading: (loading: any) => void, startDate: string, endDate: string) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/date`, {
+            start_date: startDate,
+            end_date: endDate,
+        })
+            .then(res => {
+                console.log('[useFoodLog][getFoodLogReportByDate]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodLog][getFoodLogReportByDate]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getFoodLogReportByMonth = async (setLoading: (loading: any) => void, month: number, year: number) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/month`, {
+            month,
+            year,
+        })
+            .then(res => {
+                console.log('[useFoodLog][getFoodLogReportByMonth]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodLog][getFoodLogReportByMonth]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getFoodLogReportByYear = async (setLoading: (loading: any) => void, year: number) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/year`, {
+            year,
+        })
+            .then(res => {
+                console.log('[useFoodLog][getFoodLogReportByYear]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodLog][getFoodLogReportByYear]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getFoodLogByDate,
         storeFoodLog,
@@ -103,5 +156,8 @@ export default function useFoodLog() {
         updateFoodLog,
         deleteFoodLog,
         getFoodByBarcode,
+        getFoodLogReportByDate,
+        getFoodLogReportByMonth,
+        getFoodLogReportByYear,
     }
 }

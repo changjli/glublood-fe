@@ -40,7 +40,7 @@ type DayItemProps = {
 
 const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
     return (
-        <TouchableOpacity onPress={onPress} style={[styles.container, { backgroundColor }]}>
+        <TouchableOpacity onPress={onPress} style={[styles.itemContainer, { backgroundColor }]}>
             <Text style={[styles.dayText, { color }]}>
                 {dayInterpreter(item.day.getDay())}
             </Text>
@@ -54,10 +54,9 @@ const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
 type CustomCalendarProps = {
     value: Date,
     onChange: (param: Date) => void
-    style?: StyleProp<ViewStyle>
 }
 
-export default function CustomCalendar({ value, onChange, style }: CustomCalendarProps) {
+export default function CustomCalendar({ value, onChange }: CustomCalendarProps) {
 
     const flatListRef = useRef<FlatList<DayItem>>(null)
 
@@ -103,13 +102,15 @@ export default function CustomCalendar({ value, onChange, style }: CustomCalenda
     }, [selectedDay])
 
     return (
-        <View style={style}>
-            <CustomMonthYearPicker
-                month={selectedMonth}
-                year={selectedYear}
-                setMonth={setSelectedMonth}
-                setyear={setSelectedYear}
-            />
+        <View>
+            <View style={{ marginBottom: 20 }}>
+                <CustomMonthYearPicker
+                    month={selectedMonth}
+                    year={selectedYear}
+                    setMonth={setSelectedMonth}
+                    setyear={setSelectedYear}
+                />
+            </View>
             <FlatList
                 ref={flatListRef}
                 data={selectDays}
@@ -123,7 +124,7 @@ export default function CustomCalendar({ value, onChange, style }: CustomCalenda
 };
 
 const styles = StyleSheet.create({
-    container: {
+    itemContainer: {
         alignItems: 'center',
         margin: 2,
         paddingHorizontal: 10,

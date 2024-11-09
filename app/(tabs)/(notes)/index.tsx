@@ -12,7 +12,7 @@ export default function index() {
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/medicine')}>
                     <Text>Tracking obat</Text>
                 </TouchableOpacity>
-                <Link style={styles.itemContainer} href={'asdfasdf'}>
+                <Link style={styles.itemContainer} href={'/food-logs'}>
                     <Text>Tracking nutrisi</Text>
                 </Link>
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/medicine')}>

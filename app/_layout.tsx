@@ -33,10 +33,7 @@ export default function RootLayout() {
         <SessionProvider>
             <ThemeProvider>
                 <SafeAreaView style={{ flex: 1 }}>
-                    <Stack
-                        screenOptions={{
-                            headerShown: false,
-                        }}>
+                    <Stack screenOptions={{ headerShown: false }}>
                         <Stack.Screen name='(tabs)' />
                         <Stack.Screen name='(auth)' />
                         <Stack.Screen name='food-logs' />

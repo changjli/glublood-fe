@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
     },
     inputText: {
         color: Colors.light.primary,

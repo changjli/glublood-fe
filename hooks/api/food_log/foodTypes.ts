@@ -70,3 +70,18 @@ type GetFoodByBarcodeRes = {
         serving_qty: number
     }
 }
+
+type GetFoodLogReportByDateRes = {
+    date: string
+    avg_calories: number
+}
+
+type GetFoodLogReportByMonthRes = {
+    week_range: string
+    avg_calories: number
+}
+
+type GetFoodLogReportByYearhRes = {
+    month: string
+    avg_calories: number
+}
