@@ -21,6 +21,9 @@ export default function index() {
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/exercise-logs')}>
                     <Text>Tracking olahraga</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/reminder')}>
+                    <Text>Reminder</Text>
+                </TouchableOpacity>
             </View>
         </Wrapper>
     )
