@@ -32,3 +32,14 @@ export function formatDateToDay(dateStr: string) {
 export const formatDateIntl = (date: string) => {
     return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(date))
 }
+
+export function getFirstAndLastDayOfMonth(month: number, year: number) {
+    const firstDay = new Date(year, month - 1, 1);
+
+    const lastDay = new Date(year, month, 0);
+
+    return {
+        firstDay: firstDay,
+        lastDay: lastDay
+    };
+}
