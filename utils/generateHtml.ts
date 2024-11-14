@@ -1,6 +1,6 @@
 import { resolveTimingColor } from "./resolver";
 
-const generateHtml = (datas: any, options: { [key: string]: boolean }, userProfile: any) => {
+const generateHtml = (datas: any, options: { [key: string]: boolean }, userProfile: any, startDate: string, endDate: string) => {
     // Get average 
     let avg = { calories: '', burned_calories: '', glucose_rate: '' }
 
@@ -68,7 +68,7 @@ const generateHtml = (datas: any, options: { [key: string]: boolean }, userProfi
                         <td style="font-weight: bold;">${userProfile.gender}</td>
                         <td>Data Diambil</td>
                         <td>:</td>
-                        <td style="font-weight: bold;">01/06/2024 - 07/06/2024</td>
+                        <td style="font-weight: bold;">${startDate} - ${endDate}</td>
                         </tr>
                     </tbody>
                 </table>

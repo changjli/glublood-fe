@@ -21,9 +21,11 @@ interface SelectedOptions {
 }
 
 interface ReportFormProps {
+    startDate: string,
+    endDate: string,
 }
 
-export default function ReportForm({ }: ReportFormProps) {
+export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
 
     const { getLogReportByDate } = useReport()
     const { fetchUserProfile } = useProfile()
@@ -63,8 +65,8 @@ export default function ReportForm({ }: ReportFormProps) {
     const handleGetLogReportByDate = async () => {
         try {
             const payload: GetLogReportByDateReq = {
-                start_date: selectedDate[0],
-                end_date: selectedDate[1],
+                start_date: startDate,
+                end_date: endDate,
                 food_log: selectedOptions['food_log'] ?? false,
                 exercise_log: selectedOptions['exercise_log'] ?? false,
                 glucose_log: selectedOptions['glucose_log'] ?? false,
@@ -122,56 +124,51 @@ export default function ReportForm({ }: ReportFormProps) {
         const userProfile = await handleGetUserProfile()
 
         if (type == 'download') {
-            await downloadPdf(generateHtml(logReports, selectedOptions, userProfile))
+            await downloadPdf(generateHtml(logReports, selectedOptions, userProfile, startDate, endDate))
         } else {
-            await sharePdf(generateHtml(logReports, selectedOptions, userProfile))
+            await sharePdf(generateHtml(logReports, selectedOptions, userProfile, startDate, endDate))
         }
     }
 
     return (
-        <ScrollView style={{ backgroundColor: 'white' }}>
+        <>
+            <View style={{ marginVertical: 20 }}>
+                <CustomText weight='heavy'>Pilih Data yang Diinginkan</CustomText>
+                {options.map((option, idx) => (
+                    <View
+                        style={[
+                            styles.checkboxItemContainer,
+                            idx == 0 && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+                            idx == options.length - 1 && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 }
+                        ]}
+                        id={String(idx)}
+                    >
+                        <CustomText>{option.title}</CustomText>
+                        <Checkbox
+                            style={styles.checkbox}
+                            value={selectedOptions[option.label]}
+                            onValueChange={() => {
+                                const temp = { ...selectedOptions }
+                                temp[option.label] = !selectedOptions[option.label]
+                                setSelectedOptions(temp)
+                            }}
+                            color={selectedOptions[option.label] ? Colors.light.primary : undefined}
+                        />
+                    </View>
+                ))}
+            </View>
 
-            <Wrapper>
-
-                <View style={{ marginVertical: 20 }}>
-                    <CustomText weight='heavy'>Pilih Data yang Diinginkan</CustomText>
-                    {options.map((option, idx) => (
-                        <View
-                            style={[
-                                styles.checkboxItemContainer,
-                                idx == 0 && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-                                idx == options.length - 1 && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 }
-                            ]}
-                            id={String(idx)}
-                        >
-                            <CustomText>{option.title}</CustomText>
-                            <Checkbox
-                                style={styles.checkbox}
-                                value={selectedOptions[option.label]}
-                                onValueChange={() => {
-                                    const temp = { ...selectedOptions }
-                                    temp[option.label] = !selectedOptions[option.label]
-                                    setSelectedOptions(temp)
-                                }}
-                                color={selectedOptions[option.label] ? Colors.light.primary : undefined}
-                            />
-                        </View>
-                    ))}
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <CustomText weight='heavy'>Data Kesehatan</CustomText>
-                    <TouchableOpacity>
-                        <FontAwesome name='share' size={FontSize.md} color={Colors.light.primary} onPress={() => handleDownloadOrShare('share')} />
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity style={styles.downloadContainer} onPress={() => handleDownloadOrShare('download')}>
-                    <FontAwesome name='download' size={FontSize['2xl']} color={Colors.light.primary} />
-                    <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Data akan diunduh dalam format .pdf</CustomText>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <CustomText weight='heavy'>Data Kesehatan</CustomText>
+                <TouchableOpacity>
+                    <FontAwesome name='share' size={FontSize.md} color={Colors.light.primary} onPress={() => handleDownloadOrShare('share')} />
                 </TouchableOpacity>
-            </Wrapper>
-
-        </ScrollView>
+            </View>
+            <TouchableOpacity style={styles.downloadContainer} onPress={() => handleDownloadOrShare('download')}>
+                <FontAwesome name='download' size={FontSize['2xl']} color={Colors.light.primary} />
+                <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Data akan diunduh dalam format .pdf</CustomText>
+            </TouchableOpacity>
+        </>
     )
 }
 
