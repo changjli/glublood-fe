@@ -1,12 +1,10 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import CustomTimePicker from '../CustomTimePicker';
-import CustomCalendar from '../CustomCalendar';
 import { Colors } from '@/constants/Colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FontSize, FontFamily } from '@/constants/Typography';
 import DailyCaloriesInput from './DailyCaloriesInput';
-import { Link, router } from 'expo-router';
+import { Link, router, useNavigation } from 'expo-router';
 import useFoodLog from '@/hooks/api/food_log/useFoodLog';
 import axios, { AxiosError } from 'axios';
 import { string } from 'yup';
@@ -16,11 +14,13 @@ import ProgressBar from './ProgressBar';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Wrapper from '@/components/Layout/Wrapper'
-import Header from '../../Header';
-import DynamicTextComponent from '@/components/TrackingBackground';
+import DynamicTextComponent from '@/components/DynamicText';
 import { formatDatetoString } from '@/utils/formatDatetoString';
+import CustomCalendar from '@/components/CustomCalendar';
+import CustomText from '@/components/CustomText';
 
 export default function Foods() {
+
     const { getFoodLogByDate } = useFoodLog()
     const { getDailyCaloriesByDate } = useDailyCalories()
     const { storeData } = useAsyncStorage()
@@ -85,7 +85,7 @@ export default function Foods() {
 
     const handleNavigate = async () => {
         await storeData('foodLogDate', formatDatetoString(selectedDate))
-        router.navigate('/(notes)/food-logs/search')
+        router.navigate('/food-logs/search')
     }
 
     useEffect(() => {
@@ -97,14 +97,15 @@ export default function Foods() {
     }, [selectedDate, isFocused])
 
     return (
-        <ScrollView>
-            <DynamicTextComponent text="Obat" img='@/assets/images/top-bg.png' />
-            <Wrapper>
-                <CustomCalendar
-                    value={selectedDate}
-                    onChange={setSelectedDate}
-                    style={{ marginBottom: 10 }}
-                />
+        <ScrollView style={{ backgroundColor: 'white' }}>
+            <DynamicTextComponent text='Nutrisi' img='tes' />
+            <Wrapper style={{ backgroundColor: 'white', marginBottom: 20 }}>
+                <View style={{ marginTop: 10, marginBottom: 20 }}>
+                    <CustomCalendar
+                        value={selectedDate}
+                        onChange={setSelectedDate}
+                    />
+                </View>
                 <DailyCaloriesInput
                     selectedDate={selectedDate}
                     dailyCalories={dailyCalories}
@@ -123,8 +124,9 @@ export default function Foods() {
                         <FoodLogList data={foodLogs} />
                     </View>
                 ) : (
-                    <View style={{ flex: 1, width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
+                    <View style={styles.notFoundContainer}>
                         <Image source={require('@/assets/images/characters/not-found.png')} />
+                        <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
                     </View>
 
                 )}
@@ -137,11 +139,12 @@ const styles = StyleSheet.create({
     logContainer: {
         width: '100%',
         padding: 16,
-        backgroundColor: '#FFF8E1',
+        backgroundColor: 'white',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         alignItems: 'center',
         flex: 1,
+        elevation: 5,
     },
     logHeaderContainer: {
         width: '100%',
@@ -175,5 +178,14 @@ const styles = StyleSheet.create({
     foodLogBodyText: {
         fontSize: FontSize.sm,
         color: Colors.light.primary,
+    },
+    notFoundContainer: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        gap: 8,
     }
 })

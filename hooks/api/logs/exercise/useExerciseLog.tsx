@@ -76,11 +76,67 @@ export default function useExerciseLog() {
         return res
     }
 
+    const getExerciseLogReportByDate = async (setLoading: (loading: any) => void, startDate: string, endDate: string) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/date`, {
+            start_date: startDate,
+            end_date: endDate,
+        })
+            .then(res => {
+                console.log('[useExerciseLog][getExerciseLogReportByDate]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useExerciseLog][getExerciseLogReportByDate]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getExerciseLogReportByMonth = async (setLoading: (loading: any) => void, month: number, year: number) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/month`, {
+            month,
+            year,
+        })
+            .then(res => {
+                console.log('[useExerciseLog][getExerciseLogReportByMonth]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useExerciseLog][getExerciseLogReportByMonth]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getExerciseLogReportByYear = async (setLoading: (loading: any) => void, year: number) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/report/year`, {
+            year,
+        })
+            .then(res => {
+                console.log('[useExerciseLog][getExerciseLogReportByYear]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useExerciseLog][getExerciseLogReportByYear]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getExerciseLogByDate,
         storeExerciseLog,
         getExerciseLogDetail,
         updateExerciseLog,
         deleteExerciseLog,
+        getExerciseLogReportByDate,
+        getExerciseLogReportByMonth,
+        getExerciseLogReportByYear,
     }
 }
