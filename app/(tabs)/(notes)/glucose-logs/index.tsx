@@ -64,7 +64,7 @@ export default function Glucose() {
 
   return (
     <ScrollView style={{ height: '100%' }}>
-      <DynamicTextComponent text="Gula Darah" />
+      <DynamicTextComponent img="" text="Gula Darah" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
