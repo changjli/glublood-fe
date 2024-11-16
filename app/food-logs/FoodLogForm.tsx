@@ -13,11 +13,11 @@ import { Formik } from 'formik'
 import { number, object, string } from 'yup'
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
-import CustomTimePicker from '../CustomTimePicker'
-import CustomQuantityPicker from '../CustomQuantityPicker'
 import Stepper from './Stepper'
 import Wrapper from '@/components/Layout/Wrapper'
 import CustomImagePicker from '@/components/CustomImagePicker'
+import CustomTimePicker from '@/components/CustomTimePicker'
+import CustomQuantityPicker from '@/components/CustomQuantityPicker'
 
 interface FoodLogFormRenderProps {
     values: StoreFoodLogRequest | UpdateFoodLogReq
@@ -48,14 +48,14 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
         >
             {({ handleChange, setFieldValue, handleSubmit, values, errors }) => {
 
-                useEffect(() => {
-                    setTimeout(() => {
-                        setFieldValue('calories', values.calories * values.serving_qty)
-                        setFieldValue('protein', values.protein * values.serving_qty)
-                        setFieldValue('carbohydrate', values.carbohydrate * values.serving_qty)
-                        setFieldValue('fat', values.fat * values.serving_qty)
-                    }, 1000)
-                }, [values.serving_qty])
+                // useEffect(() => {
+                //     setTimeout(() => {
+                //         setFieldValue('calories', values.calories * values.serving_qty)
+                //         setFieldValue('protein', values.protein * values.serving_qty)
+                //         setFieldValue('carbohydrate', values.carbohydrate * values.serving_qty)
+                //         setFieldValue('fat', values.fat * values.serving_qty)
+                //     }, 1000)
+                // }, [values.serving_qty])
 
                 return (
                     <ScrollView style={styles.formContainer}>
@@ -63,7 +63,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                         <CustomImagePicker image={values.img ?? ''} onChange={v => setFieldValue('img', v)}>
                             <Image
                                 source={{
-                                    uri: values.img ?? 'https://placehold.jp/300x400.png'
+                                    uri: values.img ? process.env.EXPO_PUBLIC_API_URL + values.img : 'https://placehold.jp/300x400.png'
                                 }}
                                 style={{
                                     flex: 1,

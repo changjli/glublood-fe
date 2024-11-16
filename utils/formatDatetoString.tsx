@@ -13,3 +13,33 @@ export function getDuration(startTime: string, endTime: string) {
     const durationInMins = duration / (1000 * 60);
     return durationInMins;
 }
+
+export function formatDateStripToSlash(dateStr: string) {
+    const date = new Date(dateStr);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const formattedDate = `${month}/${day}`;
+    return formattedDate
+}
+
+export function formatDateToDay(dateStr: string) {
+    const date = new Date(dateStr);
+    const daysOfWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+    const dayName = daysOfWeek[date.getDay()];
+    return dayName
+}
+
+export const formatDateIntl = (date: string) => {
+    return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(date))
+}
+
+export function getFirstAndLastDayOfMonth(month: number, year: number) {
+    const firstDay = new Date(year, month - 1, 1);
+
+    const lastDay = new Date(year, month, 0);
+
+    return {
+        firstDay: firstDay,
+        lastDay: lastDay
+    };
+}

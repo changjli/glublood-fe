@@ -29,22 +29,37 @@ export default function Create() {
         fat: 0,
         food_name: '',
         protein: 0,
-        serving_qty: 0,
-        serving_size: '',
+        serving_qty: 1,
+        serving_size: 'porsi',
         time: '',
         note: '',
         type: 'manual',
+        img: undefined,
     })
 
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
+        const formData = new FormData()
+        formData.append('payload', JSON.stringify(payload))
+        if (payload.img) {
+            const fileResponse = await fetch(payload.img);
+            const fileBlob = await fileResponse.blob();
+
+            formData.append('food_image', {
+                uri: payload.img,
+                name: 'filename.jpeg',
+                type: fileBlob.type || 'image/jpeg',
+            } as any);
+        }
+
         try {
-            console.log("payload", payload)
-            const res = await storeFoodLog(setStoreLoading, payload)
+            console.log("payload", formData)
+            const res = await storeFoodLog(setStoreLoading, formData)
             router.navigate('/(notes)/food-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
+                console.log("error", err)
                 const status = err.response?.status;
 
                 if (status === 400) {

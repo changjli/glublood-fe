@@ -23,3 +23,21 @@ type UpdateExerciseLogReq = {
     end_time: string
     burned_calories: number
 }
+
+type GetExerciseLogReportByDateRes = {
+    date: string
+    avg_burned_calories: number
+    log_count: number
+}
+
+type GetExerciseLogReportByMonthRes = {
+    week_range: string
+    avg_burned_calories: number
+    log_count: number
+}
+
+type GetExerciseLogReportByYearhRes = {
+    month: string
+    avg_burned_calories: number
+    log_count: number
+}

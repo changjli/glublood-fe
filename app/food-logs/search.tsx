@@ -57,10 +57,13 @@ export default function Search() {
         index: number
     }) => {
         return (
-            <Link href={{
-                pathname: '/(notes)/food-logs/create/[id]',
-                params: { id: item.id }
-            }} style={styles.itemContainer}>
+            <Link
+                href={{
+                    pathname: '/food-logs/create/[id]',
+                    params: { id: item.id }
+                }}
+                style={styles.itemContainer}
+            >
                 <Text>{item.food_name}</Text>
             </Link>
         );
@@ -75,7 +78,7 @@ export default function Search() {
                     value={search}
                     onChangeText={setSearch}
                     postfix={(
-                        <Link href={`/(notes)/food-logs/create/barcode`}>
+                        <Link href={`/food-logs/create/barcode`}>
                             <FontAwesome name='barcode' size={FontSize.md} color={'white'} />
                         </Link>
                     )}
@@ -93,8 +96,13 @@ export default function Search() {
                     />
                 ) : (
                     <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <CustomText weight='heavy'>Atau</CustomText>
-                        <Link href={'/(notes)/food-logs/create'}>Masukkan manual</Link>
+                        <View style={styles.orContainer}>
+                            <View style={styles.hr} />
+                            <CustomText weight='heavy'>Atau</CustomText>
+                            <View style={styles.hr} />
+                        </View>
+
+                        <Link href={'/food-logs/create'}>Masukkan manual</Link>
                     </View>
                 )}
             </Wrapper>
@@ -113,5 +121,17 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderBottomWidth: 2,
         borderBottomColor: 'grey',
+    },
+    orContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    hr: {
+        borderBottomColor: 'black',
+        borderWidth: 2,
+        borderBottomWidth: 1,
+        width: 100,
     }
 })

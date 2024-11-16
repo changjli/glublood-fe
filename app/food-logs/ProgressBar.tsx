@@ -42,7 +42,7 @@ export default function ProgressBar({ data }: ProgressBarProps) {
 const styles = StyleSheet.create({
     progressContainer: {
         height: 40,
-        backgroundColor: 'grey',
+        backgroundColor: Colors.light.gray300,
         borderRadius: 100,
         overflow: 'hidden',
     },

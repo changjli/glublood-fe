@@ -12,10 +12,10 @@ export default function index() {
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/medicine')}>
                     <Text>Tracking obat</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/food-logs')}>
+                <Link style={styles.itemContainer} href={'/food-logs'}>
                     <Text>Tracking nutrisi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/glucose-logs')}>
+                </Link>
+                <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/medicine')}>
                     <Text>Tracking gula darah</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.itemContainer} onPress={() => router.navigate('/(notes)/exercise-logs')}>

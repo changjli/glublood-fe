@@ -241,6 +241,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     primary: '#DA6E35',
     secondary: '#F3B764',
+    ternary: '#FFF8E1',
     success: '#2CDB79',
     info: '#2e9cff',
     warning: '#ecd706',

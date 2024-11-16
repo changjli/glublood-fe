@@ -109,7 +109,7 @@ export default function DailyCaloriesInput({ selectedDate, dailyCalories, fetchD
                 ) : (
                     <View style={{ flexDirection: 'column', alignItems: 'center' }}>
                         <Image source={require('@/assets/images/characters/body-blood.png')} />
-                        <Text>Belum ada target kalori anda</Text>
+                        <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Belum ada target kalori anda</CustomText>
                     </View>
                 )}
             </View>
@@ -120,7 +120,7 @@ export default function DailyCaloriesInput({ selectedDate, dailyCalories, fetchD
 const styles = StyleSheet.create({
     dailyContainer: {
         width: '100%',
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Colors.light.primary,
         borderRadius: 4,
         paddingHorizontal: 8,

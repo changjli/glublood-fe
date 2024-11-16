@@ -72,8 +72,21 @@ export default function FoodLogDetailPage() {
 
     const handleUpdateFoodLog = async (payload: UpdateFoodLogReq) => {
         try {
-            console.log("payload", payload)
-            const res = await updateFoodLog(setGetLoading, payload)
+            const formData = new FormData()
+            formData.append('payload', JSON.stringify(payload))
+            if (payload.img) {
+                const fileResponse = await fetch(payload.img);
+                const fileBlob = await fileResponse.blob();
+
+                formData.append('food_image', {
+                    uri: payload.img,
+                    name: 'filename.jpeg',
+                    type: fileBlob.type || 'image/jpeg',
+                } as any);
+            }
+
+            console.log("payload", formData)
+            const res = await updateFoodLog(setGetLoading, Number(id), formData)
             router.navigate('/(notes)/food-logs')
         } catch (err) {
             if (axios.isAxiosError(err)) {
