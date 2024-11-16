@@ -54,13 +54,18 @@
     "react-native-screens": "3.31.1",
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-step-indicator": "^1.0.3",
+    "react-native-switch": "^1.5.1",
+    "react-native-switch-toggle": "^2.2.1",
     "react-native-ui-datepicker": "^2.0.3",
     "react-native-web": "~0.19.10",
     "react-native-wheel-picker-expo": "^0.5.4",
     "react-native-wheel-scrollview-picker": "^2.0.6",
     "tailwind-variants": "^0.2.1",
     "tailwindcss": "^3.4.4",
-    "yup": "^1.4.0"
+    "toggle-switch-react-native": "^3.3.0",
+    "yup": "^1.4.0",
+    "expo-notifications": "~0.28.19",
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
