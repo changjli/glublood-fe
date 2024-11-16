@@ -555,6 +555,7 @@ export default function index() {
                 <CustomButton title='download' onPress={handleDownload} />
                 <CustomButton title='share' onPress={handleShare} />
                 <CustomButton title='report' onPress={() => router.push('/report')} />
+                <CustomButton title='menu' onPress={() => router.push('/food-menus')} />
             </View>
         </>
     )
