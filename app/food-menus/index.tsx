@@ -9,6 +9,7 @@ import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
 import { Colors } from '@/constants/Colors'
 import CustomButton from '@/components/CustomButton'
+import { router } from 'expo-router'
 
 export default function FoodMenuPage() {
 
@@ -81,7 +82,7 @@ export default function FoodMenuPage() {
                                 source={require('@/assets/images/user-profile/dummy.png')}
                                 style={styles.foodItemImage}
                             />
-                            <CustomButton title='Lihat menu' size='sm' type='outline' style={{ paddingHorizontal: 10 }} />
+                            <CustomButton title='Lihat menu' size='sm' type='outline' style={{ paddingHorizontal: 10 }} onPress={() => router.push(`/food-menus/${foodMenu.id}`)} />
                         </View>
                     ))}
                 </View>

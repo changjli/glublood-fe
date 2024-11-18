@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps } from 'formik'
-import CustomTimePicker from '../CustomTimePicker'
 import * as Yup from 'yup';
-import CustomQuantityPicker from '../CustomQuantityPicker'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { FontFamily, FontSize } from '@/constants/Typography';
+import CustomTimePicker from '@/components/CustomTimePicker';
+import CustomQuantityPicker from '@/components/CustomQuantityPicker';
 
 interface MedicineLogFormRenderProps {
     values: StoreMedicineLogReq

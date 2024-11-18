@@ -1,34 +1,40 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Colors } from '@/constants/Colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontSize, FontFamily } from '@/constants/Typography';
 import { Link, router } from 'expo-router';
-import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
-import axios from 'axios'
-import { useIsFocused } from '@react-navigation/native';
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import useFoodLog from '@/hooks/api/food_log/useFoodLog';
+import axios, { AxiosError } from 'axios';
+import { string } from 'yup';
+import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
+import { useIsFocused } from '@react-navigation/native';
+import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
+import DynamicTextComponent from '@/components/DynamicText';
+import Wrapper from '@/components/Layout/Wrapper'
+import { formatDatetoString } from '@/utils/formatDatetoString';
+import ExerciseLogList from '@/components/ExerciseLogList';
 import CustomCalendar from '@/components/CustomCalendar';
-import MedicineLogList from '@/app/logs/medicine/MedicineLogList';
-import { FontFamily, FontSize } from '@/constants/Typography';
-import Wrapper from '@/components/Layout/Wrapper';
-import CustomText from '@/components/CustomText';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-export default function MedicineLogPage() {
-    const { getMedicineLogByDate } = useMedicine()
+export default function ExerciseLogPage() {
+    const { getExerciseLogByDate } = useExerciseLog()
+    const { getDailyCaloriesByDate } = useDailyCalories()
     const { storeData } = useAsyncStorage()
-    const [getMedicineLogLoading, setGetMedicineLogLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const [medicineLog, setMedicineLog] = useState<GetMedicineLogRes[]>([])
     const isFocused = useIsFocused()
 
-    const handleGetMedicineLog = async (date: string) => {
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+    const [exerciseLogs, setExerciseLogs] = useState<GetExerciseLogRes[]>([])
+
+    const [getExerciseLogLoading, setGetExerciseLogLoading] = useState(false)
+
+    const handleGetExerciseLog = async (date: string) => {
         try {
-            const res = await getMedicineLogByDate(setGetMedicineLogLoading, date)
-            setMedicineLog(res.data)
-            console.log("[index] -> Medicine Log by Date", res.data)
+            const res = await getExerciseLogByDate(setGetExerciseLogLoading, date)
+            const data: GetExerciseLogRes[] = res.data
+            setExerciseLogs(data)
         } catch (err) {
-            setMedicineLog([])
+            setExerciseLogs([])
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
 
@@ -47,53 +53,47 @@ export default function MedicineLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('medicineLogDate', formatDatetoString(selectedDate))
-        router.navigate('/logs/medicine/AddMedicineLog')
+        await storeData('foodLogDate', formatDatetoString(selectedDate))
+        router.navigate('/logs/exercise/create')
     }
 
     useEffect(() => {
         if (isFocused) {
-            handleGetMedicineLog(formatDatetoString(selectedDate))
+            console.log("selected date", selectedDate)
+            handleGetExerciseLog(formatDatetoString(selectedDate))
         }
     }, [selectedDate, isFocused])
-
-    useEffect(() => {
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const year = selectedDate.getFullYear();
-
-        const formattedDate = `${day}/${month}/${year}`;
-    }, [selectedDate])
 
     return (
         <>
             <Wrapper style={{ backgroundColor: 'white', marginBottom: 20 }}>
-                <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
+                <CustomCalendar
+                    value={selectedDate}
+                    onChange={setSelectedDate}
+                />
             </Wrapper>
-
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
-                    <Text style={styles.logHeaderText}>Detail Log Obat</Text>
-                    <TouchableOpacity style={styles.headerAddButton} onPress={handleNavigate}>
+                    <Text style={styles.logHeaderText}>Detail log olahraga</Text>
+                    <TouchableOpacity onPress={handleNavigate} style={styles.logHeaderIcon}>
                         <FontAwesome name='plus' size={16} color="white" />
                     </TouchableOpacity>
                 </View>
-                {medicineLog.length > 0 ? (
+                {exerciseLogs.length > 0 ? (
                     <View style={{ width: '100%' }}>
-                        <MedicineLogList
-                            data={medicineLog}
+                        <ExerciseLogList
+                            data={exerciseLogs}
                         />
                     </View>
                 ) : (
                     <View style={styles.notFoundContainer}>
                         <Image source={require('@/assets/images/characters/not-found.png')} />
-                        <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
                     </View>
-                )}
 
+                )}
             </View>
         </>
-    );
+    )
 }
 
 const styles = StyleSheet.create({
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         fontSize: FontSize.lg,
         fontFamily: FontFamily.heavy,
     },
-    headerAddButton: {
+    logHeaderIcon: {
         padding: 8,
         width: 30,
         height: 30,
@@ -126,6 +126,22 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    foodLogContainer: {
+        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        borderRadius: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    foodLogHeaderText: {
+        fontSize: FontSize.md,
+        color: Colors.light.primary,
+        fontFamily: FontFamily.heavy,
+    },
+    foodLogBodyText: {
+        fontSize: FontSize.sm,
+        color: Colors.light.primary,
     },
     notFoundContainer: {
         flex: 1,

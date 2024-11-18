@@ -5,11 +5,13 @@ import { FontFamily, FontSize } from '@/constants/Typography'
 export type CustomTextProps = TextProps & {
     size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
     weight?: 'light' | 'medium' | 'heavy'
+    space?: boolean
 }
 
 export default function CustomText({
     size,
     weight,
+    space = true,
     children,
     style,
     ...rest
@@ -61,6 +63,7 @@ export default function CustomText({
             style={[{
                 fontSize,
                 fontFamily,
+                lineHeight: space ? undefined : fontSize
             }, style]}
             {...rest}
         >

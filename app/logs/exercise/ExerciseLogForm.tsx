@@ -2,10 +2,10 @@ import { View, Text } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps, useFormikContext } from 'formik'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
-import CustomTimePicker from '../CustomTimePicker'
 import ExercisePicker from './ExercisePicker'
 import CustomButton from '@/components/CustomButton'
 import { getDuration } from '@/utils/formatDatetoString'
+import CustomTimePicker from '@/components/CustomTimePicker'
 
 interface ExerciseLogFormRenderProps {
     values: StoreExerciseLogReq

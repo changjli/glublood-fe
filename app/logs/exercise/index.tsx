@@ -1,7 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import CustomTimePicker from '../CustomTimePicker';
-import CustomCalendar from '../CustomCalendar';
 import { Colors } from '@/constants/Colors';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { FontSize, FontFamily } from '@/constants/Typography';
@@ -17,6 +15,7 @@ import ExerciseLogList from './ExerciseLogList';
 import DynamicTextComponent from '@/components/DynamicText';
 import Wrapper from '@/components/Layout/Wrapper'
 import { formatDatetoString } from '@/utils/formatDatetoString';
+import CustomCalendar from '@/components/CustomCalendar';
 
 export default function ExerciseLogPage() {
     const { getExerciseLogByDate } = useExerciseLog()
@@ -67,7 +66,6 @@ export default function ExerciseLogPage() {
 
     return (
         <ScrollView>
-            <DynamicTextComponent text="Obat" img='@/assets/images/top-bg.png' />
             <Wrapper>
                 <CustomCalendar
                     value={selectedDate}

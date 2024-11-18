@@ -1,31 +1,30 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import CustomCalendar from '../CustomCalendar';
-import DynamicTextComponent from '../../../../components/DynamicText';
 import { Link, router } from 'expo-router';
-import useGlucose from '@/hooks/api/logs/glucose/useGlucoseLog';
+import MedicineLogList from './MedicineLogList';
+import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
-import GlucoseLogList from './GlucoseLogList';
-import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { formatDatetoString } from '@/utils/formatDatetoString';
+import useAsyncStorage from '@/hooks/useAsyncStorage';
+import CustomCalendar from '@/components/CustomCalendar';
 
-export default function Glucose() {
-  const { getGlucoseLogByDate } = useGlucose()
+export default function Medicine() {
+  const { getMedicineLogByDate } = useMedicine()
   const { storeData } = useAsyncStorage()
-  const [glucoseLogLoading, setGlucoseLogLoading] = useState(false)
-  const [glucoseLog, setGlucoseLog] = useState<GetGlucoseLogRes[]>([])
+  const [getMedicineLogLoading, setGetMedicineLogLoading] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [medicineLog, setMedicineLog] = useState<GetMedicineLogRes[]>([])
   const isFocused = useIsFocused()
 
-  const handleGetGlucoseLog = async (date: string) => {
+  const handleGetMedicineLog = async (date: string) => {
     try {
-      const res = await getGlucoseLogByDate(setGlucoseLogLoading, date)
-      setGlucoseLog(res.data)
-      console.log("[index] -> Glucose Log by Date", res.data)
+      const res = await getMedicineLogByDate(setGetMedicineLogLoading, date)
+      setMedicineLog(res.data)
+      console.log("[index] -> Medicine Log by Date", res.data)
     } catch (err) {
-      setGlucoseLog([])
+      setMedicineLog([])
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
 
@@ -44,13 +43,13 @@ export default function Glucose() {
   }
 
   const handleNavigate = async () => {
-    await storeData('glucoseLogDate', formatDatetoString(selectedDate))
-    router.navigate('/(notes)/glucose-logs/AddGlucoseLog')
+    await storeData('medicineLogDate', formatDatetoString(selectedDate))
+    router.navigate('/(notes)/medicine/AddMedicineLog')
   }
 
   useEffect(() => {
     if (isFocused) {
-      handleGetGlucoseLog(formatDatetoString(selectedDate))
+      handleGetMedicineLog(formatDatetoString(selectedDate))
     }
   }, [selectedDate, isFocused])
 
@@ -64,18 +63,17 @@ export default function Glucose() {
 
   return (
     <ScrollView style={{ height: '100%' }}>
-      <DynamicTextComponent img="" text="Gula Darah" />
       <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
       <View style={styles.logContainer}>
         <View style={styles.logHeaderContainer}>
-          <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold' }}>Detail Log Gula Darah</Text>
+          <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold' }}>Detail Log Obat</Text>
           <TouchableOpacity style={styles.headerAddButton} onPress={handleNavigate}>
             <FontAwesome name='plus' size={16} color="white" />
           </TouchableOpacity>
         </View>
         <View style={{ width: '100%' }}>
-          <GlucoseLogList
-            data={glucoseLog}
+          <MedicineLogList
+            data={medicineLog}
           />
         </View>
       </View>

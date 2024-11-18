@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps } from 'formik'
-import CustomTimePicker from '../CustomTimePicker'
 import * as Yup from 'yup';
-import CustomQuantityPicker from '../CustomQuantityPicker'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import CustomTimePicker from '@/components/CustomTimePicker';
+import CustomQuantityPicker from '@/components/CustomQuantityPicker';
 
 interface GlucoseLogFormRenderProps {
     values: StoreGlucoseLogReq
@@ -44,7 +44,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                             label='Gula Darahmu'
                             placeholder='Contoh: 98'
                             postfix={(
-                                <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35'}}>mg/dL</Text>
+                                <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
                             )}
                             value={values.glucose_rate ? String(values.glucose_rate) : ''}
                             onChangeText={handleChange('glucose_rate')}
@@ -58,7 +58,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                         />
                     </View>
 
-                    <View style={{ marginBottom:20 }}>
+                    <View style={{ marginBottom: 20 }}>
                         <Text style={styles.labelText}>Kondisi Pengambilan</Text>
                         <CustomQuantityPicker
                             widthSize={200}
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: '#EAF3F4', 
+        backgroundColor: '#EAF3F4',
     },
     header: {
         fontSize: 24,
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dosisItem: {
-        height: 40, 
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     },
     catatanInput: {
         height: 100,
-        textAlignVertical: 'top', 
+        textAlignVertical: 'top',
     },
     saveButton: {
         padding: 15,
