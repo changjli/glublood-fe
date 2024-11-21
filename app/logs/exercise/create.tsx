@@ -8,6 +8,7 @@ import { router } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
+import CustomHeader from '@/components/CustomHeader'
 
 export default function CreateExerciseLogPage() {
     const { storeExerciseLog } = useExerciseLog()
@@ -26,7 +27,7 @@ export default function CreateExerciseLogPage() {
         try {
             console.log("payload", payload)
             const res = await storeExerciseLog(setStoreLoading, payload)
-            router.navigate('/(notes)/exercise-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -58,19 +59,25 @@ export default function CreateExerciseLogPage() {
     }, [])
 
     return (
-        <Wrapper>
-            <CustomText size='xl' weight='heavy'>Tambah log olahraga</CustomText>
-            <ExerciseLogForm
-                formValue={formValue}
-                setFormValue={setFormValue}
-            >
-                {({ values, handleSubmit }) => (
-                    <CustomButton title='Simpan catatan' size='md' onPress={() => {
-                        handleSubmit()
-                        handleStoreExerciseLog(values)
-                    }} />
-                )}
-            </ExerciseLogForm>
-        </Wrapper>
+        <>
+            <CustomHeader title='Tambah log olahraga' />
+            <Wrapper style={{ backgroundColor: 'white', marginBottom: 16 }}>
+                <ExerciseLogForm
+                    formValue={formValue}
+                    setFormValue={setFormValue}
+                >
+                    {({ values, handleSubmit }) => (
+                        <CustomButton
+                            title='Simpan catatan'
+                            size='md'
+                            onPress={() => {
+                                handleSubmit()
+                                handleStoreExerciseLog(values)
+                            }}
+                        />
+                    )}
+                </ExerciseLogForm>
+            </Wrapper>
+        </>
     )
 }

@@ -14,8 +14,8 @@ import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
 import DynamicTextComponent from '@/components/DynamicText';
 import Wrapper from '@/components/Layout/Wrapper'
 import { formatDatetoString } from '@/utils/formatDatetoString';
-import ExerciseLogList from '@/components/ExerciseLogList';
 import CustomCalendar from '@/components/CustomCalendar';
+import ExerciseLogList from '@/components/ExerciseLogList';
 
 export default function ExerciseLogPage() {
     const { getExerciseLogByDate } = useExerciseLog()
@@ -79,18 +79,12 @@ export default function ExerciseLogPage() {
                         <FontAwesome name='plus' size={16} color="white" />
                     </TouchableOpacity>
                 </View>
-                {exerciseLogs.length > 0 ? (
-                    <View style={{ width: '100%' }}>
-                        <ExerciseLogList
-                            data={exerciseLogs}
-                        />
-                    </View>
-                ) : (
-                    <View style={styles.notFoundContainer}>
-                        <Image source={require('@/assets/images/characters/not-found.png')} />
-                    </View>
-
-                )}
+                <View style={{ width: '100%' }}>
+                    <ExerciseLogList
+                        data={exerciseLogs}
+                        loading={getExerciseLogLoading}
+                    />
+                </View>
             </View>
         </>
     )

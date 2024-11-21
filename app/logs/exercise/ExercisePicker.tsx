@@ -8,6 +8,7 @@ import { Link } from 'expo-router';
 import CustomText from '@/components/CustomText';
 import useMasterExercise from '@/hooks/api/master/exercises/useMasterExercise';
 import axios from 'axios';
+import CustomModal from '@/components/CustomModal';
 
 interface ExercisePickerProps {
     value: string
@@ -82,38 +83,29 @@ export default function ExercisePicker({ value, onChange }: ExercisePickerProps)
                 onPress={() => setModalVisible(true)}
                 value={value}
             />
-            <Modal
-                visible={modalVisible}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setModalVisible(false)}
+            <CustomModal
+                isVisible={modalVisible}
+                toggleModal={() => setModalVisible(false)}
             >
-                <View style={styles.modalBackdrop}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalHeaderContainer}>
-                            <TouchableOpacity onPress={handleResetModal}>
-                                <Text style={{ color: 'red' }}>Batal</Text>
+                <View>
+                    <CustomTextInput
+                        value={searchKeyword}
+                        onChangeText={setSearchKeyword}
+                        postfix={searchKeyword == '' ? (
+                            <FontAwesome name='search' size={FontSize.md} />
+                        ) : (
+                            <TouchableOpacity onPress={() => setSearchKeyword('')}>
+                                <FontAwesome name='close' size={FontSize.md} />
                             </TouchableOpacity>
-                        </View>
-                        <View>
-                            <CustomTextInput
-                                value={searchKeyword}
-                                onChangeText={setSearchKeyword}
-                                postfix={searchKeyword == '' ? (
-                                    <FontAwesome name='search' size={FontSize.md} />
-                                ) : (
-                                    <FontAwesome name='close' size={FontSize.md} />
-                                )}
-                            />
-                            <FlatList
-                                data={masterExercises}
-                                renderItem={renderItem}
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                        </View>
-                    </View>
+                        )}
+                    />
+                    <FlatList
+                        data={masterExercises}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
                 </View>
-            </Modal>
+            </CustomModal>
         </View>
     )
 }
@@ -123,13 +115,14 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        backgroundColor: 'red'
+        backgroundColor: Colors.light.backdrop
     },
     modalContainer: {
         width: '100%',
         height: '60%',
         backgroundColor: 'white',
         padding: 16,
+        borderRadius: 16,
     },
     modalHeaderContainer: {
         flexDirection: 'row',

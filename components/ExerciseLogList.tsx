@@ -5,13 +5,14 @@ import { getDuration } from '@/utils/formatDatetoString';
 import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 
 interface ExerciseLogListProps {
     data: GetExerciseLogRes[]
+    loading: boolean
 }
 
-export default function ExerciseLogList({ data }: ExerciseLogListProps) {
+export default function ExerciseLogList({ data, loading }: ExerciseLogListProps) {
     const renderItem = ({ item, index }: {
         item: GetExerciseLogRes
         index: number
@@ -33,7 +34,7 @@ export default function ExerciseLogList({ data }: ExerciseLogListProps) {
                     )}
                 </View>
 
-                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/(notes)/exercise-logs/${item.id}`)}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/logs/exercise/${item.id}`)}>
                     <View>
                         <Text style={styles.cardHeaderText}>{item.exercise_name}</Text>
                     </View>
@@ -42,8 +43,7 @@ export default function ExerciseLogList({ data }: ExerciseLogListProps) {
                         <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{getDuration(item.start_time, item.end_time)}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Text style={{ fontSize: FontSize.sm }}>Estimasi kalori terbakar</Text>
-                        <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{item.burned_calories} Kkal</Text>
+                        <Text style={{ fontSize: FontSize.sm }}>Estimasi kalori terbakar  <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{item.burned_calories} Kkal</Text></Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -51,39 +51,48 @@ export default function ExerciseLogList({ data }: ExerciseLogListProps) {
     };
 
     return (
-        <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={styles.container}
-        />
+        <View style={styles.container}>
+            {loading ? (
+                <View>
+                    <ActivityIndicator color={Colors.light.primary} size={30} />
+                </View>
+            ) : data.length < 1 ? (
+                <View style={styles.notFoundContainer}>
+                    <Image source={require('@/assets/images/characters/not-found.png')} />
+                    <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
+                </View>
+            ) : (
+                data.map((item, index) => (
+                    renderItem({ item, index })
+                ))
+            )}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        backgroundColor: '#FFF4E6', // Light background color
+        paddingVertical: 20,
     },
     itemContainer: {
         flexDirection: 'row',
         gap: 10,
     },
     timeSection: {
-        width: 80, // Fixed width for time section
+        width: '20%',
         alignItems: 'center',
     },
     timeText: {
         fontSize: 14,
-        color: '#333',
         marginBottom: 5,
+        fontFamily: FontFamily.heavy,
     },
     verticalLine: {
         flex: 1,
         width: 1,
         borderStyle: 'dashed',
-        borderColor: '#E85C32',
-        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        borderWidth: 1.5,
     },
     dot: {
         height: 10,
@@ -96,12 +105,12 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: Colors.light.primary,
         borderRadius: 4,
         paddingHorizontal: 12,
         paddingVertical: 8,
         marginBottom: 20,
+        backgroundColor: Colors.light.darkOrange50,
+        elevation: 1,
     },
     cardHeaderText: {
         fontSize: FontSize.md,
@@ -111,6 +120,15 @@ const styles = StyleSheet.create({
     cardBodyText: {
         fontSize: FontSize.sm,
         color: Colors.light.primary,
+    },
+    notFoundContainer: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        gap: 8,
     }
 });
 

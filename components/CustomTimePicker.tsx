@@ -17,7 +17,7 @@ const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
     const [selectedHour, setSelectedHour] = useState('01');
     const [selectedMinute, setSelectedMinute] = useState('00');
 
-    const hours = Array.from({ length: 24 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+    const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
     const periods = ['AM', 'PM'];
 

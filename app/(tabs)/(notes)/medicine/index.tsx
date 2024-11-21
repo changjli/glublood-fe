@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { formatDatetoString } from '@/utils/formatDatetoString';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import CustomCalendar from '@/components/CustomCalendar';
-import MedicineLogList from '@/app/logs/medicine/MedicineLogList';
+import MedicineLogList from '@/components/MedicineLogList';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import Wrapper from '@/components/Layout/Wrapper';
 import CustomText from '@/components/CustomText';
@@ -78,19 +78,12 @@ export default function MedicineLogPage() {
                         <FontAwesome name='plus' size={16} color="white" />
                     </TouchableOpacity>
                 </View>
-                {medicineLog.length > 0 ? (
-                    <View style={{ width: '100%' }}>
-                        <MedicineLogList
-                            data={medicineLog}
-                        />
-                    </View>
-                ) : (
-                    <View style={styles.notFoundContainer}>
-                        <Image source={require('@/assets/images/characters/not-found.png')} />
-                        <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
-                    </View>
-                )}
-
+                <View style={{ width: '100%' }}>
+                    <MedicineLogList
+                        data={medicineLog}
+                        loading={getMedicineLogLoading}
+                    />
+                </View>
             </View>
         </>
     );

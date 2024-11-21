@@ -37,7 +37,7 @@ export default function CustomQuantityPicker({
     return (
         <View>
             {label &&
-                <CustomText size='sm' weight='heavy'>
+                <CustomText size='md' weight='heavy'>
                     {label}
                 </CustomText>
             }

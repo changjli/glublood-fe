@@ -5,6 +5,7 @@ import CustomFoodLogStatisticPage from './custom'
 import MonthlyFoodLogStatisticPage from './monthly'
 import YearlyFoodLogStatisticPage from './yearly'
 import WeeklyFoodLogStatisticPage from './weekly'
+import CustomHeader from '@/components/CustomHeader'
 
 const data = [
     { title: 'Mingguan', page: WeeklyFoodLogStatisticPage },
@@ -16,6 +17,7 @@ const data = [
 export default function FoodLogStatisticPage() {
     return (
         <View style={{ flex: 1 }}>
+            <CustomHeader title='Statistik Nutrisi' />
             <SegmentedControl
                 segmentedControls={data}
             />

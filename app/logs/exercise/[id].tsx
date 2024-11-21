@@ -8,6 +8,7 @@ import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
+import CustomHeader from '@/components/CustomHeader'
 
 export default function ExerciseLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -47,7 +48,7 @@ export default function ExerciseLogDetailPage() {
     const handleUpdateExerciseLog = async (payload: UpdateExerciseLogReq) => {
         try {
             const res = await updateExerciseLog(setStoreLoading, payload)
-            router.navigate('/(notes)/exercise-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -69,7 +70,7 @@ export default function ExerciseLogDetailPage() {
     const handleDeleteExerciseLog = async (id: number) => {
         try {
             const res = await deleteExerciseLog(setStoreLoading, id)
-            router.navigate('/(notes)/exercise-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -93,31 +94,33 @@ export default function ExerciseLogDetailPage() {
     }, [])
 
     return (
-        <Wrapper>
-            <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
-            <ExerciseLogForm
-                formValue={formValue}
-                setFormValue={setFormValue}
-            >
-                {({ values, handleSubmit }) => (
-                    <View>
-                        <CustomButton
-                            title='Simpan perubahan'
-                            size='md'
-                            style={{ marginBottom: 10 }}
-                            disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                            onPress={() => {
-                                handleSubmit()
-                                handleUpdateExerciseLog({
-                                    id: Number(id),
-                                    ...values,
-                                })
-                            }}
-                        />
-                        <CustomButton title='Hapus log' size='md' onPress={() => handleDeleteExerciseLog(Number(id))} />
-                    </View>
-                )}
-            </ExerciseLogForm>
-        </Wrapper>
+        <>
+            <CustomHeader title='Edit log olahraga' />
+            <Wrapper style={{ backgroundColor: 'white', paddingBottom: 16 }}>
+                <ExerciseLogForm
+                    formValue={formValue}
+                    setFormValue={setFormValue}
+                >
+                    {({ values, handleSubmit }) => (
+                        <View>
+                            <CustomButton
+                                title='Simpan perubahan'
+                                size='md'
+                                style={{ marginBottom: 10 }}
+                                disabled={JSON.stringify(values) == JSON.stringify(formValue)}
+                                onPress={() => {
+                                    handleSubmit()
+                                    handleUpdateExerciseLog({
+                                        id: Number(id),
+                                        ...values,
+                                    })
+                                }}
+                            />
+                            <CustomButton title='Hapus log' size='md' onPress={() => handleDeleteExerciseLog(Number(id))} />
+                        </View>
+                    )}
+                </ExerciseLogForm>
+            </Wrapper>
+        </>
     )
 }

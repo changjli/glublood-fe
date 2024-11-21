@@ -2,13 +2,15 @@ import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
 import { router } from 'expo-router';
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import CustomText from './CustomText';
 
 type FoodLogListProps = {
     data: GetFoodLogResponse[]
+    loading: boolean
 }
 
-export default function FoodLogList({ data }: FoodLogListProps) {
+export default function FoodLogList({ data, loading }: FoodLogListProps) {
     const renderItem = ({ item, index }: {
         item: GetFoodLogResponse
         index: number
@@ -30,7 +32,7 @@ export default function FoodLogList({ data }: FoodLogListProps) {
                     )}
                 </View>
 
-                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/food-logs/${item.id}`)}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/logs/food/${item.id}`)}>
                     <View>
                         <Text style={styles.cardHeaderText}>{item.food_name}</Text>
                     </View>
@@ -42,12 +44,23 @@ export default function FoodLogList({ data }: FoodLogListProps) {
     };
 
     return (
-        <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={styles.container}
-        />
+        <View style={styles.container}>
+            {loading ? (
+                <View>
+                    <ActivityIndicator color={Colors.light.primary} size={30} />
+                </View>
+            ) : data.length < 1 ? (
+                <View style={styles.notFoundContainer}>
+                    <Image source={require('@/assets/images/characters/not-found.png')} />
+                    <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
+                </View>
+            ) : (
+                data.map((item, index) => (
+                    renderItem({ item, index })
+                ))
+            )
+            }
+        </View>
     );
 };
 
@@ -86,12 +99,12 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: Colors.light.primary,
         borderRadius: 4,
         paddingHorizontal: 12,
         paddingVertical: 8,
         marginBottom: 20,
+        backgroundColor: Colors.light.darkOrange50,
+        elevation: 1,
     },
     cardHeaderText: {
         fontSize: FontSize.md,
@@ -101,6 +114,15 @@ const styles = StyleSheet.create({
     cardBodyText: {
         fontSize: FontSize.sm,
         color: Colors.light.primary,
+    },
+    notFoundContainer: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        gap: 8,
     }
 });
 

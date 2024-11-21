@@ -107,6 +107,7 @@ export default function FoodLogPage() {
                 <DailyCaloriesInput
                     selectedDate={selectedDate}
                     dailyCalories={dailyCalories}
+                    loading={dailyCaloriesLoading}
                     fetchDailyCalories={() => handleGetDailyCalories(formatDatetoString(selectedDate))}
                 />
             </Wrapper>
@@ -117,17 +118,9 @@ export default function FoodLogPage() {
                         <FontAwesome name='plus' size={16} color="white" />
                     </TouchableOpacity>
                 </View>
-                {foodLogs.length > 0 ? (
-                    <View style={{ width: '100%' }}>
-                        <FoodLogList data={foodLogs} />
-                    </View>
-                ) : (
-                    <View style={styles.notFoundContainer}>
-                        <Image source={require('@/assets/images/characters/not-found.png')} />
-                        <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
-                    </View>
-
-                )}
+                <View style={{ width: '100%' }}>
+                    <FoodLogList data={foodLogs} loading={foodLogLoading} />
+                </View>
             </View>
         </>
     )

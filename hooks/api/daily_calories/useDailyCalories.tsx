@@ -36,8 +36,24 @@ export default function useDailyCalories() {
         return res
     }
 
+    const getDailyBurnedCaloriesByDate = async (setLoading: (loading: boolean) => void, date: string) => {
+        setLoading(true)
+        const res = await withToken.get(`${group}/burned?date=${date}`)
+            .then(res => {
+                console.log('[useDailyCalories][getDailyBurnedCaloriesByDate]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useDailyCalories][getDailyBurnedCaloriesByDate]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getDailyCaloriesByDate,
         storeDailyCalories,
+        getDailyBurnedCaloriesByDate,
     }
 }

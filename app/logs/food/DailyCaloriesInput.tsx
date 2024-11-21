@@ -7,7 +7,7 @@ import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProgressBar from './ProgressBar';
 import CustomText from '@/components/CustomText';
 import { formatDatetoString } from '@/utils/formatDatetoString';
@@ -15,10 +15,11 @@ import { formatDatetoString } from '@/utils/formatDatetoString';
 type DailyCaloriesInputProps = {
     selectedDate: Date,
     dailyCalories: GetDailyCaloriesResponse | null
+    loading: boolean
     fetchDailyCalories: () => void
 }
 
-export default function DailyCaloriesInput({ selectedDate, dailyCalories, fetchDailyCalories }: DailyCaloriesInputProps) {
+export default function DailyCaloriesInput({ selectedDate, dailyCalories, loading, fetchDailyCalories }: DailyCaloriesInputProps) {
     const [modalVisible, setModalVisible] = useState(false)
     const [dailyCaloriesInput, setDailyCaloriesInput] = useState("")
 

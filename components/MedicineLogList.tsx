@@ -2,13 +2,15 @@ import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, LayoutAnimation } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, LayoutAnimation, ActivityIndicator, Image } from 'react-native';
+import CustomText from './CustomText';
 
 interface MedicineLogListProps {
-    data: GetMedicineLogRes[];
+    data: GetMedicineLogRes[]
+    loading: boolean
 }
 
-export default function MedicineLogList({ data }: MedicineLogListProps) {
+export default function MedicineLogList({ data, loading }: MedicineLogListProps) {
     const [selectedButton, setSelectedButton] = useState<string | null>(null);
     const handlePress = (buttonType: 'missed' | 'taken') => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); // For smooth animation
@@ -19,91 +21,95 @@ export default function MedicineLogList({ data }: MedicineLogListProps) {
         const isSameTime = item.time === data[index - 1]?.time;
 
         return (
-            <View style={styles.itemContainer}>
+            <View style={styles.itemContainer} id={String(index)}>
                 {/* Time Section */}
                 <View style={styles.timeSection}>
                     {!isSameTime && (
                         <Text style={styles.timeText}>{item.time}</Text>
                     )}
                     {(index < data.length - 1 || isSameTime) && (
-                        <View style={styles.verticalLineContainer}>
-                            {!isSameTime && <View style={styles.dot} />}
-                            <View style={styles.dashedLine} />
+                        <View style={styles.verticalLine}>
+                            {!isSameTime && (
+                                <View style={styles.dot} />
+                            )}
                         </View>
                     )}
                 </View>
 
                 {/* Medicine Card Section */}
-                <View style={styles.cardContainer}>
+                <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/logs/medicine/${item.id}`)}>
                     <View style={styles.cardHeader}>
                         <Text style={styles.doseText}>{item.amount} {item.type}</Text>
-                        <TouchableOpacity
-                            style={styles.editButton}
-                            onPress={() => router.navigate(`/(notes)/medicine/${item.id}`)}
-                        >
-                            <Text style={styles.editText}>✎ Edit</Text>
-                        </TouchableOpacity>
                     </View>
                     <Text style={styles.medicineName}>{item.name}</Text>
                     <Text style={styles.notes}>{item.notes}</Text>
-                </View>
+                </TouchableOpacity>
             </View>
         );
     };
 
     return (
-        <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={styles.container}
-        />
+        <View style={styles.container}>
+            {loading ? (
+                <View>
+                    <ActivityIndicator color={Colors.light.primary} size={30} />
+                </View>
+            ) : data.length < 1 ? (
+                <View style={styles.notFoundContainer}>
+                    <Image source={require('@/assets/images/characters/not-found.png')} />
+                    <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
+                </View>
+            ) : (
+                data.map((item, index) => (
+                    renderItem({ item, index })
+                ))
+            )
+            }
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        paddingVertical: 20,
     },
     itemContainer: {
-        marginBottom: 20,
-        height: 100,
         flexDirection: 'row',
+        gap: 10,
     },
     timeSection: {
-        marginRight: 20,
-        width: 50,
+        width: '20%',
         alignItems: 'center',
     },
     timeText: {
-        marginBottom: 5,
-        color: '#333',
         fontSize: 14,
+        marginBottom: 5,
+        fontFamily: FontFamily.heavy,
     },
-    verticalLineContainer: {
-        alignItems: 'center',
+    verticalLine: {
+        flex: 1,
+        width: 1,
+        borderStyle: 'dashed',
+        borderColor: Colors.light.primary,
+        borderWidth: 1.5,
     },
     dot: {
-        marginBottom: 5,
-        width: 10,
         height: 10,
+        width: 10,
         borderRadius: 5,
         backgroundColor: '#E85C32',
-    },
-    dashedLine: {
-        width: 1,
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderColor: '#E85C32',
-        flex: 1,
+        position: 'absolute',
+        top: -5,
+        left: -5,
     },
     cardContainer: {
-        padding: 10,
         flex: 1,
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: Colors.light.primary,
-        borderRadius: 8,
+        borderRadius: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        marginBottom: 20,
+        backgroundColor: Colors.light.darkOrange50,
+        elevation: 1,
     },
     cardHeader: {
         flexDirection: 'row',
@@ -138,4 +144,13 @@ const styles = StyleSheet.create({
         color: '#666',
         fontSize: FontSize.sm,
     },
+    notFoundContainer: {
+        flex: 1,
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        gap: 8,
+    }
 });

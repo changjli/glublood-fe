@@ -4,12 +4,13 @@ import CustomButton from '@/components/CustomButton'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
-import { Link } from 'expo-router'
-import { FontAwesome } from '@expo/vector-icons'
+import { Link, router } from 'expo-router'
+import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
 import Wrapper from '@/components/Layout/Wrapper'
 import { Colors } from '@/constants/Colors'
+import { FlexStyles } from '@/constants/Flex'
 
 export default function Search() {
 
@@ -59,7 +60,7 @@ export default function Search() {
         return (
             <Link
                 href={{
-                    pathname: '/food-logs/create/[id]',
+                    pathname: '/logs/food/create/[id]',
                     params: { id: item.id }
                 }}
                 style={styles.itemContainer}
@@ -77,9 +78,13 @@ export default function Search() {
                     placeholder='Cari menu makan'
                     value={search}
                     onChangeText={setSearch}
-                    postfix={(
-                        <Link href={`/food-logs/create/barcode`}>
-                            <FontAwesome name='barcode' size={FontSize.md} color={'white'} />
+                    postfix={search != '' ? (
+                        <TouchableOpacity onPress={() => setSearch('')}>
+                            <FontAwesome name='close' size={FontSize.md} color={'white'} />
+                        </TouchableOpacity>
+                    ) : (
+                        <Link href={`/logs/food/create/barcode`}>
+                            <Ionicons name='barcode' size={FontSize.md} color={'white'} />
                         </Link>
                     )}
                     containerStyle={{ borderColor: 'white' }}
@@ -88,23 +93,28 @@ export default function Search() {
                 />
             </View>
             <Wrapper>
-                {search != '' ? (
+                {search != '' && (
                     <FlatList
                         data={masterFoods}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => index.toString()}
-                    />
-                ) : (
-                    <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <View style={styles.orContainer}>
-                            <View style={styles.hr} />
-                            <CustomText weight='heavy'>Atau</CustomText>
-                            <View style={styles.hr} />
-                        </View>
-
-                        <Link href={'/food-logs/create'}>Masukkan manual</Link>
+                    />)
+                }
+                {/* <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                    <View style={styles.orContainer}>
+                        <View style={styles.hr} />
+                        <CustomText weight='heavy'>Atau</CustomText>
+                        <View style={styles.hr} />
                     </View>
-                )}
+
+                    <Link href={'/logs/food/create'}>Masukkan manual</Link>
+                </View> */}
+                <TouchableOpacity style={[FlexStyles.flexRow, { justifyContent: 'center', gap: 8 }, search != '' && { paddingVertical: 8 }]} onPress={() => router.push('/logs/food/create')}>
+                    <View style={styles.iconContainer} >
+                        <FontAwesome name='plus' size={12} color="white" />
+                    </View>
+                    <CustomText style={{ color: Colors.light.primary }}>Tambahkan menu makan secara manual</CustomText>
+                </TouchableOpacity>
             </Wrapper>
         </>
 
@@ -133,5 +143,13 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderBottomWidth: 1,
         width: 100,
+    },
+    iconContainer: {
+        ...FlexStyles.flexRow,
+        justifyContent: 'center',
+        backgroundColor: Colors.light.primary,
+        width: 16,
+        height: 16,
+        borderRadius: 8
     }
 })

@@ -5,7 +5,6 @@ import CustomButton, { CustomButtonProps, StyledCustomButton } from '@/component
 import { Ionicons } from '@expo/vector-icons'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
-import index from '..'
 import { Colors } from '@/constants/Colors'
 import Mcq from './Mcq'
 import DiabetesPedigree from './DiabetesPedigree'

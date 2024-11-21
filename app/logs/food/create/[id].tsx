@@ -5,8 +5,6 @@ import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
-import CustomTimePicker from '../../CustomTimePicker'
-import CustomQuantityPicker from '../../CustomQuantityPicker'
 import { Colors } from '@/constants/Colors'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import CustomButton from '@/components/CustomButton'
@@ -70,10 +68,23 @@ export default function Detail() {
     }
 
     const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
+        const formData = new FormData()
+        formData.append('payload', JSON.stringify(payload))
+        if (payload.img) {
+            const fileResponse = await fetch(payload.img);
+            const fileBlob = await fileResponse.blob();
+
+            formData.append('food_image', {
+                uri: payload.img,
+                name: 'filename.jpeg',
+                type: fileBlob.type || 'image/jpeg',
+            } as any);
+        }
+
         try {
-            console.log("payload", payload)
-            const res = await storeFoodLog(setGetLoading, payload)
-            router.navigate('/(notes)/food-logs')
+            console.log("payload", formData)
+            const res = await storeFoodLog(setGetLoading, formData)
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;

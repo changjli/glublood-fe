@@ -14,6 +14,7 @@ module.exports = {
         warning: '#ecd706',
         danger: '#fe3f11',
         background: '#FFF8E1',
+        darkOrange50: '#FDF6EF',
       },
       fontFamily: {
         'helvetica': ['Helvetica'],

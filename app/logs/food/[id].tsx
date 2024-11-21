@@ -87,7 +87,7 @@ export default function FoodLogDetailPage() {
 
             console.log("payload", formData)
             const res = await updateFoodLog(setGetLoading, Number(id), formData)
-            router.navigate('/(notes)/food-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;

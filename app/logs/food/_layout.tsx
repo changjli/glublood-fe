@@ -3,13 +3,12 @@ import React from 'react'
 import { Stack } from 'expo-router'
 import { Colors } from '@/constants/Colors'
 
-export default function _layout() {
+export default function FoodLogLayout() {
     return (
         <Stack>
             <Stack.Screen name='index' options={{
                 headerShown: false,
-            }}>
-            </Stack.Screen>
+            }} />
             <Stack.Screen name='search' options={{
                 headerTitle: '',
                 headerStyle: {
@@ -17,17 +16,23 @@ export default function _layout() {
                 },
                 headerShadowVisible: false,
                 headerTintColor: 'white',
-            }}>
-            </Stack.Screen>
-            <Stack.Screen name='create/index' options={{ headerTitle: '' }}></Stack.Screen>
+            }} />
+            <Stack.Screen name='create/index' options={{
+                headerTitle: '',
+                headerTransparent: true,
+            }} />
             <Stack.Screen name='create/[id]' options={{
                 headerTitle: '',
                 headerTransparent: true,
-            }}></Stack.Screen>
+            }} />
             <Stack.Screen name='create/barcode/[barcode]' options={{
                 headerTitle: '',
                 headerTransparent: true,
-            }}></Stack.Screen>
+            }} />
+            <Stack.Screen name='[id]' options={{
+                headerTitle: '',
+                headerTransparent: true,
+            }} />
         </Stack>
     )
 }

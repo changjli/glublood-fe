@@ -9,21 +9,6 @@ type StepperProps = {
 
 export default function Stepper({ value, onChange }: StepperProps) {
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const handleDecrement = () => {
-    intervalRef.current = setInterval(() => {
-      onChange(value - 1)
-    }, 1000)
-  }
-
-  const handlePressOut = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
   return (
     <View style={{
       flexDirection: 'row',
@@ -36,8 +21,6 @@ export default function Stepper({ value, onChange }: StepperProps) {
           height: 36,
         }}
         onPress={() => onChange(value - 1)}
-        onLongPress={handleDecrement}
-        onPressOut={handlePressOut}
       />
       <TextInput style={{
         width: 72,

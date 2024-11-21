@@ -35,7 +35,7 @@ export default function LogPage() {
                                 <CustomText size='2xl' weight='heavy' space={false} style={{ color: 'white' }}>Tracking</CustomText>
                                 <CustomText size='2xl' weight='heavy' space={false} style={{ color: 'white', marginBottom: 16 }}>{selectedTab.title}</CustomText>
                             </View>
-                            <Image source={selectedTab.image} style={{ height: 70 }} resizeMode='contain' />
+                            {/* <Image source={selectedTab.image} style={{ height: 50 }} resizeMode='contain' /> */}
                         </View>
                         <View style={styles.tabContainer}>
                             {tabs.map((tab, idx) => (

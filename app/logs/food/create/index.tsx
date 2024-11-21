@@ -1,9 +1,7 @@
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, GestureResponderEvent, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
-import CustomTimePicker from '../../CustomTimePicker'
 import { Formik } from 'formik'
-import CustomQuantityPicker from '../../CustomQuantityPicker'
 import CustomText from '@/components/CustomText'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomButton from '@/components/CustomButton'
@@ -56,7 +54,7 @@ export default function Create() {
         try {
             console.log("payload", formData)
             const res = await storeFoodLog(setStoreLoading, formData)
-            router.navigate('/(notes)/food-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 console.log("error", err)

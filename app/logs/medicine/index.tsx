@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } fr
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
-import MedicineLogList from './MedicineLogList';
+import MedicineLogList from '../../../components/MedicineLogList';
 import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';

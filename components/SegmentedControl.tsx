@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import CustomFoodLogStatisticPage from '@/app/(statistic)/food-logs/custom'
+import { FontFamily, FontSize } from '@/constants/Typography'
 
 interface SegmentedControlDataProps {
     title: string,
@@ -24,8 +25,8 @@ export default function SegmentedControl({ segmentedControls }: SegmentedControl
                             style={[
                                 styles.itemContainer,
                                 selectedSegment.title == segmentedControl.title && styles.selectedItemContainer,
-                                idx == 0 && { borderTopLeftRadius: 20, borderBottomLeftRadius: 20 },
-                                idx == segmentedControls.length - 1 && { borderTopRightRadius: 20, borderBottomRightRadius: 20, borderRightWidth: 0 }
+                                idx == 0 && { borderTopLeftRadius: 8, borderBottomLeftRadius: 8 },
+                                idx == segmentedControls.length - 1 && { borderTopRightRadius: 8, borderBottomRightRadius: 8, borderRightWidth: 0 }
                             ]}
                             onPress={() => setSelectedSegment(segmentedControl)}
                             id={String(idx)}
@@ -44,25 +45,26 @@ const styles = StyleSheet.create({
     container: {
         display: 'flex',
         flexDirection: 'row',
-        backgroundColor: 'white',
-        borderWidth: 1,
-        borderColor: Colors.light.primary,
-        borderRadius: 20,
+        backgroundColor: Colors.light.gray200,
+        borderRadius: 8,
     },
     itemContainer: {
         flexGrow: 1,
         alignItems: 'center',
         borderRightWidth: 1,
-        borderColor: Colors.light.primary,
+        borderColor: Colors.light.gray300,
+        padding: 8,
     },
     itemText: {
         color: 'black',
-        padding: 8,
+        fontSize: FontSize.sm,
+        lineHeight: FontSize.sm,
     },
     selectedItemContainer: {
         backgroundColor: Colors.light.primary,
     },
     selectedItemText: {
-        color: 'white'
+        color: 'white',
+        fontFamily: FontFamily.heavy,
     }
 })

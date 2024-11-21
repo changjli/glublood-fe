@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Alert } from 'react-native'
 import React, { Children, useEffect, useState } from 'react'
 import { Formik, FormikProps, useFormikContext } from 'formik'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
@@ -6,6 +6,8 @@ import ExercisePicker from './ExercisePicker'
 import CustomButton from '@/components/CustomButton'
 import { getDuration } from '@/utils/formatDatetoString'
 import CustomTimePicker from '@/components/CustomTimePicker'
+import useProfile from '@/hooks/api/profile/useProfile'
+import axios from 'axios'
 
 interface ExerciseLogFormRenderProps {
     values: StoreExerciseLogReq
@@ -19,6 +21,38 @@ interface ExerciseLogFormProps {
 }
 
 export default function ExerciseLogForm({ formValue, setFormValue, children, ...rest }: ExerciseLogFormProps) {
+
+    const { fetchUserProfile } = useProfile()
+
+    const [userProfile, setUserProfile] = useState({})
+    const [fetchUserProfileLoading, setFetchUserProfileLoading] = useState(false)
+
+    const handleFetchUserProfile = async () => {
+        try {
+            const res = await fetchUserProfile(setFetchUserProfileLoading)
+            setUserProfile(res.data)
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+            return []
+        }
+    }
+
+    useEffect(() => {
+        handleFetchUserProfile()
+    }, [])
 
     return (
         <Formik
@@ -35,7 +69,7 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
                     if (caloriesPerKg && values.start_time && values.end_time) {
                         const duration = getDuration(values.start_time, values.end_time)
                         console.log("duration", duration)
-                        setFieldValue('burned_calories', 100 * caloriesPerKg * duration / 60)
+                        setFieldValue('burned_calories', Number(userProfile.weight) * caloriesPerKg * duration / 60)
                     }
                 }, [caloriesPerKg, values.start_time, values.end_time])
 

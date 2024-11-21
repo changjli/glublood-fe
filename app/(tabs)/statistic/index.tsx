@@ -19,7 +19,7 @@ export default function StatisticPage() {
     return (
         <View style={{ flex: 1, backgroundColor: Colors.light.darkOrange50 }}>
             <DynamicTextComponent text="Statistik" img={require('@/assets/images/backgrounds/bg-stat.png')} />
-            <TouchableOpacity style={[styles.itemContainer, styles.itemBorder]} onPress={() => router.navigate('/(statistic)/food-logs')}>
+            <TouchableOpacity style={[styles.itemContainer, styles.itemBorder]} onPress={() => router.navigate('/(statistic)/glucose-logs')}>
                 <Image source={require('@/assets/images/icons/glucose-meter.png')} style={{ height: 100, width: 76.25 }} />
                 <View style={[FlexStyles.flexCol]}>
                     <CustomText style={{ color: Colors.light.primary }}>Statistik</CustomText>
@@ -31,15 +31,15 @@ export default function StatisticPage() {
                 <Image source={require('@/assets/images/icons/barbell.png')} style={{ height: 100, width: 100 }} />
                 <View style={[FlexStyles.flexCol]}>
                     <CustomText style={{ color: Colors.light.primary }}>Statistik</CustomText>
-                    <CustomText size='lg' weight='heavy' style={{ color: Colors.light.primary }}>Glukosa</CustomText>
+                    <CustomText size='lg' weight='heavy' style={{ color: Colors.light.primary }}>Olahraga</CustomText>
                 </View>
                 <Ionicons name='chevron-forward' size={40} color={Colors.light.primary} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.itemContainer, { bottom: 20 }]} onPress={() => router.navigate('/(statistic)/exercise-logs')}>
+            <TouchableOpacity style={[styles.itemContainer, { bottom: 20 }]} onPress={() => router.navigate('/(statistic)/food-logs')}>
                 <Image source={require('@/assets/images/icons/fruits.png')} style={{ height: 100, width: 103 }} />
                 <View style={[FlexStyles.flexCol]}>
                     <CustomText style={{ color: Colors.light.primary }}>Statistik</CustomText>
-                    <CustomText size='lg' weight='heavy' style={{ color: Colors.light.primary }}>Glukosa</CustomText>
+                    <CustomText size='lg' weight='heavy' style={{ color: Colors.light.primary }}>Nutrisi</CustomText>
                 </View>
                 <Ionicons name='chevron-forward' size={40} color={Colors.light.primary} />
             </TouchableOpacity>

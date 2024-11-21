@@ -1,5 +1,5 @@
-import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity, Easing } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from '../context/AuthenticationProvider'
 import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
@@ -15,13 +15,23 @@ import { formatDatetoString } from '@/utils/formatDatetoString'
 import { FlexStyles } from '@/constants/Flex'
 import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
+import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
+import { FontSize } from '@/constants/Typography'
 
 export default function index() {
     const { signOut, session } = useSession()
     const { getAllFoodMenu } = useFoodMenu()
+    const { getDailyCaloriesByDate, getDailyBurnedCaloriesByDate } = useDailyCalories()
 
+    const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
+    const [dailyCalories, setDailyCalories] = useState<GetDailyCaloriesResponse | null>(null)
+    const [dailyBurnedCalories, setDailyBurnedCalories] = useState(null)
     const [getAllFoodMenuLoading, setGetAllFoodMenuLoading] = useState(false)
+    const [getDailyCaloriesLoading, setGetDailyCaloriesLoading] = useState(false)
+    const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] = useState(false)
+    const dailyCaloriesCircularProgressRef = useRef(null)
+    const dailyBurnedCaloriesCircularProgressRef = useRef(null)
 
     const handleGetAllFoodMenu = async () => {
         try {
@@ -46,9 +56,76 @@ export default function index() {
         }
     }
 
+    const handleGetDailyCalories = async (date: string) => {
+        try {
+            const res = await getDailyCaloriesByDate(setGetDailyCaloriesLoading, date)
+            const data: GetDailyCaloriesResponse = res.data
+            setDailyCalories(data)
+        } catch (err) {
+            setDailyCalories(null)
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+        }
+    }
+
+    const handleGetDailyBurnedCalories = async (date: string) => {
+        try {
+            const res = await getDailyBurnedCaloriesByDate(setDailyCaloriesBurnedLoading, date)
+            const data = res.data
+            setDailyBurnedCalories(data)
+        } catch (err) {
+            setDailyBurnedCalories(null)
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+        }
+    }
+
     useEffect(() => {
         handleGetAllFoodMenu()
+        handleGetDailyCalories(formatDatetoString(today))
+        handleGetDailyBurnedCalories(formatDatetoString(today))
     }, [])
+
+    useEffect(() => {
+        if (dailyCalories) {
+            if (dailyCaloriesCircularProgressRef.current) {
+                dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
+            }
+        }
+    }, [dailyCalories])
+
+    // useEffect(() => {
+    //     if (dailyCalories && dailyBurnedCalories) {
+    //         if (dailyBurnedCaloriesCircularProgressRef.current) {
+    //             dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, Easing.quad)
+    //         }
+    //     }
+    // }, [dailyBurnedCalories])
+
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -56,14 +133,23 @@ export default function index() {
                 <View style={styles.headerContainer} />
                 <Wrapper>
                     <View style={{ marginBottom: 12 }}>
-                        <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
+                        <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
+                            <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
+                            <TouchableOpacity onPress={() => router.push('/profile')}>
+                                <Image
+                                    source={require('@/assets/images/user-profile/dummy.png')}
+                                    style={styles.profile}
+                                />
+                            </TouchableOpacity>
+                        </View>
                         <CustomText style={{ color: 'white', maxWidth: '70%' }}>Hai, Jonathan jaga kesehatan dan perbanyak aktivitas tubuh</CustomText>
                     </View>
                     <View style={styles.summaryContainer}>
                         <AnimatedCircularProgress
+                            ref={dailyBurnedCaloriesCircularProgressRef}
                             size={170}
                             width={20}
-                            fill={50}
+                            fill={0}
                             tintColor={Colors.light.red}
                             onAnimationComplete={() => console.log('onAnimationComplete')}
                             backgroundColor={Colors.light.gray300}
@@ -71,9 +157,10 @@ export default function index() {
                             lineCap='round'
                             children={() => (
                                 <AnimatedCircularProgress
+                                    ref={dailyCaloriesCircularProgressRef}
                                     size={130}
                                     width={20}
-                                    fill={50}
+                                    fill={dailyCalories ? dailyCalories.consumed_calories / dailyCalories.target_calories * 100 : 0}
                                     tintColor={Colors.light.primary}
                                     onAnimationComplete={() => console.log('onAnimationComplete')}
                                     backgroundColor={Colors.light.gray300}
@@ -85,7 +172,7 @@ export default function index() {
 
                         <View style={styles.summaryInnerContainer}>
                             <View style={styles.todayContainer}>
-                                <CustomText>{formatDatetoString(new Date())}</CustomText>
+                                <CustomText>{formatDatetoString(today)}</CustomText>
                             </View>
                             <View>
                                 <View style={[FlexStyles.flexRow, { gap: 8 }]}>
@@ -190,5 +277,10 @@ const styles = StyleSheet.create({
         borderColor: Colors.light.primary,
         padding: 8,
     },
+    profile: {
+        width: 40,
+        height: 40,
+        borderRadius: 40,
+    }
 })
 

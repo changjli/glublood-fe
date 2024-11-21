@@ -63,7 +63,8 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                         <CustomImagePicker image={values.img ?? ''} onChange={v => setFieldValue('img', v)}>
                             <Image
                                 source={{
-                                    uri: values.img ? process.env.EXPO_PUBLIC_API_URL + values.img : 'https://placehold.jp/300x400.png'
+                                    // uri: values.img ? process.env.EXPO_PUBLIC_API_URL + values.img : 'https://placehold.jp/300x400.png'
+                                    uri: values.img ? values.img : 'https://placehold.jp/300x400.png'
                                 }}
                                 style={{
                                     flex: 1,
@@ -83,7 +84,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                                         value={values.food_name}
                                         onChangeText={handleChange('food_name')}
                                     />
-                                    <CustomText size='sm' weight='heavy'>Niali gizi makanan</CustomText>
+                                    <CustomText size='md' weight='heavy'>Niali gizi makanan</CustomText>
                                     <View style={styles.nutrientOuterContainer}>
                                         <View style={styles.nutrientContainer}>
                                             <View style={styles.nutrientInnerLeftContainer}>
@@ -211,6 +212,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                             />
                             {children({ values, handleSubmit })}
                         </Wrapper>
+                        <View style={{ height: 20 }} />
                     </ScrollView>
                 )
             }}
@@ -251,6 +253,7 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         gap: 10,
+        backgroundColor: 'white',
     },
     nutrientOuterContainer: {
         padding: 8,
@@ -260,6 +263,7 @@ const styles = StyleSheet.create({
         gap: 8,
         borderRadius: 8,
         borderWidth: 1,
+        borderColor: Colors.light.gray300,
     },
     nutrientContainer: {
         width: '100%',
