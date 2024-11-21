@@ -6,34 +6,38 @@ import {
     ImageBackgroundProps,
     StyleSheet,
     TouchableOpacity,
+    ImageSourcePropType,
 } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 export type DynamicTextComponentProps = ImageBackgroundProps & {
     text: string
-    img: string
+    img: ImageSourcePropType
+    back?: boolean
 };
 
 export default function DynamicTextComponent({
     text,
     img,
+    back,
     ...rest
 }: DynamicTextComponentProps) {
     const navigation = useNavigation()
 
     return (
         <ImageBackground
-            source={require('@/assets/images/backgrounds/tracking-nutrisi.png')} // path to your image
+            source={img}
             style={styles.imgBackground}
             {...rest}
         >
             <View style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name='arrow-back' style={styles.iconStyle} />
-                </TouchableOpacity>
-                <Text style={styles.textStyle}>Tracking</Text>
-                <Text style={[styles.textStyle, { marginTop: -15 },]}>{text}</Text>
+                {back && (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name='arrow-back' style={styles.iconStyle} />
+                    </TouchableOpacity>
+                )}
+                <Text style={styles.textStyle}>{text}</Text>
             </View>
         </ImageBackground>
     );
@@ -45,7 +49,7 @@ const styles = StyleSheet.create({
         height: 260,
     },
     container: {
-        marginTop: 50,
+        marginTop: 30,
         marginLeft: 20,
         display: 'flex',
         flexDirection: 'column'

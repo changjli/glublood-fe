@@ -19,61 +19,57 @@ export default function TabLayout() {
     }
 
     return (
-        <Tabs
-            screenOptions={{
-                tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)',
-                tabBarActiveTintColor: 'white',
-                tabBarStyle: {
-                    height: 76,
-                    backgroundColor: Colors.light.primary,
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
-                    paddingBottom: 16,
-                    paddingTop: 12,
-                    paddingHorizontal: 16
-                },
-                tabBarLabelStyle: {
-                    fontFamily: FontFamily.heavy,
-                },
-                headerShown: false,
-                tabBarHideOnKeyboard: true,
-            }}
-        >
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: 'Home',
-                    tabBarIcon: ({ color }) => <Ionicons name='home' size={28} color={color} />,
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <Tabs
+                screenOptions={{
+                    tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)',
+                    tabBarActiveTintColor: 'white',
+                    tabBarStyle: {
+                        height: 76,
+                        backgroundColor: Colors.light.primary,
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        paddingBottom: 16,
+                        paddingTop: 12,
+                        paddingHorizontal: 16
+                    },
+                    tabBarLabelStyle: {
+                        fontFamily: FontFamily.heavy,
+                    },
+                    headerShown: false,
+                    tabBarHideOnKeyboard: true,
                 }}
-            />
-            <Tabs.Screen
-                name="statistic"
-                options={{
-                    title: 'Statistic',
-                    tabBarIcon: ({ color }) => <Ionicons name='stats-chart' size={28} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="(notes)"
-                options={{
-                    title: 'Notes',
-                    tabBarIcon: ({ color }) => <Ionicons name='clipboard' size={28} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="scan"
-                options={{
-                    title: 'Scan',
-                    tabBarIcon: ({ color }) => <Ionicons name='scan' size={28} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ color }) => <Ionicons name='person' size={28} color={color} />,
-                }}
-            />
-        </Tabs>
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: 'Home',
+                        tabBarIcon: ({ color }) => <Ionicons name='home' size={28} color={color} />,
+                        unmountOnBlur: true,
+                    }}
+                />
+                <Tabs.Screen
+                    name="statistic"
+                    options={{
+                        title: 'Statistic',
+                        tabBarIcon: ({ color }) => <Ionicons name='stats-chart' size={28} color={color} />,
+                    }}
+                />
+                <Tabs.Screen
+                    name="(notes)"
+                    options={{
+                        title: 'Notes',
+                        tabBarIcon: ({ color }) => <Ionicons name='clipboard' size={28} color={color} />,
+                    }}
+                />
+                <Tabs.Screen
+                    name="scan"
+                    options={{
+                        title: 'Scan',
+                        tabBarIcon: ({ color }) => <Ionicons name='scan' size={28} color={color} />,
+                    }}
+                />
+            </Tabs>
+        </View>
     )
 }

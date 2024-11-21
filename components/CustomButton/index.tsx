@@ -74,7 +74,7 @@ const buttonStyles = tv({
             outline: "bg-transparent border-2 border-primary",
         },
         disabled: {
-            true: "bg-secondary border-secondary",
+            true: "bg-darkOrange50 border-darkOrange50",
         },
     },
     defaultVariants: {

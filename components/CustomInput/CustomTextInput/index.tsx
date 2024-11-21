@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
         borderColor: Colors.light.primary,
     },
     disabledInputContainer: {
-        backgroundColor: Colors.light.secondary,
-        borderColor: Colors.light.secondary,
+        backgroundColor: Colors.light.darkOrange50,
+        borderColor: Colors.light.darkOrange50,
     },
     errorInputContainer: {
         borderColor: Colors.light.danger,
