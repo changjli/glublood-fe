@@ -84,7 +84,7 @@ export default function Search() {
                         </TouchableOpacity>
                     ) : (
                         <Link href={`/logs/food/create/barcode`}>
-                            <Ionicons name='barcode' size={FontSize.md} color={'white'} />
+                            <FontAwesome name='barcode' size={FontSize.md} color={'white'} />
                         </Link>
                     )}
                     containerStyle={{ borderColor: 'white' }}

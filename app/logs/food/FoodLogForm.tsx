@@ -18,18 +18,23 @@ import Wrapper from '@/components/Layout/Wrapper'
 import CustomImagePicker from '@/components/CustomImagePicker'
 import CustomTimePicker from '@/components/CustomTimePicker'
 import CustomQuantityPicker from '@/components/CustomQuantityPicker'
+import { FlexStyles } from '@/constants/Flex'
+import { FontAwesome } from '@expo/vector-icons'
+import Collapsible from 'react-native-collapsible';
 
 interface FoodLogFormRenderProps {
-    values: StoreFoodLogRequest | UpdateFoodLogReq
+    values: PostFoodLogRequest
     handleSubmit: () => void
 }
 
 interface FoodLogFormProps {
-    formValue: StoreFoodLogRequest | UpdateFoodLogReq
+    formValue: PostFoodLogRequest
     children: (props: FoodLogFormRenderProps) => React.ReactNode
 }
 
 export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFormProps) {
+
+    const [showAdditional, setShowAdditional] = useState(true)
 
     const getSizeData = () => {
         const sizeData = []
@@ -161,7 +166,12 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                             {/* auto */}
                             {values.type == 'auto' && (
                                 <>
-                                    <CustomText size='xl' weight='heavy'>{formValue.food_name}</CustomText>
+                                    <View style={styles.headerContainer}>
+                                        <CustomText size='xl' weight='heavy' style={{ flex: 2 }}>{formValue.food_name}</CustomText>
+                                        <View style={styles.brandCotnainer}>
+                                            <CustomText>{formValue.brand}</CustomText>
+                                        </View>
+                                    </View>
                                     <View style={styles.nutrientAutoOuterContainer}>
                                         <View style={[styles.nutrientAutoContainer, { width: '100%' }]}>
                                             <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientAutoIcon} />
@@ -183,6 +193,36 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                                             <CustomText size='sm' weight='heavy'>Lemak</CustomText>
                                             <CustomText size='sm'>{values.fat} g</CustomText>
                                         </View>
+                                    </View>
+                                    <View style={styles.additionalContainer}>
+                                        <TouchableOpacity onPress={() => setShowAdditional(!showAdditional)}>
+                                            <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
+                                                <CustomText weight='heavy'>Informasi Nilai Gizi Tambahan</CustomText>
+                                                <FontAwesome name='chevron-down' />
+                                            </View>
+                                        </TouchableOpacity>
+                                        <Collapsible collapsed={showAdditional}>
+                                            <View style={styles.additionalItemContainer}>
+                                                <CustomText size='sm'>Kolestrol</CustomText>
+                                                <CustomText size='sm'>{formValue.cholestrol} mg</CustomText>
+                                            </View>
+                                            <View style={styles.additionalItemContainer}>
+                                                <CustomText size='sm'>Fiber</CustomText>
+                                                <CustomText size='sm'>{formValue.fiber} g</CustomText>
+                                            </View>
+                                            <View style={styles.additionalItemContainer}>
+                                                <CustomText size='sm'>Gula</CustomText>
+                                                <CustomText size='sm'>{formValue.sugar} g</CustomText>
+                                            </View>
+                                            <View style={styles.additionalItemContainer}>
+                                                <CustomText size='sm'>Sodium</CustomText>
+                                                <CustomText size='sm'>{formValue.sodium} mg</CustomText>
+                                            </View>
+                                            <View style={[styles.additionalItemContainer, { borderBottomWidth: 0 }]}>
+                                                <CustomText size='sm'>Kalium</CustomText>
+                                                <CustomText size='sm'>{formValue.kalium} mg</CustomText>
+                                            </View>
+                                        </Collapsible>
                                     </View>
                                 </>
                             )}
@@ -221,6 +261,18 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
 }
 
 const styles = StyleSheet.create({
+    headerContainer: {
+        ...FlexStyles.flexRow,
+        justifyContent: 'space-between',
+    },
+    brandCotnainer: {
+        ...FlexStyles.flexRow,
+        justifyContent: 'center',
+        flex: 1,
+        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        borderRadius: 8,
+    },
     nutrientAutoOuterContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -279,4 +331,18 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
     },
+    additionalContainer: {
+        backgroundColor: 'white',
+        padding: 8,
+        borderRadius: 8,
+        elevation: 3,
+    },
+    additionalItemContainer: {
+        ...FlexStyles.flexRow,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.light.gray300,
+        paddingVertical: 4,
+        borderStyle: 'dashed',
+    }
 })

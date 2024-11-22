@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'nativewind';
 import ThemeProvider from './context/ThemeProvider';
 import { Colors } from '@/constants/Colors';
+import { CustomAlertProvider } from './context/CustomAlertProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,13 +34,15 @@ export default function RootLayout() {
     return (
         <SessionProvider>
             <ThemeProvider>
-                <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.primary }}>
-                    <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name='(tabs)' />
-                        <Stack.Screen name='(auth)' />
-                        <Stack.Screen name='food-logs' />
-                    </Stack>
-                </SafeAreaView>
+                <CustomAlertProvider>
+                    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.light.primary }}>
+                        <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name='(tabs)' />
+                            <Stack.Screen name='(auth)' />
+                            <Stack.Screen name='food-logs' />
+                        </Stack>
+                    </SafeAreaView>
+                </CustomAlertProvider>
             </ThemeProvider>
         </SessionProvider>
     )

@@ -11,7 +11,8 @@ type GetFoodLogResponse = {
     serving_size: number
 }
 
-type StoreFoodLogRequest = {
+type PostFoodLogRequest = {
+    id?: number
     date: string
     time: string
     food_name: string
@@ -24,22 +25,12 @@ type StoreFoodLogRequest = {
     note: string
     type: string
     img?: string
-}
-
-type UpdateFoodLogReq = {
-    id: number
-    date: string
-    time: string
-    food_name: string
-    calories: number
-    protein: number
-    carbohydrate: number
-    fat: number
-    serving_qty: number
-    serving_size: string
-    note: string
-    type: string
-    img?: string
+    brand?: string
+    cholestrol?: number
+    fiber?: number
+    sugar?: number
+    sodium?: number
+    kalium?: number
 }
 
 type GetFoodByBarcodeReq = {

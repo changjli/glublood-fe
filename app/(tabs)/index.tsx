@@ -17,6 +17,7 @@ import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
+import Skeleton from "react-native-reanimated-skeleton";
 
 export default function index() {
     const { signOut, session } = useSession()
@@ -111,21 +112,15 @@ export default function index() {
     }, [])
 
     useEffect(() => {
-        if (dailyCalories) {
+        if (dailyCalories && dailyBurnedCalories) {
             if (dailyCaloriesCircularProgressRef.current) {
                 dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
             }
+            if (dailyBurnedCaloriesCircularProgressRef.current) {
+                dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
+            }
         }
-    }, [dailyCalories])
-
-    // useEffect(() => {
-    //     if (dailyCalories && dailyBurnedCalories) {
-    //         if (dailyBurnedCaloriesCircularProgressRef.current) {
-    //             dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, Easing.quad)
-    //         }
-    //     }
-    // }, [dailyBurnedCalories])
-
+    }, [dailyCalories, dailyBurnedCalories])
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -150,9 +145,9 @@ export default function index() {
                             size={170}
                             width={20}
                             fill={0}
-                            tintColor={Colors.light.red}
+                            tintColor={'rgba(171,0,0,1)'}
                             onAnimationComplete={() => console.log('onAnimationComplete')}
-                            backgroundColor={Colors.light.gray300}
+                            backgroundColor={'rgba(171,0,0,0.2)'}
                             rotation={0}
                             lineCap='round'
                             children={() => (
@@ -161,11 +156,14 @@ export default function index() {
                                     size={130}
                                     width={20}
                                     fill={dailyCalories ? dailyCalories.consumed_calories / dailyCalories.target_calories * 100 : 0}
-                                    tintColor={Colors.light.primary}
+                                    tintColor={'rgba(218,110,53,1)'}
                                     onAnimationComplete={() => console.log('onAnimationComplete')}
-                                    backgroundColor={Colors.light.gray300}
+                                    backgroundColor={'rgba(218,110,53,0.2)'}
                                     rotation={0}
                                     lineCap='round'
+                                    children={() => (
+                                        <Image source={require('@/assets/images/icons/kembar.png')} style={{ width: 60 }} resizeMode='contain' />
+                                    )}
                                 />
                             )}
                         />
@@ -213,7 +211,7 @@ export default function index() {
                             )}
                             keyExtractor={(item, index) => index.toString()}
                             horizontal
-                            contentContainerStyle={{ gap: 12 }}
+                            contentContainerStyle={{ gap: 12, padding: 4 }}
                         />
                     </View>
                     <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
@@ -223,6 +221,9 @@ export default function index() {
                     </TouchableOpacity>
                 </Wrapper>
                 <View style={{ height: 20 }} />
+                <Skeleton isLoading={true} containerStyle={{ width: 50, height: 50 }}>
+                    <Text>hello</Text>
+                </Skeleton>
             </ScrollView>
         </View>
     )

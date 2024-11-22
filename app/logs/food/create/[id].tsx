@@ -27,7 +27,7 @@ export default function Detail() {
     const { getMasterFoodDetail } = useMasterFood()
     const { storeFoodLog } = useFoodLog()
 
-    const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
+    const [formValue, setFormValue] = useState<PostFoodLogRequest>({
         calories: 0,
         carbohydrate: 0,
         date: '',
@@ -39,9 +39,11 @@ export default function Detail() {
         time: '',
         note: '',
         type: 'auto',
+        brand: '',
     })
 
     const [getLoading, setGetLoading] = useState(false)
+    const [storeLoading, setStoreLoading] = useState(false)
 
     const handleGetMasterFoodDetail = async (id: string) => {
         try {
@@ -67,23 +69,23 @@ export default function Detail() {
         }
     }
 
-    const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
-        const formData = new FormData()
-        formData.append('payload', JSON.stringify(payload))
-        if (payload.img) {
-            const fileResponse = await fetch(payload.img);
-            const fileBlob = await fileResponse.blob();
-
-            formData.append('food_image', {
-                uri: payload.img,
-                name: 'filename.jpeg',
-                type: fileBlob.type || 'image/jpeg',
-            } as any);
-        }
-
+    const handleStoreFoodLog = async (payload: PostFoodLogRequest) => {
         try {
+            const formData = new FormData()
+            formData.append('payload', JSON.stringify(payload))
+            if (payload.img) {
+                const fileResponse = await fetch(payload.img);
+                const fileBlob = await fileResponse.blob();
+
+                formData.append('food_image', {
+                    uri: payload.img,
+                    name: 'filename.jpeg',
+                    type: fileBlob.type || 'image/jpeg',
+                } as any);
+            }
+
             console.log("payload", formData)
-            const res = await storeFoodLog(setGetLoading, formData)
+            const res = await storeFoodLog(setStoreLoading, formData)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -116,6 +118,12 @@ export default function Detail() {
             date: date ?? '',
             serving_qty: food.serving_qty,
             serving_size: food.serving_size,
+            brand: food.brand,
+            cholestrol: food.cholestrol,
+            fiber: food.fiber,
+            sugar: food.sugar,
+            sodium: food.sodium,
+            kalium: food.kalium,
         })
     }
 
@@ -136,6 +144,7 @@ export default function Detail() {
                         handleStoreFoodLog(values)
                     }}
                     style={{ marginTop: 20 }}
+                    loading={storeLoading}
                 />
             )}
         </FoodLogForm>
