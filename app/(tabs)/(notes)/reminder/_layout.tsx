@@ -6,11 +6,8 @@ export default function _layout() {
     return (
         <Stack>
             <Stack.Screen name='index' options={{ headerShown: false }}></Stack.Screen>
-            <Stack.Screen name='AddGlucoseLog' options={{ headerShown: false }}></Stack.Screen>
+            <Stack.Screen name='AddReminder' options={{ headerShown: false }}></Stack.Screen>
             <Stack.Screen name='[id]' options={{ headerShown: false }}></Stack.Screen>
-            {/* <Stack.Screen name='search' options={{ headerTitle: '' }}></Stack.Screen>
-            <Stack.Screen name='create' options={{ headerTitle: '' }}></Stack.Screen>
-            <Stack.Screen name='[id]' options={{ headerTitle: '' }}></Stack.Screen> */}
         </Stack>
     )
 }
