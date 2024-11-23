@@ -46,7 +46,7 @@ export default function GlucoseLogDetailPage() {
     const handleUpdateGlucoseLog = async (payload: UpdateGlucoseLogReq) => {
         try {
             const res = await updateGlucoseLog(setLoading, payload)
-            router.navigate('/(notes)/glucose-logs')
+            router.navigate('/logs/glucose/')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -68,7 +68,7 @@ export default function GlucoseLogDetailPage() {
     const handleDeleteGlucoseLog = async (id: number) => {
         try {
             const res = await deleteGlucoseLog(setLoading, id)
-            router.navigate('/(notes)/glucose-logs')
+            router.navigate('/logs/glucose/')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;

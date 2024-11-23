@@ -41,7 +41,7 @@ export default function CustomQuantityPicker({
                     {label}
                 </CustomText>
             }
-            {showQtyPicker && (
+            {showQtyPicker ? 
                 <View style={styles.container}>
                     {/* left */}
                     <FontAwesome name='play' style={styles.arrow} />
@@ -92,7 +92,34 @@ export default function CustomQuantityPicker({
                         width={175}
                     />
                 </View>
-            )}
+                :
+                <View style={styles.container}>
+                    {/* right */}
+                    <FontAwesome name='play' style={styles.arrow} />
+                    <WheelPickerExpo
+                        initialSelectedIndex={0}
+                        onChange={({ index }) => onChangeSize(typeData[index])}
+                        items={typeData.map(data => ({ label: data, value: data }))}
+                        renderItem={({ label }) => (
+                            <View style={[
+                                styles.pickerContainer,
+                                label == String(size) && styles.pickerSelected,
+                            ]}>
+                                <Text style={[
+                                    styles.pickerText,
+                                    label == String(size) && styles.pickerTextSelected
+                                ]}>
+                                    {label}
+                                </Text>
+                            </View>
+                        )}
+                        flatListProps={{
+                            nestedScrollEnabled: true,
+                        }}
+                        width={175}
+                    />
+                </View>
+            }
         </View>
     )
 }

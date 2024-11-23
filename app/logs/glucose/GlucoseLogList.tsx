@@ -32,7 +32,7 @@ export default function GlucoseLogList({ data }: GlucoseLogListProps) {
                         <Text style={styles.doseText}>{item.glucose_rate} mg/dL</Text>
                         <TouchableOpacity
                             style={styles.editButton}
-                            onPress={() => router.navigate(`/(notes)/glucose-logs/${item.id}`)}
+                            onPress={() => router.navigate(`/logs/glucose/${item.id}`)}
                         >
                             <Text style={styles.editText}>✎ Edit</Text>
                         </TouchableOpacity>
