@@ -1,46 +1,67 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import useAsyncStorage from '@/hooks/useAsyncStorage';
+import * as Notifications from 'expo-notifications';
 
-interface Reminder {
-  id: string;
-  time: string;
-  days: string;
-  description: string;
-  category: string;
-  isEnabled: boolean;
-}
+export default function ReminderPage() {
+  const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
 
-export default function App() {
-  const [reminders, setReminders] = useState<Reminder[]>([
-    { id: '1', time: '08.41', days: 'Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', description: 'Setiap Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', category: 'Gula darah', isEnabled: false },
-    { id: '2', time: '13.41', days: '', description: 'Setiap hari', category: 'Olahraga', isEnabled: true },
-    { id: '3', time: '10.41', days: '', description: 'Setelah makan abis itu ambil darah', category: 'Gula darah', isEnabled: true },
-    { id: '4', time: '17.20', days: 'Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', description: 'Setiap Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', category: 'Gula darah', isEnabled: false },
-    { id: '5', time: '17.20', days: 'Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', description: 'Setiap Senin, Selasa, Rabu, Kamis, Jumat, Sabtu', category: 'Olahraga', isEnabled: false },
-  ]);
+  const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
 
-  // Toggle switch function
-  const toggleSwitch = (id: string) => {
-    setReminders((prevReminders) =>
-      prevReminders.map((reminder) =>
-        reminder.id === id ? { ...reminder, isEnabled: !reminder.isEnabled } : reminder
-      )
-    );
-  };
-
-  // Group reminders by time
-  const groupRemindersByTime = () => {
-    const grouped = reminders.reduce((acc, reminder) => {
-      if (!acc[reminder.time]) {
-        acc[reminder.time] = [];
+  useEffect(() => {
+    const fetchReminders = async () => {
+      const reminderData = await getAllReminderData();
+      if (reminderData) {
+        const remindersArray = Object.values(reminderData) as ReminderFormValues[];
+        setReminders(remindersArray);
       }
-      acc[reminder.time].push(reminder);
-      return acc;
-    }, {} as { [key: string]: Reminder[] });
+    };
 
-    return Object.entries(grouped).map(([time, reminders]) => ({ time, reminders }));
+    fetchReminders();
+  }, []);
+
+  const getAllReminderData = async () => { 
+    const keys = await getAllKeys();
+    const reminderKeys: string[] = []
+    
+    keys.forEach((key) => {
+        if (key.startsWith('reminder')){
+        reminderKeys.push(key)
+        }
+    });
+
+    const reminderData = await getAllObjectData(reminderKeys);
+    
+    return reminderData;
+  }
+
+  const reminderNotifications = async (reminder: ReminderFormValues, day: number) => {
+    const [hours, minutes] = reminder.time.split(':').map(Number);
+    const title = reminder.reminderType.join(' ');
+    const body = reminder.notes;
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title,
+        body: body,
+        data: { id: reminder.id },
+      },
+      trigger: {
+        weekday: day,
+        hour: hours,
+        minute: minutes,
+        repeats: true,
+      },
+    });
+
+    return notificationId;
+  }
+
+  const cancelNotifications = async (notificationIds: string[]) => {
+    for (const id of notificationIds) {
+      await Notifications.cancelScheduledNotificationAsync(id);
+    }
   };
 
   const handleNavigate = async () => {
@@ -48,30 +69,83 @@ export default function App() {
     router.navigate('/(notes)/reminder/AddReminder')
   }
 
+  const handleSwitchToggle = async (id: string, value: boolean) => {
+    // Update the reminders state
+    const updatedReminders = reminders.map((reminder) =>
+      reminder.id === id ? { ...reminder, isEnabled: value } : reminder
+    );
+    setReminders(updatedReminders);
+
+    const updatedReminder = updatedReminders.find((reminder) => reminder.id === id);
+
+    if (updatedReminder) {
+      if (value) {
+        for (const day of updatedReminder.repeatDays) { 
+          updatedReminder.notificationId.push(await reminderNotifications(updatedReminder, day))
+        }
+
+        await storeObjectData(updatedReminder.id, updatedReminder)
+      } else {
+        await cancelNotifications(updatedReminder.notificationId);
+        updatedReminder.notificationId = [];
+      }
+    }
+  };
+
+  const mapReminderType = (value: number) => {
+    switch (value) {
+      case 1:
+        return 'Gula Darah';
+      case 2:
+        return 'Obat';
+      case 3:
+        return 'Olahraga';
+    }
+  }
+
+  const dayMapping: { [key: number]: string } = {
+    1: 'Senin',
+    2: 'Selasa',
+    3: 'Rabu',
+    4: 'Kamis',
+    5: 'Jumat',
+    6: 'Sabtu',
+    7: 'Minggu'
+  };
+
   // Render each reminder item
-  const renderItem = ({ item }: { item: { time: string; reminders: Reminder[] } }) => (
-    <View style={styles.reminderContainer}>
+  const renderItem = ({ item }: { item: ReminderFormValues }) => (
+    <TouchableOpacity
+      style={styles.reminderContainer}
+      onPress={() => router.navigate(`/(notes)/reminder/${item.id}`)}
+      // onPress={() => router.navigate('/(notes)/reminder/TestNotification')}
+    >
       <View style={styles.reminderLeft}>
-        {/* Render categories if there are multiple */}
         <View style={styles.categoryContainer}>
-          {item.reminders.map((reminder) => (
-            <Text key={reminder.id} style={styles.category}>
-              {reminder.category}
+          {item.reminderType.map((type, index) => (
+            <Text key={index} style={styles.category}>
+              {mapReminderType(type)}
             </Text>
           ))}
         </View>
+  
         <Text style={styles.time}>{item.time}</Text>
-        <Text style={styles.description}>{item.reminders[0].description}</Text>
-        {item.reminders[0].days && <Text style={styles.days}>{item.reminders[0].days}</Text>}
+  
+        {item.repeatDays.length > 0 &&
+          (item.repeatDays.length == 7 ? <Text style={styles.days}>Setiap Hari</Text> : <Text style={styles.days}>Setiap {item.repeatDays.map((num) => dayMapping[num]).join(', ')}</Text>)
+        }
+        {item.notes && (
+          <Text style={styles.days}>{item.notes}</Text>
+        )}
       </View>
-      {/* Render the switch for the first item in the grouped reminders */}
+  
       <Switch
-        value={item.reminders[0].isEnabled}
-        onValueChange={() => toggleSwitch(item.reminders[0].id)}
+        value={item.isEnabled}
+        onValueChange={(value) => handleSwitchToggle(item.id, value)}
         trackColor={{ false: '#767577', true: '#f4b400' }}
-        thumbColor={item.reminders[0].isEnabled ? '#ff9800' : '#f4f3f4'}
+        thumbColor={false ? '#ff9800' : '#f4f3f4'}
       />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -89,7 +163,7 @@ export default function App() {
       <Text style={styles.subtitle}>Jadwal Pengingat</Text>
 
       <FlatList
-        data={groupRemindersByTime()}
+        data={reminders}
         renderItem={renderItem}
         keyExtractor={(item) => item.time}
       />

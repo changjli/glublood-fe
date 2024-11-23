@@ -43,10 +43,50 @@ export default function useAsyncStorage() {
         }
     }
 
+    const getAllKeys = async () => {
+        try {
+          const keys = await AsyncStorage.getAllKeys();
+          console.log('All keys:', keys);
+          return keys;
+        } catch (error) {
+          console.error('Error fetching keys:', error);
+          return [];
+        }
+    };
+
+    const getAllObjectData = async (keys: string[]) => {
+        try {
+            const allItems = await AsyncStorage.multiGet(keys);
+            
+            const data = allItems.reduce<StoredData>((acc, [key, value]) => {
+                if (value != null) {
+                    acc[key] = JSON.parse(value);
+                }
+                return acc;
+            }, {});
+            
+            return data;
+        } catch (err) {
+            console.log('[useAuth][getAllObjectData] Error:', err);
+        }
+    };
+
+    const deleteDataByKey = async (key: string) => {
+        try {
+          await AsyncStorage.removeItem(key);
+          console.log(`Data with key ${key} deleted successfully.`);
+        } catch (error) {
+          console.error('Error deleting data:', error);
+        }
+    };
+
     return {
         storeData,
         getData,
         storeObjectData,
         getObjectData,
+        getAllKeys,
+        getAllObjectData,
+        deleteDataByKey,
     }
 }
