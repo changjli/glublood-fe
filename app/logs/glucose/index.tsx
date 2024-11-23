@@ -44,7 +44,7 @@ export default function Glucose() {
 
   const handleNavigate = async () => {
     await storeData('glucoseLogDate', formatDatetoString(selectedDate))
-    router.navigate('/(notes)/glucose-logs/AddGlucoseLog')
+    router.navigate('/logs/glucose/AddGlucoseLog')
   }
 
   useEffect(() => {

@@ -8,6 +8,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog';
 import GlucoseLogForm from './GlucoseLogForm';
 import Wrapper from '@/components/Layout/Wrapper';
+import CustomHeader from '@/components/CustomHeader';
 
 export default function AddGlucoseLog() {
     const { storeGlucoseLog } = useGlucoseLog()
@@ -18,7 +19,7 @@ export default function AddGlucoseLog() {
         try {
             console.log("Data: ", data)
             const res = await storeGlucoseLog(setStoreLoading, data)
-            router.navigate('/(notes)/glucose-logs')
+            router.navigate('/logs/glucose/')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -59,9 +60,8 @@ export default function AddGlucoseLog() {
 
     return (
         <ScrollView>
+            <CustomHeader title='Tambah log gula darah' />
             <Wrapper style={styles.container}>
-                <Text style={styles.header}>Tambah log obat</Text>
-
                 <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
