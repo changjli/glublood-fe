@@ -1,5 +1,5 @@
 import { View, Text, TouchableWithoutFeedback, Keyboard, StyleSheet, GestureResponderEvent, Alert, Pressable } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomText from '@/components/CustomText'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { router } from 'expo-router'
@@ -12,6 +12,7 @@ import useAuth from '@/hooks/api/auth/useAuth'
 import { useSession } from '@/app/context/AuthenticationProvider'
 import Wrapper from '@/components/Layout/Wrapper'
 import Loader from '@/components/Loader'
+import axios from 'axios'
 
 type VerifyCodeProps = {
     credentials: {
@@ -20,9 +21,13 @@ type VerifyCodeProps = {
     }
 }
 
-const Timer = ({ time }: { time: number }) => {
+const Timer = ({ time, flag }: { time: number, flag: boolean }) => {
     const [timer, setTimer] = useState(time);
     const timeOutCallback = useCallback(() => setTimer(currTimer => currTimer - 1), []);
+
+    useEffect(() => {
+        setTimer(time)
+    }, [flag])
 
     useEffect(() => {
         if (timer > 0) {
@@ -37,7 +42,7 @@ const Timer = ({ time }: { time: number }) => {
     return (
         <View>
             {minutes === 0 && seconds === 0
-                ? null
+                ? <Text style={{ color: Colors.light.danger }}>00:00</Text>
                 : <Text style={{ color: Colors.light.secondary }}> {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
             }
         </View>
@@ -46,7 +51,7 @@ const Timer = ({ time }: { time: number }) => {
 
 export default function VerifyCode({ credentials }: VerifyCodeProps) {
     const [innerCredentials, setInnerCredentials] = useState(credentials)
-    const [minutes, setMinutes] = useState(3 * 60)
+    const [timeFlag, setTimeFlag] = useState(false)
 
     // const { getObjectData } = useAsyncStorage()
     const { register, login, sendCode } = useAuth()
@@ -70,6 +75,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
         value,
         setValue,
     });
+    const [verificationCode, setVerificationCode] = useState('')
 
     // const handleGetCredentials = async () => {
     //     try {
@@ -80,19 +86,19 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
     //     }
     // }
 
-    const handleRegister = async (data: { code: string }) => {
+    const handleRegister = async () => {
         try {
             const payload = {
                 ...innerCredentials,
-                ...data
+                code: verificationCode,
             }
 
             const res = await register(setRegisterLoading, payload)
             if (res.status == 200) {
                 console.log(res.data)
-                Alert.alert('success', res.message)
             } else if (res.status == 400) {
                 console.log(res.message)
+                setVerificationCode('')
                 Alert.alert('error', res.message)
             }
         } catch (err) {
@@ -102,16 +108,16 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
     }
 
     const handleLogin = async () => {
-        const payload = {
-            ...innerCredentials,
-        }
-
         try {
+            const payload = {
+                ...innerCredentials,
+            }
+
             const res = await login(setLoginLoading, payload)
             if (res.status == 200) {
                 console.log(res.data)
-                Alert.alert('success', res.message)
                 signIn(res)
+                router.push('/userProfile/first_time_setup')
             } else if (res.status == 400) {
                 console.log(res.message)
                 Alert.alert('error', res.message)
@@ -131,7 +137,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                 // await storeObjectData('credentials', data)
                 // router.replace('(auth)/verify-code')
                 setInnerCredentials(res.data)
-                setMinutes(3 * 60)
+                setTimeFlag(prev => !prev)
             } else if (res.status == 400) {
                 console.log(res.message)
                 Alert.alert('error', res.message)
@@ -142,6 +148,11 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
         }
     }
 
+    const handleSubmit = async () => {
+        await handleRegister()
+        await handleLogin()
+    }
+
     // useEffect(() => {
     //     handleGetCredentials()
     // }, [])
@@ -150,59 +161,46 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
         setInnerCredentials(credentials)
     }, [])
 
+    useEffect(() => {
+        if (verificationCode.length == 6) {
+            handleSubmit()
+        }
+    }, [verificationCode])
+
     return (
         <View style={{ flex: 1 }}>
             <Wrapper>
                 <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Verifikasi kode</CustomText>
                 <CustomText size='md' style={{ color: Colors.light.gray400, marginBottom: 10 }}>Masukkan 6 kode yang telah dikirim ke {credentials.email}</CustomText>
-                <Formik
-                    initialValues={{ code: '', }}
-                    onSubmit={async (values) => {
-                        await handleRegister(values)
-                        await handleLogin()
-                        router.push('/userProfile/first_time_setup')
-                    }}
-                >
-                    {({ handleChange, handleSubmit, values, errors }) => {
-                        useEffect(() => {
-                            if (values.code.length == 6) {
-                                handleSubmit()
-                            }
-                        }, [values.code])
-
-                        return (
-                            <View className='flex flex-col gap-4'>
-                                <CodeField
-                                    ref={ref}
-                                    {...props}
-                                    value={values.code}
-                                    onChangeText={handleChange('code')}
-                                    cellCount={6}
-                                    rootStyle={styles.codeFieldRoot}
-                                    keyboardType="default"
-                                    textContentType="oneTimeCode"
-                                    renderCell={({ index, symbol, isFocused }) => (
-                                        <Text
-                                            key={index}
-                                            style={[styles.cell, isFocused && styles.focusCell]}
-                                            onLayout={getCellOnLayoutHandler(index)}>
-                                            {symbol || (isFocused ? <Cursor /> : null)}
-                                        </Text>
-                                    )}
-                                />
-                                <View className='flex flex-row justify-end'>
-                                    <Text>Batas Waktu</Text><Timer time={minutes} />
-                                </View>
-                                <View className='flex flex-row justify-center'>
-                                    <Text>Tidak menerima kode?</Text>
-                                    <Pressable onPress={() => handleSendCode(credentials)}>
-                                        <Text className='text-primary font-helvetica-bold'> Kirim ulang</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                        )
-                    }}
-                </Formik>
+                <View className='flex flex-col gap-4'>
+                    <CodeField
+                        ref={ref}
+                        {...props}
+                        value={verificationCode}
+                        onChangeText={setVerificationCode}
+                        cellCount={6}
+                        rootStyle={styles.codeFieldRoot}
+                        keyboardType="default"
+                        textContentType="oneTimeCode"
+                        renderCell={({ index, symbol, isFocused }) => (
+                            <Text
+                                key={index}
+                                style={[styles.cell, isFocused && styles.focusCell]}
+                                onLayout={getCellOnLayoutHandler(index)}>
+                                {symbol || (isFocused ? <Cursor /> : null)}
+                            </Text>
+                        )}
+                    />
+                    <View className='flex flex-row justify-end'>
+                        <Text>Batas Waktu</Text><Timer time={3 * 60} flag={timeFlag} />
+                    </View>
+                    <View className='flex flex-row justify-center'>
+                        <Text>Tidak menerima kode?</Text>
+                        <Pressable onPress={() => handleSendCode(credentials)}>
+                            <Text className='text-primary font-helvetica-bold'> Kirim ulang</Text>
+                        </Pressable>
+                    </View>
+                </View>
             </Wrapper>
             {(registerLoading || loginLoading || sendCodeLoading) && (
                 <Loader />

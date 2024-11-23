@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Alert, ScrollView } from 'react-native'
 import React, { useState } from 'react';
 import { Formik } from 'formik';
 import { Ionicons } from '@expo/vector-icons';
@@ -170,70 +170,72 @@ export default function FirstTimeSetup() {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <Formik
-                initialValues={{
-                    firstname: '',
-                    lastname: '',
-                    weight: '',
-                    height: '',
-                    age: '',
-                    birthDate: new Date(),
-                    gender: '',
-                    descendant: '',
-                    diseaseHistory: '',
-                    selectPatient: '',
-                    selectDiabetesType: 0
-                }}
-                validationSchema={validationSchema}
-                onSubmit={(values) => console.log("Values onSubmit Formik: ", values)}
-            >
-                {formikProps => (
-                    <View className="px-5 py-16 bg-bg flex flex-1" style={{ height: '100%' }}>
-                        <StepIndicator
-                            currentPosition={currentPosition}
-                            customStyles={customStyles}
-                            stepCount='3'
-                        />
-                        {React.createElement(formikSteps[currentPosition].component, formikProps)}
-                        <View
-                            style={{
-                                marginTop: 'auto',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: currentPosition == 3 ? 'flex-end' : 'space-between',
-                                alignItems: 'flex-end',
-                            }}
-                        >
-                            <TouchableOpacity
-                                style={[
-                                    styles.prevButton,
-                                    { display: currentPosition == 0 || currentPosition == 3 ? 'none' : 'flex' },
-                                ]}
-                                onPress={() => pageController(-1, formikProps)}
+            <ScrollView>
+                <Formik
+                    initialValues={{
+                        firstname: '',
+                        lastname: '',
+                        weight: '',
+                        height: '',
+                        age: '',
+                        birthDate: new Date(),
+                        gender: '',
+                        descendant: '',
+                        diseaseHistory: '',
+                        selectPatient: '',
+                        selectDiabetesType: 0
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={(values) => console.log("Values onSubmit Formik: ", values)}
+                >
+                    {formikProps => (
+                        <View className="px-5 py-16 bg-bg flex flex-1" style={{ height: '100%' }}>
+                            <StepIndicator
+                                currentPosition={currentPosition}
+                                customStyles={customStyles}
+                                stepCount='3'
+                            />
+                            {React.createElement(formikSteps[currentPosition].component, formikProps)}
+                            <View
+                                style={{
+                                    marginTop: 12,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: currentPosition == 3 ? 'flex-end' : 'space-between',
+                                    alignItems: 'flex-end',
+                                }}
                             >
-                                <Ionicons name="arrow-back" color='#DA6E35' size={24} className='text-center' />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[
-                                    styles.nextButton,
-                                    { marginLeft: currentPosition == 0 ? 'auto' : 0 },
-                                    { width: currentPosition == 3 ? 175 : 55 }
-                                ]}
-                                onPress={() => pageController(1, formikProps)}
-                            >
-                                {
-                                    currentPosition === 3 ?
-                                        <Text className='font-helvetica-bold text-center text-white' onPress={() => router.navigate('/(tabs)/prediction')}>
-                                            Mulai Pengecekkan
-                                        </Text>
-                                        :
-                                        <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
-                                }
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.prevButton,
+                                        { display: currentPosition == 0 || currentPosition == 3 ? 'none' : 'flex' },
+                                    ]}
+                                    onPress={() => pageController(-1, formikProps)}
+                                >
+                                    <Ionicons name="arrow-back" color='#DA6E35' size={24} className='text-center' />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        styles.nextButton,
+                                        { marginLeft: currentPosition == 0 ? 'auto' : 0 },
+                                        { width: currentPosition == 3 ? 175 : 55 }
+                                    ]}
+                                    onPress={() => pageController(1, formikProps)}
+                                >
+                                    {
+                                        currentPosition === 3 ?
+                                            <Text className='font-helvetica-bold text-center text-white' onPress={() => router.navigate('/(tabs)/prediction')}>
+                                                Mulai Pengecekkan
+                                            </Text>
+                                            :
+                                            <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
+                                    }
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                )}
-            </Formik>
+                    )}
+                </Formik>
+            </ScrollView>
         </TouchableWithoutFeedback>
     )
 }

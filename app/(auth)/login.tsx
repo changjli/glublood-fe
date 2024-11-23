@@ -25,7 +25,7 @@ export default function LoginPage() {
 
     const { login } = useAuth()
     const { signIn } = useSession()
-    const { width } = Dimensions.get('window')
+    const { width, height } = Dimensions.get('window')
 
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
@@ -49,27 +49,27 @@ export default function LoginPage() {
 
     return (
         <View style={{ flex: 1 }}>
-            <View className='absolute'>
+            {/* <View className='absolute'>
                 <Image source={require('../../assets/images/backgrounds/wave-1.png')} style={{ width: width, height: 375 }} />
-            </View>
-            <Wrapper>
-                <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Masuk</CustomText>
-                <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Selamat datang lanjutkan perjalananmu!</CustomText>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                    <Image source={require('../../assets/images/characters/icon-login.png')} style={{ width: 277, height: 250 }} />
-                </View>
-                <Formik
-                    initialValues={{
-                        email: '',
-                        password: ''
-                    }}
-                    onSubmit={async (values) => {
-                        await handleLogin(values)
-                    }}
-                    validationSchema={loginSchema}
-                >
-                    {({ handleChange, handleSubmit, values, errors }) => (
-                        <WithKeyboard>
+            </View> */}
+            <WithKeyboard>
+                <Wrapper style={{ backgroundColor: 'white', height: height }}>
+                    <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Masuk</CustomText>
+                    <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Selamat datang lanjutkan perjalananmu!</CustomText>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                        <Image source={require('../../assets/images/characters/icon-login.png')} style={{ height: 200 }} resizeMode='contain' />
+                    </View>
+                    <Formik
+                        initialValues={{
+                            email: '',
+                            password: ''
+                        }}
+                        onSubmit={async (values) => {
+                            await handleLogin(values)
+                        }}
+                        validationSchema={loginSchema}
+                    >
+                        {({ handleChange, handleSubmit, values, errors }) => (
                             <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
                                 <View style={{ flexDirection: 'column', gap: errors && 5 }}>
                                     <CustomTextInput
@@ -112,10 +112,10 @@ export default function LoginPage() {
                                     </View>
                                 </View>
                             </View>
-                        </WithKeyboard>
-                    )}
-                </Formik>
-            </Wrapper>
+                        )}
+                    </Formik>
+                </Wrapper>
+            </WithKeyboard>
         </View>
     )
 }   

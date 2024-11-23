@@ -17,7 +17,6 @@ import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
-import Skeleton from "react-native-reanimated-skeleton";
 
 export default function index() {
     const { signOut, session } = useSession()
@@ -130,7 +129,7 @@ export default function index() {
                     <View style={{ marginBottom: 12 }}>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
                             <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
-                            <TouchableOpacity onPress={() => router.push('/profile')}>
+                            <TouchableOpacity onPress={() => signOut()}>
                                 <Image
                                     source={require('@/assets/images/user-profile/dummy.png')}
                                     style={styles.profile}
@@ -220,10 +219,8 @@ export default function index() {
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
                     </TouchableOpacity>
                 </Wrapper>
+                <CustomButton title='prediction' onPress={() => router.push('/prediction')} />
                 <View style={{ height: 20 }} />
-                <Skeleton isLoading={true} containerStyle={{ width: 50, height: 50 }}>
-                    <Text>hello</Text>
-                </Skeleton>
             </ScrollView>
         </View>
     )
