@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Switch, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import * as Notifications from 'expo-notifications';
+import { FontSize } from '@/constants/Typography';
 
 export default function ReminderPage() {
   const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
@@ -63,11 +64,6 @@ export default function ReminderPage() {
       await Notifications.cancelScheduledNotificationAsync(id);
     }
   };
-
-  const handleNavigate = async () => {
-    // await storeData('glucoseLogDate', formatDatetoString(selectedDate))
-    router.navigate('/(notes)/reminder/AddReminder')
-  }
 
   const handleSwitchToggle = async (id: string, value: boolean) => {
     // Update the reminders state
@@ -151,13 +147,25 @@ export default function ReminderPage() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity>
-          <FontAwesome name="arrow-left" size={24} color="white" />
-        </TouchableOpacity>
+        <View style={styles.buttonNavigate}>
+          <TouchableOpacity
+            onPress={() => router.back()}  
+          >
+            <Ionicons name='arrow-back' size={40} color={'white'} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.navigate('/(notes)/reminder/AddReminder')}
+            style={{
+              paddingVertical: 5,
+              paddingHorizontal: 7,
+              backgroundColor: 'white',
+              borderRadius: 5,
+            }}
+          >
+            <FontAwesome name="plus" size={24} color="#DA6E35" />
+          </TouchableOpacity>
+        </View>
         <Text style={styles.headerTitle}>Pengingat</Text>
-        <TouchableOpacity onPress={handleNavigate}>
-          <FontAwesome name="plus" size={24} color="white" />
-        </TouchableOpacity>
       </View>
 
       <Text style={styles.subtitle}>Jadwal Pengingat</Text>
@@ -176,27 +184,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f2f8f9',
-    paddingTop: 40,
   },
-  header: {
+  header:{
+    paddingTop: 30,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#d0663e',
+  },
+  buttonNavigate: {
+    marginBottom: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#d0663e',
   },
   headerTitle: {
     color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontFamily: 'Helvetica-Bold',
   },
   subtitle: {
+    marginVertical: 15,
+    paddingHorizontal: 20,
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
   },
   reminderContainer: {
     flexDirection: 'row',

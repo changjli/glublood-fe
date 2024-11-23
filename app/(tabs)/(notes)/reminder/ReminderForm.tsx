@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Modal, Fl
 import { Formik, Field, FormikConsumer } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesome } from '@expo/vector-icons';
-import CustomTimePicker from '../CustomTimePicker';
+import CustomTimePicker from '@/components/CustomTimePicker';
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import WheelPickerExpo from 'react-native-wheel-picker-expo';
 import { Colors } from '@/constants/Colors';
+import CustomHeader from '@/components/CustomHeader';
 
 interface ReminderFormRenderProps {
     values: ReminderFormValues
@@ -114,15 +115,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
             {({ handleChange, handleSubmit, handleBlur, values, setFieldValue, errors }) => (
                 <ScrollView style={styles.container}>
                     {/* Header */}
-                    <View style={styles.header}>
-                        <TouchableOpacity>
-                            <FontAwesome name="arrow-left" size={24} color="white" />
-                        </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Tambah Pengingat</Text>
-                        <TouchableOpacity>
-                            <FontAwesome name="plus" size={24} color="white" />
-                        </TouchableOpacity>
-                    </View>
+                    <CustomHeader title='Tambahkan Pengingat' />
 
                     {/* Time Selection */}
                     <View style={styles.timePickerContainer}>
@@ -322,19 +315,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#EAF3F4',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#d0663e',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
-    headerTitle: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
     },
     label: {
         marginTop: 12,

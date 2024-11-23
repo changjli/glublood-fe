@@ -1,5 +1,5 @@
-import { View, Text, Modal, StyleSheet, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity, Easing } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from '../context/AuthenticationProvider'
 import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
@@ -7,557 +7,280 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
-
-const generateHtml = (datas: any) => `
-    <html>
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-        </head>
-        <body>
-            <div style="background-color: white;">
-                <h1 style="text-align: center;">Hasil Laporan Kesehatan</h1>
-                <table style="margin-bottom: 10px;">
-                <colgroup>
-                    <col style="width: 16%;" />
-                    <col style="width: 2%;" />
-                    <col style="width: 16%;" />
-                    <col style="width: 16%;" />
-                    <col style="width: 2%;" />
-                    <col style="width: 16%;" />
-                </colgroup>
-                <tbody>
-                    <tr>
-                    <td>Nama</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">Nicholas Audric</td>
-                    <td>Riwayat Penyakit</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">Tidak Ada</td>
-                    </tr>
-                    <tr>
-                    <td>Usia</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">24 Tahun</td>
-                    <td>Keturunan Diabetes</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">Tidak Ada</td>
-                    </tr>
-                    <tr>
-                    <td>Berat Badan</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">78 Kg</td>
-                    <td>Tipe Diabetes</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">Non-diabetes</td>
-                    </tr>
-                    <tr>
-                    <td>Tinggi Badan</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">165 Cm</td>
-                    </tr>
-                    <tr>
-                    <td>Jenis Kelamin</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">Pria</td>
-                    <td>Data Diambil</td>
-                    <td>:</td>
-                    <td style="font-weight: bold;">01/06/2024 - 07/06/2024</td>
-                    </tr>
-                </tbody>
-                </table>
-
-                <table style="border: 1px solid black; border-collapse: collapse; margin-bottom: 10px;">
-                <colgroup>
-                    <col style="width: 16%;" />
-                    <col style="width: 16%;" />
-                    <col style="width: 16%;" />
-                    <col style="width: 16%;" />
-                    <col style="width: 16%;" />
-                </colgroup>
-                <thead>
-                    <tr>
-                    <th colSpan="2">Hari dan Waktu</th>
-                    <th>Gula Darah (mg/dL)</th>
-                    <th>Kalori Nutrisi (Kal)</th>
-                    <th>Aktivitas Fisik (Kal)</th>
-                    <th>Konsumsi Obat</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${datas.map(data => `
-                    <tr>
-                        ${data.description === 'pagi' ? `<td style="border: 1px solid black;" rowSpan="5">${data.date}</td>` : ''}
-                        <td style="border: 1px solid black;">${data.description}</td>
-                        <td style="border: 1px solid black;">${data.avg_glucose_rate}</td>
-                        <td style="border: 1px solid black;">${data.avg_calories}</td>
-                        <td style="border: 1px solid black;">${data.avg_burned_calories}</td>
-                        <td style="border: 1px solid black;">${data.medicine_details}</td>
-                    </tr>
-                    `).join('')}
-                    <tr>
-                    <td style="border: 1px solid black; font-weight: bold;" colSpan="2">Rata-rata</td>
-                    <td style="border: 1px solid black; font-weight: bold;">100</td>
-                    <td style="border: 1px solid black; font-weight: bold;">100</td>
-                    <td style="border: 1px solid black; font-weight: bold;">100</td>
-                    </tr>
-                </tbody>
-                </table>
-
-                <table style="border-collapse: collapse; margin-bottom: 10px;">
-                <thead>
-                    <tr>
-                    <th style="border: 1px solid black;">Keterangan:</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td style="border: 1px solid black;">Pagi</td>
-                    <td style="border: 1px solid black;">Berkisar jam 05.00 - 09.59</td>
-                    </tr>
-                    <tr>
-                    <td style="border: 1px solid black;">Siang</td>
-                    <td style="border: 1px solid black;">Berkisar jam 10.00 - 14.59</td>
-                    </tr>
-                    <tr>
-                    <td style="border: 1px solid black;">Sore</td>
-                    <td style="border: 1px solid black;">Berkisar jam 15.00 - 17.59</td>
-                    </tr>
-                    <tr>
-                    <td style="border: 1px solid black;">Malam</td>
-                    <td style="border: 1px solid black;">Berkisar jam 18.00 - 21.59</td>
-                    </tr>
-                    <tr>
-                    <td style="border: 1px solid black;">Waktu Tidur</td>
-                    <td style="border: 1px solid black;">Berkisar jam 22.00 - 04.59</td>
-                    </tr>
-                </tbody>
-                </table>
-
-                <div style="width: 100%; text-align: center;">
-                Sebagai catatan: Laporan ini dikeluarkan oleh aplikasi Glublood dan dapat ditunjukkan laporan ini untuk dianalisis pada dokter yang berkaitan dengan diabetes ataupun ahli gizi.
-                </div>
-            </div>
-        </body>
-    </html>
-`;
-
-const datas = [
-    {
-        "date": "2024-10-20",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-20",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-20",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-20",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-20",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-21",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-21",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-21",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-21",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-21",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-22",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-22",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-22",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-22",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-22",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-23",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-23",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-23",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-23",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-23",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-24",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-24",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-24",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-24",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-24",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-25",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-25",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-25",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-25",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-25",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-26",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-26",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-26",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-26",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-26",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    },
-    {
-        "date": "2024-10-27",
-        "description": "pagi",
-        "avg_calories": 424.81,
-        "avg_burned_calories": 529.7,
-        "avg_glucose_rate": 72.56,
-        "medicine_details": "   + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Panadol + 2 Dosis Promaag + 2 Kapsul Panadol + 2 Pil Insulin + 3 Kapsul Insulin + 3 Pil Insulin + 3 Pil Panadol"
-    },
-    {
-        "date": "2024-10-27",
-        "description": "siang",
-        "avg_calories": 505.92,
-        "avg_burned_calories": 504.72,
-        "avg_glucose_rate": 77.46,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Pil Insulin + 2 Dosis Insulin + 2 Dosis Promaag + 2 Kapsul Insulin + 2 Pil Promaag + 3 Kapsul Insulin + 3 Kapsul Panadol + 3 Kapsul Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-27",
-        "description": "sore",
-        "avg_calories": 485.63,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 131.5,
-        "medicine_details": "   + 1 Dosis Insulin + 1 Dosis Panadol + 2 Dosis Insulin + 2 Dosis Panadol + 3 Dosis Panadol + 3 Dosis Promaag + 3 Pil Insulin + 3 Pil Promaag"
-    },
-    {
-        "date": "2024-10-27",
-        "description": "malam",
-        "avg_calories": 576.94,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 90.65,
-        "medicine_details": "   + 1 Dosis Panadol + 1 Dosis Promaag + 1 Kapsul Panadol + 1 Kapsul Promaag"
-    },
-    {
-        "date": "2024-10-27",
-        "description": "waktu tidur",
-        "avg_calories": 435.3,
-        "avg_burned_calories": 0,
-        "avg_glucose_rate": 142.2,
-        "medicine_details": "   + 1 Kapsul Promaag + 2 Pil Promaag + 3 Pil Insulin"
-    }
-]
-
+import Wrapper from '@/components/Layout/Wrapper'
+import CustomText from '@/components/CustomText'
+import { Colors } from '@/constants/Colors'
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { formatDatetoString } from '@/utils/formatDatetoString'
+import { FlexStyles } from '@/constants/Flex'
+import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
+import axios from 'axios'
+import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
+import { FontSize } from '@/constants/Typography'
 
 export default function index() {
     const { signOut, session } = useSession()
+    const { getAllFoodMenu } = useFoodMenu()
+    const { getDailyCaloriesByDate, getDailyBurnedCaloriesByDate } = useDailyCalories()
 
-    const [modal, setModal] = useState(false)
+    const today = new Date()
+    const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
+    const [dailyCalories, setDailyCalories] = useState<GetDailyCaloriesResponse | null>(null)
+    const [dailyBurnedCalories, setDailyBurnedCalories] = useState(null)
+    const [getAllFoodMenuLoading, setGetAllFoodMenuLoading] = useState(false)
+    const [getDailyCaloriesLoading, setGetDailyCaloriesLoading] = useState(false)
+    const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] = useState(false)
+    const dailyCaloriesCircularProgressRef = useRef(null)
+    const dailyBurnedCaloriesCircularProgressRef = useRef(null)
 
-    const handleShare = async () => {
-        const { uri: pdfUri } = await Print.printToFileAsync({
-            html: generateHtml(datas),
-            margins: {
-                top: 16,
-                right: 16,
-                bottom: 16,
-                left: 16,
-            }
-        });
-        console.log('File has been saved to:', pdfUri);
-
-        await shareAsync(pdfUri, { UTI: '.pdf', mimeType: 'application/pdf' });
-    };
-
-    const handleDownload = async () => {
+    const handleGetAllFoodMenu = async () => {
         try {
-            // 1. Generate PDF
-            const { uri: pdfUri } = await Print.printToFileAsync({
-                html: generateHtml(datas),
-                margins: {
-                    top: 16,
-                    right: 16,
-                    bottom: 16,
-                    left: 16,
+            const res = await getAllFoodMenu(setGetAllFoodMenuLoading, '', 3)
+            setFoodMenus(res.data)
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
                 }
-            });
-
-            // 2. Convert PDF to base64
-            const pdfBase64 = await FileSystem.readAsStringAsync(pdfUri, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
-
-            // 3. Request permission access to local storage
-            const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-            if (!permissions.granted) {
-                alert('Permission to access storage was denied');
-                return;
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
             }
-
-            const directoryUri = permissions.directoryUri;
-            const fileName = 'Hasil_Laporan_Kesehatan.pdf'; // TODO: Generate file name 
-
-            // 4. Save file to local storage
-            try {
-                await FileSystem.StorageAccessFramework.createFileAsync(directoryUri, fileName, 'application/pdf')
-                    .then(async (uri) => {
-                        await FileSystem.writeAsStringAsync(uri, pdfBase64, { encoding: FileSystem.EncodingType.Base64 });
-                        alert(`File has been saved to ${uri}`);
-                    })
-                    .catch((e) => {
-                        throw e
-                    });
-            } catch (e) {
-                throw e
-            }
-        } catch (error) {
-            console.error('Error generating or saving PDF:', error);
-            alert('Failed to save the PDF. Please try again.');
+            return []
         }
     }
 
+    const handleGetDailyCalories = async (date: string) => {
+        try {
+            const res = await getDailyCaloriesByDate(setGetDailyCaloriesLoading, date)
+            const data: GetDailyCaloriesResponse = res.data
+            setDailyCalories(data)
+        } catch (err) {
+            setDailyCalories(null)
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+        }
+    }
+
+    const handleGetDailyBurnedCalories = async (date: string) => {
+        try {
+            const res = await getDailyBurnedCaloriesByDate(setDailyCaloriesBurnedLoading, date)
+            const data = res.data
+            setDailyBurnedCalories(data)
+        } catch (err) {
+            setDailyBurnedCalories(null)
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                } else if (status === 500) {
+                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                } else {
+                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                Alert.alert('Network Error', 'Please check your internet connection.');
+            }
+        }
+    }
+
+    useEffect(() => {
+        handleGetAllFoodMenu()
+        handleGetDailyCalories(formatDatetoString(today))
+        handleGetDailyBurnedCalories(formatDatetoString(today))
+    }, [])
+
+    useEffect(() => {
+        if (dailyCalories) {
+            if (dailyCaloriesCircularProgressRef.current) {
+                dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
+            }
+        }
+    }, [dailyCalories])
+
+    // useEffect(() => {
+    //     if (dailyCalories && dailyBurnedCalories) {
+    //         if (dailyBurnedCaloriesCircularProgressRef.current) {
+    //             dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, Easing.quad)
+    //         }
+    //     }
+    // }, [dailyBurnedCalories])
+
+
     return (
-        <>
-            <Modal
-                animationType="slide"
-                visible={modal}
-                transparent={true}
-            >
-                <View className='flex-1 flex-col justify-end'>
-                    <View style={{
-                        height: 300,
-                        backgroundColor: 'white'
-                    }}>
-                        <CustomButton title='modal' onPress={() => setModal(!modal)} />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <ScrollView>
+                <View style={styles.headerContainer} />
+                <Wrapper>
+                    <View style={{ marginBottom: 12 }}>
+                        <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
+                            <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
+                            <TouchableOpacity onPress={() => router.push('/profile')}>
+                                <Image
+                                    source={require('@/assets/images/user-profile/dummy.png')}
+                                    style={styles.profile}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        <CustomText style={{ color: 'white', maxWidth: '70%' }}>Hai, Jonathan jaga kesehatan dan perbanyak aktivitas tubuh</CustomText>
                     </View>
-                </View>
-            </Modal>
-            <View>
-                <CustomButton title='Sign out' onPress={() => signOut()} />
-                <CustomButton title='modal' onPress={() => setModal(!modal)} />
-                <CustomButton title='download' onPress={handleDownload} />
-                <CustomButton title='share' onPress={handleShare} />
-                <CustomButton title='report' onPress={() => router.push('/report')} />
-                <CustomButton title='menu' onPress={() => router.push('/food-menus')} />
-            </View>
-        </>
+                    <View style={styles.summaryContainer}>
+                        <AnimatedCircularProgress
+                            ref={dailyBurnedCaloriesCircularProgressRef}
+                            size={170}
+                            width={20}
+                            fill={0}
+                            tintColor={Colors.light.red}
+                            onAnimationComplete={() => console.log('onAnimationComplete')}
+                            backgroundColor={Colors.light.gray300}
+                            rotation={0}
+                            lineCap='round'
+                            children={() => (
+                                <AnimatedCircularProgress
+                                    ref={dailyCaloriesCircularProgressRef}
+                                    size={130}
+                                    width={20}
+                                    fill={dailyCalories ? dailyCalories.consumed_calories / dailyCalories.target_calories * 100 : 0}
+                                    tintColor={Colors.light.primary}
+                                    onAnimationComplete={() => console.log('onAnimationComplete')}
+                                    backgroundColor={Colors.light.gray300}
+                                    rotation={0}
+                                    lineCap='round'
+                                />
+                            )}
+                        />
+
+                        <View style={styles.summaryInnerContainer}>
+                            <View style={styles.todayContainer}>
+                                <CustomText>{formatDatetoString(today)}</CustomText>
+                            </View>
+                            <View>
+                                <View style={[FlexStyles.flexRow, { gap: 8 }]}>
+                                    <View style={{ width: 12, height: 12, backgroundColor: Colors.light.primary }} />
+                                    <CustomText size='sm' style={{ color: Colors.light.primary }}>Asupan kalori</CustomText>
+                                </View>
+                                <View style={[FlexStyles.flexRow, { gap: 8 }]}>
+                                    <View style={{ width: 12, height: 12, backgroundColor: Colors.light.red }} />
+                                    <CustomText size='sm' style={{ color: Colors.light.red }}>Pembakaran kalori</CustomText>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <CustomText size='lg' weight='heavy'>Remainder</CustomText>
+                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/(notes)/reminder/')}>
+                        <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
+                        <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Kamu belum tambah pengigat</CustomText>
+                    </TouchableOpacity>
+
+                    <View>
+                        <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
+                            <CustomText size='lg' weight='heavy'>Menu Sehat</CustomText>
+                            <TouchableOpacity onPress={() => router.push('/food-menus')}>
+                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>Lihat Selengkapnya</CustomText>
+                            </TouchableOpacity>
+                        </View>
+                        <FlatList
+                            data={foodMenus}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity style={styles.foodItemContainer} id={String(index)} onPress={() => router.push(`/food-menus/${item.id}`)}>
+                                    <CustomText size='sm' weight='heavy' style={{ textAlign: 'center' }}>{item.title}</CustomText>
+                                    <CustomText size='sm'>{item.calories} Kal</CustomText>
+                                    <Image
+                                        source={require('@/assets/images/user-profile/dummy.png')}
+                                        style={styles.foodItemImage}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={(item, index) => index.toString()}
+                            horizontal
+                            contentContainerStyle={{ gap: 12 }}
+                        />
+                    </View>
+                    <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
+                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/report')}>
+                        <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
+                        <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
+                    </TouchableOpacity>
+                </Wrapper>
+                <View style={{ height: 20 }} />
+            </ScrollView>
+        </View>
     )
 }
+
+const styles = StyleSheet.create({
+    headerContainer: {
+        backgroundColor: Colors.light.primary,
+        width: '100%',
+        height: 150,
+        position: 'absolute',
+    },
+    summaryContainer: {
+        backgroundColor: 'white',
+        elevation: 5,
+        padding: 16,
+        borderRadius: 16,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16
+    },
+    summaryInnerContainer: {
+        gap: 32
+    },
+    todayContainer: {
+        borderWidth: 1,
+        borderColor: Colors.light.gray300,
+        borderRadius: 8,
+        padding: 8,
+    },
+    foodItemContainer: {
+        backgroundColor: 'white',
+        marginBottom: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 10,
+        gap: 10,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    foodItemImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    reportContainer: {
+        ...FlexStyles.flexCol,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: Colors.light.primary,
+        padding: 8,
+    },
+    profile: {
+        width: 40,
+        height: 40,
+        borderRadius: 40,
+    }
+})
 

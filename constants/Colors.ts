@@ -248,6 +248,9 @@ export const Colors = {
     danger: '#fe3f11',
     transparent: 'rgba(52, 52, 52, alpha)',
     backdrop: 'rgba(0, 0, 0, 0.7)',
+    red: '#AB0000',
+    darkOrange50: '#FDF6EF',
+    orangeYel300: '#f3b764'
   },
   dark: {
     ...tailwind,
