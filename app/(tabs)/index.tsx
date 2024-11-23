@@ -187,7 +187,7 @@ export default function index() {
                         </View>
                     </View>
                     <CustomText size='lg' weight='heavy'>Remainder</CustomText>
-                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/report')}>
+                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/(notes)/reminder/')}>
                         <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Kamu belum tambah pengigat</CustomText>
                     </TouchableOpacity>
