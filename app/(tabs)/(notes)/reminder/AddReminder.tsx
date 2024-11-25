@@ -20,13 +20,25 @@ export default function AddReminder() {
     return `reminders${formattedTime}-${formattedRepeatDays}-${reminderType}`;
   };
 
-  const reminderNotifications = async (reminder: ReminderFormValues, day: number) => {
+  const reminderNotificationsRepeat = async (reminder: ReminderFormValues, day: number, type: number) => {
     const [hours, minutes] = reminder.time.split(':').map(Number);
-    const title = reminder.reminderType.join(' ');
-    const body = reminder.notes;
+    var body = ''
+
+    switch (type) {
+      case 1:
+        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
+        break;
+      case 2:
+        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
+        break;
+      case 3:
+        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
+        break;
+    }
+
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: title,
+        title: "Ding! Dong! Waktunya tiba ⏰",
         body: body,
         data: { id: reminder.id },
       },
@@ -35,6 +47,40 @@ export default function AddReminder() {
         hour: hours,
         minute: minutes,
         repeats: true,
+      },
+    });
+
+    return notificationId
+  };
+
+  const reminderNotificationsSingle = async (reminder: ReminderFormValues, type: number) => {
+    const [hours, minutes] = reminder.time.split(':').map(Number);
+    const year = new Date().getFullYear()
+    const month = new Date().getMonth()
+    const day = new Date().getDate()
+
+    var body = ''
+
+    switch (type) {
+      case 1:
+        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
+        break;
+      case 2:
+        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
+        break;
+      case 3:
+        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
+        break;
+    }
+
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Ding! Dong! Waktunya tiba ⏰",
+        body: body,
+        data: { id: reminder.id },
+      },
+      trigger: {
+        date: new Date(year, month, day, hours, minutes, 0),
       },
     });
 
@@ -111,14 +157,28 @@ export default function AddReminder() {
       values.reminderType = values.reminderType.sort((a, b) => a - b);
       values.repeatDays = values.repeatDays.sort((a, b) => a - b);
 
-      console.log("last value: ", values)
+      if (values.repeatDays[0] == 1 && values.repeatDays.length > 1) {
+        const rotatedList = values.repeatDays.slice(1).concat(values.repeatDays[0]);
+        values.repeatDays = rotatedList
+      } 
       
-      for (const day of values.repeatDays) { 
-        values.notificationId.push(await reminderNotifications(values, day))
+      if (values.repeatDays.length > 0) {
+        for (const type of values.reminderType) { 
+          for (const day of values.repeatDays) { 
+            values.notificationId.push(await reminderNotificationsRepeat(values, day, type))
+          }
+        }
+      } else {
+        for (const type of values.reminderType) { 
+          values.notificationId.push(await reminderNotificationsSingle(values, type))
+        }
       }
+      
+      console.log("[AddReminder] Last value: ", values)
 
       await storeObjectData(uniqueKey, values);
       console.log('Reminder saved successfully!');
+      router.navigate('/(notes)/reminder/');
       // console.log(await AsyncStorage.getAllKeys())
       // await AsyncStorage.clear();
     } catch (err) {
@@ -150,7 +210,6 @@ export default function AddReminder() {
             onPress={() => {
               handleSubmit();
               handleSaveReminder(values);
-              router.navigate('/(notes)/reminder/');
             }} />
         )}
       </ReminderForm>

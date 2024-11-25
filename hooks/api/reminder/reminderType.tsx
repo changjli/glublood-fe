@@ -11,6 +11,7 @@ type ReminderFormValues = {
 type DayItem = {
     id: number;
     day: string;
+    value: number;
 };
 
 type StoredData = {
