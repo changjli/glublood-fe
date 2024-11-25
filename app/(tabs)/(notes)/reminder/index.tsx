@@ -5,9 +5,12 @@ import { router } from 'expo-router';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import * as Notifications from 'expo-notifications';
 import { FontSize } from '@/constants/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 export default function ReminderPage() {
   const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
+  const isFocused = useIsFocused()
 
   const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
 
@@ -20,8 +23,10 @@ export default function ReminderPage() {
       }
     };
 
-    fetchReminders();
-  }, []);
+    if (isFocused) {
+      fetchReminders();
+    }
+  }, [isFocused]);
 
   const getAllReminderData = async () => { 
     const keys = await getAllKeys();
@@ -100,23 +105,29 @@ export default function ReminderPage() {
   }
 
   const dayMapping: { [key: number]: string } = {
-    1: 'Senin',
-    2: 'Selasa',
-    3: 'Rabu',
-    4: 'Kamis',
-    5: 'Jumat',
-    6: 'Sabtu',
-    7: 'Minggu'
+    1: 'Minggu',
+    2: 'Senin',
+    3: 'Selasa',
+    4: 'Rabu',
+    5: 'Kamis',
+    6: 'Jumat',
+    7: 'Sabtu',
   };
 
   // Render each reminder item
   const renderItem = ({ item }: { item: ReminderFormValues }) => (
     <TouchableOpacity
-      style={styles.reminderContainer}
+      style={
+        styles.reminderContainer
+      }
       onPress={() => router.navigate(`/(notes)/reminder/${item.id}`)}
       // onPress={() => router.navigate('/(notes)/reminder/TestNotification')}
     >
-      <View style={styles.reminderLeft}>
+      <View style={[
+          styles.reminderLeft,
+          { opacity: item.isEnabled ? 1 : 0.5 }
+        ]}
+      >
         <View style={styles.categoryContainer}>
           {item.reminderType.map((type, index) => (
             <Text key={index} style={styles.category}>
@@ -138,7 +149,7 @@ export default function ReminderPage() {
       <Switch
         value={item.isEnabled}
         onValueChange={(value) => handleSwitchToggle(item.id, value)}
-        trackColor={{ false: '#767577', true: '#f4b400' }}
+        trackColor={{ false: '#767577', true: '#da6e35' }}
         thumbColor={false ? '#ff9800' : '#f4f3f4'}
       />
     </TouchableOpacity>
