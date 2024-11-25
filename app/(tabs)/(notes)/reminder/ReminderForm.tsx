@@ -27,14 +27,24 @@ interface Option {
 }
 
 const DAYS: DayItem[] = [
-    { id: 1, day: 'Senin' },
-    { id: 2, day: 'Selasa' },
-    { id: 3, day: 'Rabu' },
-    { id: 4, day: 'Kamis' },
-    { id: 5, day: 'Jumat' },
-    { id: 6, day: 'Sabtu' },
-    { id: 7, day: 'Minggu' }
+    { id: 1, day: 'Senin', value: 2 },
+    { id: 2, day: 'Selasa', value: 3 },
+    { id: 3, day: 'Rabu', value: 4 },
+    { id: 4, day: 'Kamis', value: 5 },
+    { id: 5, day: 'Jumat', value: 6 },
+    { id: 6, day: 'Sabtu', value: 7 },
+    { id: 7, day: 'Minggu', value: 1 }
 ];
+
+const dayMapping: { [key: number]: string } = {
+    2: 'Senin',
+    3: 'Selasa',
+    4: 'Rabu',
+    5: 'Kamis',
+    6: 'Jumat',
+    7: 'Sabtu',
+    1: 'Minggu',
+};
 
 const validationSchema = Yup.object().shape({
     reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
@@ -81,6 +91,15 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
         setFieldValue('time', `${selectedHour}:${selectedMinute}`)
     } 
 
+    const handleSortRepeatDays = (values: ReminderFormValues) => {
+        const sortedDays = values.repeatDays.sort((a: number, b: number) => a - b)
+
+        if (sortedDays[0] == 1 && sortedDays.length > 1) {
+            const rotatedList = sortedDays.slice(1).concat(sortedDays[0]);
+            values.repeatDays = rotatedList
+        }
+    } 
+
     const toggleDaySelection = (dayId: number, values: any, setFieldValue: (field: string, value: any) => void) => {
         const updatedDays = values.repeatDays.includes(dayId)
             ? values.repeatDays.filter((selectedDayId: number) => selectedDayId !== dayId)
@@ -94,10 +113,10 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
             {({ values, setFieldValue }) => (
                 <TouchableOpacity
                     style={styles.itemContainer}
-                    onPress={() => toggleDaySelection(item.id, values, setFieldValue)}
+                    onPress={() => toggleDaySelection(item.value, values, setFieldValue)}
                 >
                     <Text style={styles.itemText}>{item.day}</Text>
-                    {values.repeatDays.includes(item.id) && (
+                    {values.repeatDays.includes(item.value) && (
                         <Text style={styles.checkMark}>✓</Text>
                     )}
                 </TouchableOpacity>
@@ -106,6 +125,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
     );
     
     return (
+        
         <Formik
             initialValues={formValue}
             validationSchema={validationSchema}
@@ -139,6 +159,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     {label}
                                 </Text>
                             )}
+                            flatListProps={{
+                                nestedScrollEnabled: true,
+                            }}
                         />
                         <WheelPickerExpo
                             height={height * 0.3}
@@ -146,7 +169,12 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                             backgroundColor='#eaf3f4'
                             initialSelectedIndex={minutes.indexOf(selectedMinute)}
                             items={minutes.map(minute => ({ label: minute, value: minute }))}
-                            onChange={({ index }) => setSelectedMinute(minutes[index])}
+                            onChange={({ index }) =>
+                                {
+                                    setSelectedMinute(minutes[index])
+                                    handleTimeFieldValue(setFieldValue)
+                                }
+                            }
                             renderItem={({ label }) => (
                                 <Text style={[
                                     styles.timePickerText,
@@ -155,6 +183,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     {label}
                                 </Text>
                             )}
+                            flatListProps={{
+                                nestedScrollEnabled: true,
+                            }}
                         />
                     </View>
                     {errors.time && <Text style={styles.errorText}>{errors.time}</Text>}
@@ -169,7 +200,16 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                 style={styles.openModalButton}
                                 onPress={() => setModalWeeklyReminderVisible(true)}
                             >
-                                <Text style={styles.openModalText2}>Sekali</Text>
+                                <Text style={styles.openModalText2}>
+                                    {
+                                        values.repeatDays.length > 0 ? 
+                                            values.repeatDays.length > 2 ? ['Setiap ', values.repeatDays.slice(0, 2).map((num) => dayMapping[num]).join(', '), ' ...']
+                                                :
+                                            ['Setiap ', values.repeatDays.map((num) => dayMapping[num]).join(', ')]
+                                            :
+                                            'Sekali'
+                                    }
+                                </Text>
                                 <FontAwesome name="chevron-right" size={20} color="black" />
                             </TouchableOpacity>
                         </View>
@@ -200,7 +240,10 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     
                                     <TouchableOpacity
                                         style={styles.closeButton}
-                                        onPress={() => setModalWeeklyReminderVisible(false)}
+                                        onPress={() => {
+                                            setModalWeeklyReminderVisible(false)
+                                            handleSortRepeatDays(values)
+                                        }}
                                     >
                                         <Text style={styles.closeButtonText}>Simpan</Text>
                                     </TouchableOpacity>
@@ -393,13 +436,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Helvetica-Bold',
     },
     openModalButton: {
-        width: 65,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     openModalText2: {
+        marginRight: 7,
         fontSize: 16,
         fontFamily: 'Helvetica',
     },
