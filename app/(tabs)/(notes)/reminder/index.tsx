@@ -142,7 +142,14 @@ export default function ReminderPage() {
           (item.repeatDays.length == 7 ? <Text style={styles.days}>Setiap Hari</Text> : <Text style={styles.days}>Setiap {item.repeatDays.map((num) => dayMapping[num]).join(', ')}</Text>)
         }
         {item.notes && (
-          <Text style={styles.days}>{item.notes}</Text>
+          <Text style={styles.days}>
+            {
+              item.notes.length > 23 ? 
+                [item.notes.slice(0, 25) , ' ...']
+                :
+                item.notes
+            }
+          </Text>
         )}
       </View>
   
