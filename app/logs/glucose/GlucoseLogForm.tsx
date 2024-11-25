@@ -7,6 +7,7 @@ import { FontFamily, FontSize } from '@/constants/Typography';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import CustomTimePicker from '@/components/CustomTimePicker';
 import CustomQuantityPicker from '@/components/CustomQuantityPicker';
+import { FlexStyles } from '@/constants/Flex';
 
 interface GlucoseLogFormRenderProps {
     values: StoreGlucoseLogReq
@@ -34,54 +35,55 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
         <Formik
             initialValues={formValue}
             validationSchema={validationSchema}
-            onSubmit={(values) => { }}
+            onSubmit={(values) => {
+                console.log("sini", values)
+            }}
             enableReinitialize
         >
-            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <View>
-                    <View style={{ marginBottom: 20 }}>
-                        <CustomTextInput
-                            label='Gula Darahmu'
-                            placeholder='Contoh: 98'
-                            postfix={(
-                                <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
-                            )}
-                            value={values.glucose_rate ? String(values.glucose_rate) : ''}
-                            onChangeText={handleChange('glucose_rate')}
-                        />
-                    </View>
+            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => {
+                console.log("error", errors)
+                return (
+                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <View>
+                            <CustomTextInput
+                                label='Gula Darahmu'
+                                placeholder='Contoh: 98'
+                                postfix={(
+                                    <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
+                                )}
+                                value={values.glucose_rate ? String(values.glucose_rate) : ''}
+                                onChangeText={handleChange('glucose_rate')}
+                                error={errors.glucose_rate}
+                            />
 
-                    <View style={{ marginBottom: 20 }}>
-                        <CustomTimePicker
-                            value={values.time}
-                            onChange={handleChange('time')}
-                        />
-                    </View>
+                            <CustomTimePicker
+                                value={values.time}
+                                onChange={handleChange('time')}
+                                error={errors.time}
+                            />
 
-                    <View style={{ marginBottom: 20 }}>
-                        <Text style={styles.labelText}>Kondisi Pengambilan</Text>
-                        <CustomQuantityPicker
-                            widthSize={200}
-                            size={values.time_selection}
-                            onChangeSize={handleChange('time_selection')}
-                            typeData={doseTypes}
-                            showQtyPicker={false}
-                        />
-                    </View>
+                            <Text style={styles.labelText}>Kondisi Pengambilan</Text>
+                            <CustomQuantityPicker
+                                widthSize={200}
+                                size={values.time_selection}
+                                onChangeSize={handleChange('time_selection')}
+                                typeData={doseTypes}
+                                showQtyPicker={false}
+                            />
 
-                    <View style={{ marginBottom: 10 }}>
-                        <CustomTextInput
-                            style={styles.catatanInput}
-                            label='Catatan'
-                            placeholder='Masukkan catatan di bagian ini'
-                            value={values.notes}
-                            onChangeText={handleChange('notes')}
-                        />
+                            <CustomTextInput
+                                style={styles.catatanInput}
+                                label='Catatan'
+                                placeholder='Masukkan catatan di bagian ini'
+                                value={values.notes}
+                                onChangeText={handleChange('notes')}
+                                error={errors.notes}
+                            />
+                        </View>
+                        {children({ values, handleSubmit })}
                     </View>
-
-                    {children({ values, handleSubmit })}
-                </View>
-            )}
+                )
+            }}
         </Formik>
     )
 }

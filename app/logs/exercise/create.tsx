@@ -66,14 +66,12 @@ export default function CreateExerciseLogPage() {
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <CustomButton
                             title='Simpan catatan'
                             size='md'
-                            onPress={() => {
-                                handleSubmit()
-                                handleStoreExerciseLog(values)
-                            }}
+                            disabled={disabled}
+                            onPress={handleSubmit(data => handleStoreExerciseLog(data))}
                         />
                     )}
                 </ExerciseLogForm>

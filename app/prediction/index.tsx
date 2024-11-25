@@ -1,4 +1,4 @@
-import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet, TouchableOpacity, Pressable, GestureResponderEvent, Alert, Image } from 'react-native'
+import { View, Text, Keyboard, TouchableWithoutFeedback, StyleSheet, TouchableOpacity, Pressable, GestureResponderEvent, Alert, Image, ScrollView, useWindowDimensions, LayoutChangeEvent } from 'react-native'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { FontSize, FontFamily } from '@/constants/Typography'
 import CustomButton, { CustomButtonProps, StyledCustomButton } from '@/components/CustomButton'
@@ -12,6 +12,10 @@ import usePrediction from '@/hooks/api/prediction/usePrediction'
 import { predictionRequest, predictionResponse } from '@/hooks/api/prediction/predictionTypes'
 import { useSession } from '@/app/context/AuthenticationProvider'
 import { router } from 'expo-router'
+import CustomProgressBar from '@/components/CustomProgressBar'
+import Wrapper from '@/components/Layout/Wrapper'
+import CustomText from '@/components/CustomText'
+import { FlexStyles } from '@/constants/Flex'
 
 export type prediction = {
     pregnancies: number,
@@ -33,12 +37,15 @@ export default function Prediction() {
     const { session } = useSession()
     const { storePrediction } = usePrediction()
 
+    const { height } = useWindowDimensions()
+
     // Initialize questions 
     // refactor: bisa dipindahin 
     const qnas = [{
         group: 'mcq',
         key: 'pregnancies',
         question: 'Sudah berapa kali anda mengalami kehamilan?',
+        description: '',
         answers: [
             {
                 label: 'A. 0-4 kali',
@@ -61,6 +68,7 @@ export default function Prediction() {
         group: 'mcq',
         key: 'glucose',
         question: 'Setelah meminum 75g gula, berapa kadar gula darah Anda setelah 2 jam?',
+        description: 'Siapkan alat cek kadar gula darah, strip tes, dan alat tes berupa jarum|Masukkan strip tes ke dalam alat cek kadar gula darah.|Gunakan alat jarum untuk menusuk ujung jari Anda dan ambil setes darah.|Tempatkan setetes darah pada strip tes sesuai dengan instruksi alat.|Tunggu berapa detik hingga alat menampilkan hasil pengukuran kadar gula darah Anda.|Catat kadar gula darah Anda yang ditampilkan dalam satuan mg/dL.',
         answers: [
             {
                 label: 'A. 0-50 mg/dL',
@@ -83,6 +91,7 @@ export default function Prediction() {
         group: 'mcq',
         key: 'blood_pressure',
         question: 'Berapa tekanan darah diastolik Anda?',
+        description: 'Duduklah dengan nyaman dan rileks selama 5 menit sebelum pengukuran.|Pastikan lengan Anda dalam posisi nyaman dan sejajar dengan jantung.|Pasang manset di lengan atas, sekitar 2-3 cm di atas siku.|Pastikan manset cukup kencang tetapi tidak terlalu ketat, agar dapat membaca tekanan darah dengan akurat.|Nyalakan alat cek tensi darah dan ikuti instruksi pada layar.|Tetap tenang dan diam selama pengukuran berlangsung.|Setelah pengukuran selesaai, catat angka yang muncul untuk tekanan darah diastolik (angka yang lebih rendah).',
         answers: [
             {
                 label: 'A. 0-30 mmHg',
@@ -105,6 +114,7 @@ export default function Prediction() {
         group: 'mcq',
         key: 'skin_thickness',
         question: 'Berapa ketebalan kulit Anda di perut setelah dipinch?',
+        description: 'Pastikan kulit di area perut bersih dan kering.|Gunakan ibu jari dan jari telunjuk untuk mencubit kulit dan lemak di area perut, sekitar 2-3 cm di samping pusar.|Pastikan Anda hanya mencubit kulit dan lemak, bukan otot.|Pegang alat ukur ketebalan kulit(caliper) dengan tangan yang lain.|Nyalakan alat cek tensi darah dan ikuti instruksi pada layar.|Tempatkan caliper di tengah lipatan kulit yang telah dicubit.|Lepaskan tekanan pada caliper secara perlahan hingga caliper menempel dengan baik pada lipatan kulit.|Baca dan catat angka yang ditunjukkan pada skala caliper dalam satuan milimeter (mm).',
         answers: [
             {
                 label: 'A. 0-25 mm',
@@ -127,6 +137,7 @@ export default function Prediction() {
         group: 'mcq',
         key: 'insulin',
         question: 'Berapa kadar insulin dalam tubuh anda?',
+        description: '',
         answers: [
             {
                 label: 'A. 0-25 mm',
@@ -148,26 +159,31 @@ export default function Prediction() {
     }, {
         group: 'bmi',
         key: 'bmi',
+        description: '',
         question: 'Kalkulator Body Mass Index (BMI)',
         answers: [],
     }, {
         group: 'diabetes_pedigree',
         key: 'is_father',
+        description: '',
         question: 'Apakah ayah Anda terkena diabetes?',
         answers: [],
     }, {
         group: 'diabetes_pedigree',
         key: 'is_mother',
+        description: '',
         question: 'Apakah ibu Anda terkena diabetes?',
         answers: [],
     }, {
         group: 'diabetes_pedigree',
         key: 'is_sister',
+        description: '',
         question: 'Apakah saudara perempuan Anda terkena diabetes?',
         answers: [],
     }, {
         group: 'diabetes_pedigree',
         key: 'is_brother',
+        description: '',
         question: 'Apakah saudara laki-laki Anda terkena diabetes?',
         answers: [],
     }]
@@ -175,6 +191,7 @@ export default function Prediction() {
     const [page, setPage] = useState(0)
     const [predictionLoading, setPredictionLoading] = useState(false)
     const [result, setResult] = useState(-1)
+    const [headerHeight, setHeaderHeight] = useState(0)
 
     const handleNextPage = () => setPage(page + 1)
     const handlePreviousPage = () => setPage(page - 1)
@@ -207,155 +224,173 @@ export default function Prediction() {
         setResult(-1)
     }
 
-    return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View className='flex-1 px-[16px] py-[22px] bg-background'>
-                {
-                    result == -1 &&
-                    <Formik<prediction>
-                        initialValues={{
-                            pregnancies: -1,
-                            glucose: -1,
-                            blood_pressure: -1,
-                            skin_thickness: -1,
-                            insulin: -1,
-                            weight: 0,
-                            height: 0,
-                            bmi: 0,
-                            is_father: -1,
-                            is_mother: -1,
-                            is_sister: -1,
-                            is_brother: -1,
-                            age: 20,
-                        }}
-                        onSubmit={async (values) => {
-                            await handleStorePrediction(values)
-                        }}
-                    >
-                        {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                            <View className='flex-1 justify-between'>
-                                {/* Mcq */}
-                                {
-                                    qnas[page].group == 'mcq' &&
-                                    <Mcq
-                                        question={qnas[page].question}
-                                        answers={qnas[page].answers}
-                                        value={values[qnas[page].key as keyof prediction]}
-                                        onChange={(value) => setFieldValue(qnas[page].key as keyof prediction, value)}
-                                    />
-                                }
-                                {/* BMI */}
-                                {
-                                    qnas[page].group == 'bmi' &&
-                                    <View>
-                                        <Text style={bmiStyles.question}>{qnas[page].question}</Text>
-                                        <View className='flex flex-row gap-4 mb-4'>
-                                            <View className='flex-1'>
-                                                <StyledCustomTextInput label='Berat badan (Kg)' value={String(values.weight)} onChangeText={handleChange('weight')} keyboardType='numeric' />
-                                            </View>
-                                            <View className='flex-1'>
-                                                <StyledCustomTextInput label='Tinggi badan (Cm)' value={String(values.height)} onChangeText={handleChange('height')} keyboardType='numeric' />
-                                            </View>
-                                        </View>
-                                        <StyledCustomButton title='Calculate' size='lg' onPress={() => {
-                                            const bmi = handleCalculateBMI(values.weight, values.height)
-                                            setFieldValue('bmi', String(bmi))
-                                        }} style={'mb-4'} />
-                                        <View style={bmiStyles.result}>
-                                            <View>
-                                                <Text style={{ textAlign: 'center', fontSize: FontSize.md, fontFamily: FontFamily.medium }}>
-                                                    Hasil BMI
-                                                </Text>
-                                                <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: FontFamily.heavy, color: Colors.light.primary }}>
-                                                    {String(values.bmi)}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                }
-                                {/* Diabetes pedigree */}
-                                {
-                                    qnas[page].group == 'diabetes_pedigree' &&
-                                    <DiabetesPedigree
-                                        question={qnas[page].question}
-                                        value={values[qnas[page].key as keyof prediction]}
-                                        onChange={(value) => setFieldValue(qnas[page].key as keyof prediction, value)}
-                                    />
-                                }
-                                <View className={`flex flex-row ${isFirstPage ? 'justify-end' : 'justify-between'}`}>
-                                    {!isFirstPage && <TouchableOpacity
-                                        style={styles.nextButton}
-                                        onPress={handlePreviousPage}
-                                    >
-                                        <Ionicons name="arrow-back" color='#ffffff' size={24} className='text-center' />
-                                    </TouchableOpacity>}
-                                    {!isLastPage ?
-                                        <TouchableOpacity
-                                            style={styles.nextButton}
-                                            onPress={handleNextPage}
-                                            disabled={values[qnas[page].key as keyof prediction] == -1 ||
-                                                (qnas[page].group == 'bmi' && values[qnas[page].key as keyof prediction] == 0) ? true : false}
-                                        >
-                                            <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
-                                        </TouchableOpacity> :
-                                        <CustomButton title='Submit' onPress={handleSubmit as (e?: GestureResponderEvent) => void} loading={predictionLoading} />
-                                    }
-                                </View>
-                            </View>
-                        )}
-                    </Formik>
-                }
-                {
-                    result == 0 &&
-                    <>
-                        <Image
-                            source={require('@/assets/images/prediction/Vector3.png')}
-                            className='absolute'
-                        />
-                        <View className='flex-1 justify-between gap-4'>
-                            <View className='flex-1 justify-center items-center'>
-                                <Image
-                                    source={require('@/assets/images/characters/indikasi-terkena-1.png')}
-                                    style={{
-                                        width: 242,
-                                        height: 264,
-                                    }}
-                                />
-                                <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
-                                <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TIDAK TERINDIKASI DIABETES</Text>
-                            </View>
-                            <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
-                            <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
-                        </View>
-                    </>
-                }
-                {
-                    result == 1 &&
-                    <>
-                        <Image
-                            source={require('@/assets/images/prediction/Vector3.png')}
-                            className='absolute'
-                        />
-                        <View className='flex-1 justify-between gap-4'>
-                            <View className='flex-1 justify-center items-center'>
-                                <Image
-                                    source={require('@/assets/images/characters/indikasi-tidak-1.png')}
-                                    style={{
-                                        width: 242,
-                                        height: 264,
-                                    }}
-                                />
-                                <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
-                                <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TERINDIKASI DIABETES</Text>
-                            </View>
-                            <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
-                            <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
-                        </View>
-                    </>
-                }
+    const handleHeaderLayout = (e: LayoutChangeEvent) => {
+        const { height } = e.nativeEvent.layout;
+        console.log("height", height)
+        setHeaderHeight(height);
+    }
 
-            </View>
-        </TouchableWithoutFeedback>
+    return (
+        <>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <ScrollView>
+                    <CustomProgressBar current={page + 1} total={qnas.length} onLayout={handleHeaderLayout} />
+                    {
+                        result == -1 &&
+                        <Formik<prediction>
+                            initialValues={{
+                                pregnancies: -1,
+                                glucose: -1,
+                                blood_pressure: -1,
+                                skin_thickness: -1,
+                                insulin: -1,
+                                weight: 0,
+                                height: 0,
+                                bmi: 0,
+                                is_father: -1,
+                                is_mother: -1,
+                                is_sister: -1,
+                                is_brother: -1,
+                                age: 20,
+                            }}
+                            onSubmit={async (values) => {
+                                await handleStorePrediction(values)
+                            }}
+                        >
+                            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
+                                <Wrapper style={{
+                                    height: qnas[page].description == '' ? height - headerHeight : undefined,
+                                    justifyContent: qnas[page].description == '' ? 'space-between' : undefined
+                                }}>
+                                    {/* Mcq */}
+                                    {
+                                        qnas[page].group == 'mcq' &&
+                                        <Mcq
+                                            question={qnas[page].question}
+                                            description={qnas[page].description}
+                                            answers={qnas[page].answers}
+                                            value={values[qnas[page].key as keyof prediction]}
+                                            onChange={(value) => setFieldValue(qnas[page].key as keyof prediction, value)}
+                                        />
+                                    }
+                                    {/* BMI */}
+                                    {
+                                        qnas[page].group == 'bmi' &&
+                                        <View>
+                                            <Text style={bmiStyles.question}>{qnas[page].question}</Text>
+                                            <View className='flex flex-row gap-4 mb-4'>
+                                                <View className='flex-1'>
+                                                    <StyledCustomTextInput label='Berat badan (Kg)' value={String(values.weight)} onChangeText={handleChange('weight')} keyboardType='numeric' />
+                                                </View>
+                                                <View className='flex-1'>
+                                                    <StyledCustomTextInput label='Tinggi badan (Cm)' value={String(values.height)} onChangeText={handleChange('height')} keyboardType='numeric' />
+                                                </View>
+                                            </View>
+                                            <StyledCustomButton title='Calculate' size='lg' onPress={() => {
+                                                const bmi = handleCalculateBMI(values.weight, values.height)
+                                                setFieldValue('bmi', String(bmi))
+                                            }} style={'mb-4'} />
+                                            <View style={bmiStyles.result}>
+                                                <View>
+                                                    <Text style={{ textAlign: 'center', fontSize: FontSize.md, fontFamily: FontFamily.medium }}>
+                                                        Hasil BMI
+                                                    </Text>
+                                                    <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: FontFamily.heavy, color: Colors.light.primary }}>
+                                                        {String(values.bmi)}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    }
+                                    {/* Diabetes pedigree */}
+                                    {
+                                        qnas[page].group == 'diabetes_pedigree' &&
+                                        <DiabetesPedigree
+                                            question={qnas[page].question}
+                                            value={values[qnas[page].key as keyof prediction]}
+                                            onChange={(value) => setFieldValue(qnas[page].key as keyof prediction, value)}
+                                        />
+                                    }
+                                    <View className={`flex flex-row ${isFirstPage ? 'justify-end' : 'justify-between'}`}>
+                                        {!isFirstPage && (
+                                            <TouchableOpacity
+                                                style={styles.nextButton}
+                                                onPress={handlePreviousPage}
+                                            >
+                                                <Ionicons name="arrow-back" color='#ffffff' size={24} className='text-center' />
+                                            </TouchableOpacity>
+                                        )}
+                                        {!isLastPage ?
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.nextButton,
+                                                    (values[qnas[page].key as keyof prediction] == -1 ||
+                                                        (qnas[page].group == 'bmi' && values[qnas[page].key as keyof prediction] == 0)) && styles.disabledNextButton
+                                                ]}
+                                                onPress={handleNextPage}
+                                                disabled={values[qnas[page].key as keyof prediction] == -1 ||
+                                                    (qnas[page].group == 'bmi' && values[qnas[page].key as keyof prediction] == 0) ? true : false}
+                                            >
+                                                <Ionicons name="arrow-forward" color='#ffffff' size={24} className='text-center' />
+                                            </TouchableOpacity> :
+                                            <CustomButton title='Submit' onPress={handleSubmit as (e?: GestureResponderEvent) => void} loading={predictionLoading} />
+                                        }
+                                    </View>
+                                </Wrapper>
+                            )}
+                        </Formik>
+                    }
+                    {
+                        result == 0 &&
+                        <>
+                            <Image
+                                source={require('@/assets/images/prediction/Vector3.png')}
+                                className='absolute'
+                            />
+                            <View className='flex-1 justify-between gap-4'>
+                                <View className='flex-1 justify-center items-center'>
+                                    <Image
+                                        source={require('@/assets/images/characters/indikasi-terkena-1.png')}
+                                        style={{
+                                            width: 242,
+                                            height: 264,
+                                        }}
+                                    />
+                                    <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
+                                    <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TIDAK TERINDIKASI DIABETES</Text>
+                                </View>
+                                <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
+                                <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
+                            </View>
+                        </>
+                    }
+                    {
+                        result == 1 &&
+                        <>
+                            <Image
+                                source={require('@/assets/images/prediction/Vector3.png')}
+                                className='absolute'
+                            />
+                            <View className='flex-1 justify-between gap-4'>
+                                <View className='flex-1 justify-center items-center'>
+                                    <Image
+                                        source={require('@/assets/images/characters/indikasi-tidak-1.png')}
+                                        style={{
+                                            width: 242,
+                                            height: 264,
+                                        }}
+                                    />
+                                    <Text style={{ fontSize: FontSize.md }}>Hasil prediksi menyatakan</Text>
+                                    <Text style={{ fontSize: FontSize.xl, color: Colors.light.primary, fontFamily: FontFamily.heavy }}>TERINDIKASI DIABETES</Text>
+                                </View>
+                                <CustomButton title='Lanjutkan' size='lg' onPress={() => router.navigate('/(tabs)')} />
+                                <CustomButton title='Ulangi hasil tes' size='lg' type='outline' onPress={handleReset} />
+                            </View>
+                        </>
+                    }
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </>
     )
 }
 
@@ -363,11 +398,15 @@ const styles = StyleSheet.create({
     nextButton: {
         width: 55,
         height: 40,
-        backgroundColor: '#DA6E35',
+        backgroundColor: Colors.light.primary,
         borderRadius: 8,
         display: 'flex',
         justifyContent: 'center',
+        marginBottom: 8,
     },
+    disabledNextButton: {
+        backgroundColor: Colors.light.gray300
+    }
 })
 
 const bmiStyles = StyleSheet.create({

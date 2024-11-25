@@ -11,7 +11,7 @@ import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import { Colors } from '@/constants/Colors'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { formatDatetoString } from '@/utils/formatDatetoString'
+import { formatDateIntl, formatDatetoStringYmd } from '@/utils/formatDatetoString'
 import { FlexStyles } from '@/constants/Flex'
 import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
@@ -106,8 +106,8 @@ export default function index() {
 
     useEffect(() => {
         handleGetAllFoodMenu()
-        handleGetDailyCalories(formatDatetoString(today))
-        handleGetDailyBurnedCalories(formatDatetoString(today))
+        handleGetDailyCalories(formatDatetoStringYmd(today))
+        handleGetDailyBurnedCalories(formatDatetoStringYmd(today))
     }, [])
 
     useEffect(() => {
@@ -169,7 +169,7 @@ export default function index() {
 
                         <View style={styles.summaryInnerContainer}>
                             <View style={styles.todayContainer}>
-                                <CustomText>{formatDatetoString(today)}</CustomText>
+                                <CustomText style={{ textAlign: 'center' }}>{formatDateIntl(today)}</CustomText>
                             </View>
                             <View>
                                 <View style={[FlexStyles.flexRow, { gap: 8 }]}>
@@ -184,7 +184,7 @@ export default function index() {
                         </View>
                     </View>
                     <CustomText size='lg' weight='heavy'>Remainder</CustomText>
-                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/(notes)/reminder/')}>
+                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/(tabs)/(notes)/reminder')}>
                         <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Kamu belum tambah pengigat</CustomText>
                     </TouchableOpacity>
@@ -219,7 +219,6 @@ export default function index() {
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
                     </TouchableOpacity>
                 </Wrapper>
-                <CustomButton title='prediction' onPress={() => router.push('/prediction')} />
                 <View style={{ height: 20 }} />
             </ScrollView>
         </View>

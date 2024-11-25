@@ -8,6 +8,7 @@ import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import WheelPickerExpo from 'react-native-wheel-picker-expo';
 import { Colors } from '@/constants/Colors';
 import CustomHeader from '@/components/CustomHeader';
+import Wrapper from '@/components/Layout/Wrapper';
 
 interface ReminderFormRenderProps {
     values: ReminderFormValues
@@ -23,7 +24,7 @@ interface ReminderFormProps {
 interface Option {
     title: string;
     label: string;
-    value: string; 
+    value: string;
 }
 
 const DAYS: DayItem[] = [
@@ -39,7 +40,7 @@ const DAYS: DayItem[] = [
 const validationSchema = Yup.object().shape({
     reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
     time: Yup.string().required('Time selection is required!'),
-    repeatDays: Yup.array().of(Yup. number()).min(1, 'At least one day must be selected!'),
+    repeatDays: Yup.array().of(Yup.number()).min(1, 'At least one day must be selected!'),
     notes: Yup.string(),
 });
 
@@ -71,7 +72,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
     const [selectedHour, setSelectedHour] = useState('01');
     const [selectedMinute, setSelectedMinute] = useState('00');
 
-    const hours = Array.from({ length: 24 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+    const hours = Array.from({ length: 24 }, (_, i) => (i).toString().padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
     const [modalWeeklyReminderVisible, setModalWeeklyReminderVisible] = useState<boolean>(false);
@@ -79,16 +80,16 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
 
     const handleTimeFieldValue = (setFieldValue: any) => {
         setFieldValue('time', `${selectedHour}:${selectedMinute}`)
-    } 
+    }
 
     const toggleDaySelection = (dayId: number, values: any, setFieldValue: (field: string, value: any) => void) => {
         const updatedDays = values.repeatDays.includes(dayId)
             ? values.repeatDays.filter((selectedDayId: number) => selectedDayId !== dayId)
             : [...values.repeatDays, dayId];
-    
+
         setFieldValue('repeatDays', updatedDays);
     };
-    
+
     const renderItem: ListRenderItem<DayItem> = ({ item }) => (
         <FormikConsumer>
             {({ values, setFieldValue }) => (
@@ -104,7 +105,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
             )}
         </FormikConsumer>
     );
-    
+
     return (
         <Formik
             initialValues={formValue}
@@ -125,11 +126,10 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                             backgroundColor='#eaf3f4'
                             initialSelectedIndex={hours.indexOf(selectedHour)}
                             items={hours.map(hour => ({ label: hour, value: hour }))}
-                            onChange={({ index }) =>
-                                {
-                                    setSelectedHour(hours[index])
-                                    handleTimeFieldValue(setFieldValue)
-                                }
+                            onChange={({ index }) => {
+                                setSelectedHour(hours[index])
+                                handleTimeFieldValue(setFieldValue)
+                            }
                             }
                             renderItem={({ label }) => (
                                 <Text style={[
@@ -139,6 +139,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     {label}
                                 </Text>
                             )}
+                            flatListProps={{
+                                nestedScrollEnabled: true,
+                            }}
                         />
                         <WheelPickerExpo
                             height={height * 0.3}
@@ -155,6 +158,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     {label}
                                 </Text>
                             )}
+                            flatListProps={{
+                                nestedScrollEnabled: true,
+                            }}
                         />
                     </View>
                     {errors.time && <Text style={styles.errorText}>{errors.time}</Text>}
@@ -186,18 +192,18 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                         <TouchableOpacity
                                             onPress={() => setModalWeeklyReminderVisible(false)}
                                         >
-                                            <Text style={{ color: '#969696',fontFamily: 'Helvetica' }}>Kembali</Text>
+                                            <Text style={{ color: '#969696', fontFamily: 'Helvetica' }}>Kembali</Text>
                                         </TouchableOpacity>
                                         <Text style={styles.modalHeader}>Berulang</Text>
                                     </View>
-                                    
+
                                     <FlatList
                                         data={DAYS}
                                         renderItem={renderItem}
                                         keyExtractor={(item) => item.id.toString()}
                                         style={{ paddingHorizontal: 12 }}
                                     />
-                                    
+
                                     <TouchableOpacity
                                         style={styles.closeButton}
                                         onPress={() => setModalWeeklyReminderVisible(false)}
@@ -220,10 +226,10 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                             <Text
                                 style={[
                                     styles.openModalText2,
-                                    {color: '#969696'}
+                                    { color: '#969696' }
                                 ]}
                             >
-                                {values.notes.length == 0 ? 'Tidak ada catatan' : values.notes.length > 7 ? values.notes.slice(0, 7)+'...' : values.notes.slice(0, 7)}
+                                {values.notes.length == 0 ? 'Tidak ada catatan' : values.notes.length > 7 ? values.notes.slice(0, 7) + '...' : values.notes.slice(0, 7)}
                             </Text>
                         </TouchableOpacity>
 
@@ -239,7 +245,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                         <TouchableOpacity
                                             onPress={() => setModalNotesVisible(false)}
                                         >
-                                            <Text style={{ color: '#969696',fontFamily: 'Helvetica' }}>Kembali</Text>
+                                            <Text style={{ color: '#969696', fontFamily: 'Helvetica' }}>Kembali</Text>
                                         </TouchableOpacity>
                                         <Text style={styles.modalHeader}>Berulang</Text>
                                     </View>
@@ -251,7 +257,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                         value={values.notes}
                                         onChangeText={handleChange('notes')}
                                     />
-                                    
+
                                     <TouchableOpacity
                                         style={styles.closeButton}
                                         onPress={() => setModalNotesVisible(false)}
@@ -263,9 +269,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                         </Modal>
                     </View>
                     {errors.notes && <Text style={styles.errorText}>{errors.notes}</Text>}
-                    
+
                     {/* Reminder Type Selection */}
-                    <View style={ styles.reminderTypeContainer }>
+                    <View style={styles.reminderTypeContainer}>
                         <Text style={styles.label}>Jenis Pengingat</Text>
                         <View style={styles.reminderTypeButtonContainer}>
                             {reminderType.map((option) => (
@@ -278,8 +284,8 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     onPress={() => {
                                         if (values.reminderType.includes(option.value)) {
                                             setFieldValue(
-                                            'reminderType',
-                                            values.reminderType.filter((item:number) => item !== option.value)
+                                                'reminderType',
+                                                values.reminderType.filter((item: number) => item !== option.value)
                                             );
                                         } else {
                                             setFieldValue('reminderType', [...values.reminderType, option.value]);
@@ -289,14 +295,14 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     <Text
                                         style={[
                                             styles.reminderTypeText,
-                                            values.reminderType.includes(option.value) && {color: '#fff'}
+                                            values.reminderType.includes(option.value) && { color: '#fff' }
                                         ]}
                                     >
                                         {option.title}
                                     </Text>
                                     <Image
                                         source={option.imgPath}
-                                        style={{ marginTop: 15, width: 64, height: 60}}
+                                        style={{ marginTop: 15, width: 64, height: 60 }}
                                     />
                                 </TouchableOpacity>
                             ))}
@@ -458,7 +464,7 @@ const styles = StyleSheet.create({
     textInput: {
         height: 180,
         borderRadius: 8,
-        textAlignVertical: 'top', 
+        textAlignVertical: 'top',
         fontSize: 16,
         fontFamily: 'Helvetica',
     },

@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.medium,
         color: Colors.light.danger,
         fontSize: FontSize.sm,
-        lineHeight: FontSize.sm,
+        // lineHeight: FontSize.sm,
     },
     innerContainer: {
         flex: 1,

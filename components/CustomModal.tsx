@@ -21,7 +21,7 @@ export default function CustomModal({ toggleModal, ...rest }: CustomModalProps) 
                     </TouchableWithoutFeedback>
                 )}
             >
-                <View style={styles.modalContainer}>
+                <View style={[styles.modalContainer, rest.style]}>
                     <View style={styles.modalHeaderContainer}>
                         <TouchableOpacity onPress={toggleModal}>
                             <CustomText size='sm' style={{ color: Colors.light.danger }}>Batal</CustomText>

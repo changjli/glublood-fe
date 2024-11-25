@@ -15,7 +15,7 @@ import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../../FoodLogForm'
-import { formatDatetoString } from '@/utils/formatDatetoString'
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString'
 import Loader from '@/components/Loader'
 import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
@@ -107,7 +107,7 @@ export default function CreateBarcodePage() {
     }
 
     const handlePopulateFormValue = async () => {
-        const date = formatDatetoString(new Date())
+        const date = formatDatetoStringYmd(new Date())
         const food = await handleGetMasterFoodDetail(String(barcode))
 
         setFormValue({

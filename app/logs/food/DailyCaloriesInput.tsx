@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProgressBar from './ProgressBar';
 import CustomText from '@/components/CustomText';
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
 
 type DailyCaloriesInputProps = {
     selectedDate: Date,
@@ -30,7 +30,7 @@ export default function DailyCaloriesInput({ selectedDate, dailyCalories, loadin
     const handleStoreDailyCalories = async () => {
         try {
             const payload: StoreDailyCaloriesRequest = {
-                date: formatDatetoString(selectedDate),
+                date: formatDatetoStringYmd(selectedDate),
                 consumed_calories: 0,
                 target_calories: Number(dailyCaloriesInput),
             }

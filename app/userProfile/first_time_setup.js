@@ -151,7 +151,7 @@ export default function FirstTimeSetup() {
                 }
 
                 if (currentPosition === 2) {
-                    router.replace('abc')
+                    router.navigate('/(tabs)')
                     formikProps.handleSubmit(handleStoreUserProfile(userProfileHandler(formikProps.values)))
                     return;
                 }
@@ -224,7 +224,7 @@ export default function FirstTimeSetup() {
                                 >
                                     {
                                         currentPosition === 3 ?
-                                            <Text className='font-helvetica-bold text-center text-white' onPress={() => router.navigate('/(tabs)/prediction')}>
+                                            <Text className='font-helvetica-bold text-center text-white' onPress={() => router.navigate('/prediction')}>
                                                 Mulai Pengecekkan
                                             </Text>
                                             :

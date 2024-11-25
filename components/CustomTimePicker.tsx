@@ -9,10 +9,11 @@ import WheelPickerExpo from 'react-native-wheel-picker-expo';
 type CustomTimePickerProps = {
     value: string
     onChange: (value: string) => void
-    error?: string
+    error: string | undefined
+    label: string
 }
 
-const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
+const CustomTimePicker = ({ value, onChange, error, label }: CustomTimePickerProps) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedHour, setSelectedHour] = useState('01');
     const [selectedMinute, setSelectedMinute] = useState('00');
@@ -33,13 +34,14 @@ const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
     return (
         <View>
             <CustomTextInput
-                label='Pilih waktu'
+                label={label}
                 placeholder='Tekan untuk pilih waktu'
                 postfix={(
                     <FontAwesome name='clock-o' size={FontSize.lg} />
                 )}
                 value={value}
                 onPress={() => setModalVisible(true)}
+                error={error}
             />
             <Modal
                 visible={modalVisible}

@@ -9,7 +9,7 @@ import CustomBarChart from '@/components/CustomBarChart';
 import CustomCalendarPicker from '@/components/CustomCalendarPicker';
 import { VictoryChart, VictoryScatter, VictoryTheme, VictoryZoomContainer } from 'victory-native';
 import SegmentedControl from '@/components/SegmentedControl';
-import { formatDateIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
+import { formatDateStringIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
 import { Colors } from '@/constants/Colors';
 
 export default function CustomExerciseLogStatisticPage() {
@@ -107,7 +107,7 @@ export default function CustomExerciseLogStatisticPage() {
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah asupan: {exerciseLog.log_count}x</CustomText>
-                            <CustomText size='sm'>{formatDateIntl(exerciseLog.date)}</CustomText>
+                            <CustomText size='sm'>{formatDateStringIntl(exerciseLog.date)}</CustomText>
                         </View>
                     </View>
                 ))) : (

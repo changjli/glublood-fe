@@ -10,7 +10,7 @@ import CustomCalendarPicker from '@/components/CustomCalendarPicker';
 import { VictoryChart, VictoryScatter, VictoryTheme, VictoryZoomContainer } from 'victory-native';
 import SegmentedControl from '@/components/SegmentedControl';
 import CustomMonthYearPicker from '@/components/CustomMonthYearPicker';
-import { formatDateStripToSlash, formatDatetoString, getFirstAndLastDayOfMonth } from '@/utils/formatDatetoString';
+import { formatDateStripToSlash, formatDatetoStringYmd, getFirstAndLastDayOfMonth } from '@/utils/formatDatetoString';
 import { resolveNumberToString } from '@/utils/resolver';
 import useReport from '@/hooks/api/report/useReport';
 import { downloadPdf, sharePdf } from '@/utils/generatePdf';
@@ -43,8 +43,8 @@ export default function MonthlyReportPage() {
                     setyear={setyear}
                 />
                 <LogReportForm
-                    startDate={formatDatetoString(new Date(year, month - 1, 1))}
-                    endDate={formatDatetoString(new Date(year, month, 0))}
+                    startDate={formatDatetoStringYmd(new Date(year, month - 1, 1))}
+                    endDate={formatDatetoStringYmd(new Date(year, month, 0))}
                 />
             </Wrapper>
 

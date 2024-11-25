@@ -39,26 +39,22 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
             enableReinitialize
         >
             {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <ScrollView>
-                    <View style={{ marginBottom: 20 }}>
+                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <View>
                         <CustomTextInput
                             label='Nama Obat'
                             placeholder='Cth: Insulin'
                             value={values.name}
                             onChangeText={handleChange('name')}
                         />
-                    </View>
 
-                    {/* Waktu Selection */}
-                    <View style={{ marginBottom: 20 }}>
+                        {/* Waktu Selection */}
                         <CustomTimePicker
                             value={values.time}
                             onChange={handleChange('time')}
                         />
-                    </View>
 
-                    {/* Scrollable Dosis Picker */}
-                    <View style={{ marginBottom: 20 }}>
+                        {/* Scrollable Dosis Picker */}
                         <Text style={styles.labelText}>Dosis</Text>
                         <CustomQuantityPicker
                             qty={values.amount}
@@ -68,10 +64,8 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                             qtyData={doses}
                             typeData={doseTypes}
                         />
-                    </View>
 
-                    {/* Catatan Input */}
-                    <View style={{ marginBottom: 10 }}>
+                        {/* Catatan Input */}
                         <CustomTextInput
                             style={styles.catatanInput}
                             label='Catatan'
@@ -82,7 +76,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     </View>
 
                     {children({ values, handleSubmit })}
-                </ScrollView>
+                </View>
             )}
         </Formik>
     )

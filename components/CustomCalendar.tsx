@@ -94,7 +94,7 @@ export default function CustomCalendar({ value, onChange }: CustomCalendarProps)
 
     useEffect(() => {
         setDays(daysInMonth(selectedMonth, selectedYear))
-        setTimeout(() => handleScroll(selectedDay - 1), 500)
+        setTimeout(() => handleScroll(selectedDay - 1), 1000)
     }, [selectedMonth, selectedYear])
 
     useEffect(() => {

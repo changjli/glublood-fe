@@ -136,7 +136,6 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                 Alert.alert('success', res.message)
                 // await storeObjectData('credentials', data)
                 // router.replace('(auth)/verify-code')
-                setInnerCredentials(res.data)
                 setTimeFlag(prev => !prev)
             } else if (res.status == 400) {
                 console.log(res.message)

@@ -8,6 +8,8 @@ import Wrapper from '@/components/Layout/Wrapper'
 import axios from 'axios'
 import { router } from 'expo-router'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import CustomHeader from '@/components/CustomHeader';
 
 export default function AddMedicineLog() {
     const { storeMedicineLog } = useMedicine()
@@ -18,7 +20,7 @@ export default function AddMedicineLog() {
         try {
             console.log("Data: ", data)
             const res = await storeMedicineLog(setStoreLoading, data)
-            router.navigate('/(notes)/medicine')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -59,7 +61,8 @@ export default function AddMedicineLog() {
     }, [])
 
     return (
-        <ScrollView>
+        <>
+            <CustomHeader title='Tambah log obat' />
             <Wrapper style={styles.container}>
                 <Text style={styles.header}>Tambah log obat</Text>
 
@@ -75,7 +78,7 @@ export default function AddMedicineLog() {
                     )}
                 </MedicineLogForm>
             </Wrapper>
-        </ScrollView>
+        </>
 
     );
 };
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4',
+        backgroundColor: 'white',
     },
     header: {
         fontSize: 24,

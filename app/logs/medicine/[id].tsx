@@ -7,6 +7,7 @@ import useMedicineLog from '@/hooks/api/logs/medicine/useMedicineLog'
 import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
+import CustomHeader from '@/components/CustomHeader'
 
 export default function MedicineLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -93,9 +94,9 @@ export default function MedicineLogDetailPage() {
     }, [])
 
     return (
-        <ScrollView>
+        <>
+            <CustomHeader title='Edit log gula darah' />
             <Wrapper style={styles.container}>
-                <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
                 <MedicineLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
@@ -126,7 +127,7 @@ export default function MedicineLogDetailPage() {
                     )}
                 </MedicineLogForm>
             </Wrapper>
-        </ScrollView>
+        </>
     )
 }
 
@@ -134,6 +135,6 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4',
+        backgroundColor: 'white',
     },
 });
