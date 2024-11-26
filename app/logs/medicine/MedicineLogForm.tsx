@@ -6,10 +6,12 @@ import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import CustomTimePicker from '@/components/CustomTimePicker';
 import CustomQuantityPicker from '@/components/CustomQuantityPicker';
+import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface MedicineLogFormRenderProps {
-    values: StoreMedicineLogReq
-    handleSubmit: () => void
+    handleSubmit: UseFormHandleSubmit<StoreMedicineLogReq, undefined>
+    disabled: boolean
 }
 
 interface MedicineLogFormProps {
@@ -18,67 +20,97 @@ interface MedicineLogFormProps {
     children: (props: MedicineLogFormRenderProps) => React.ReactNode
 }
 
-const validationSchema = Yup.object().shape({
-    date: Yup.date(),
-    medicineName: Yup.string().required('Nama obat wajib diisi!'),
-    timeConsumption: Yup.date().required('Waktu konsumsi wajib diisi!'),
-    dose: Yup.number(),
-    doseType: Yup.string(),
+const medicineLogSchema = Yup.object().shape({
+    name: Yup.string().required('Nama obat wajib diisi!'),
+    time: Yup.string().required('Waktu konsumsi wajib diisi!'),
+    amount: Yup.number().required('Jumlah dosis wajib diisi'),
+    type: Yup.string().required('Tipe dosis wajib dipilih'),
     note: Yup.string(),
 });
 
+// TODO: ambil dari db 
 const doses = Array.from({ length: 100 }, (_, i) => i + 1);
 const doseTypes = ["Tablet", "Kaplet", "Kapsul", "IU", "mL", "Tetes", "Sachet"];
 
 export default function MedicineLogForm({ formValue, setFormValue, children, ...rest }: MedicineLogFormProps) {
+
+    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<StoreMedicineLogReq>({
+        defaultValues: formValue,
+        resolver: yupResolver(medicineLogSchema),
+        mode: 'onChange',
+    })
+
+    const [type] = watch(['type'])
+
+    useEffect(() => {
+        reset(formValue)
+    }, [formValue])
+
     return (
-        <Formik
-            initialValues={formValue}
-            validationSchema={validationSchema}
-            onSubmit={(values) => { }}
-            enableReinitialize
-        >
-            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <View>
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+            <View>
+                <Controller
+                    control={control}
+                    name='name'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTextInput
                             label='Nama Obat'
                             placeholder='Cth: Insulin'
-                            value={values.name}
-                            onChangeText={handleChange('name')}
+                            value={value}
+                            onChangeText={onChange}
+                            error={errors.name ? errors.name.message : ''}
                         />
+                    )}
+                />
 
-                        {/* Waktu Selection */}
+                <Controller
+                    control={control}
+                    name='time'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTimePicker
-                            value={values.time}
-                            onChange={handleChange('time')}
+                            value={value}
+                            onChange={onChange}
+                            label='Pilih waktu'
+                            error={errors.time ? errors.time.message : ''}
                         />
+                    )}
+                />
 
-                        {/* Scrollable Dosis Picker */}
-                        <Text style={styles.labelText}>Dosis</Text>
-                        <CustomQuantityPicker
-                            qty={values.amount}
-                            size={values.type}
-                            onChangeQty={handleChange('amount')}
-                            onChangeSize={handleChange('type')}
-                            qtyData={doses}
-                            typeData={doseTypes}
-                        />
+                <Controller
+                    control={control}
+                    name='amount'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                        <>
+                            <Text style={styles.labelText}>Dosis</Text>
+                            <CustomQuantityPicker
+                                qty={value}
+                                size={type}
+                                onChangeQty={onChange}
+                                onChangeSize={(v) => setValue('type', v)}
+                                qtyData={doses}
+                                typeData={doseTypes}
+                            />
+                        </>
+                    )}
+                />
 
-                        {/* Catatan Input */}
+                <Controller
+                    control={control}
+                    name='notes'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTextInput
                             style={styles.catatanInput}
                             label='Catatan'
                             placeholder='Masukkan catatan di bagian ini'
-                            value={values.notes}
-                            onChangeText={handleChange('notes')}
+                            value={value}
+                            onChangeText={onChange}
                         />
-                    </View>
+                    )}
+                />
 
-                    {children({ values, handleSubmit })}
-                </View>
-            )}
-        </Formik>
+            </View>
+            {children({ handleSubmit, disabled: !isDirty || !isValid })}
+        </View>
     )
 }
 

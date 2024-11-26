@@ -54,13 +54,11 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
         resolver: yupResolver(exerciseLogSchema),
         mode: 'onChange',
     })
-    const onSubmit: SubmitHandler<StoreExerciseLogReq> = (data) => console.log(data)
 
     const [userProfile, setUserProfile] = useState({})
     const [fetchUserProfileLoading, setFetchUserProfileLoading] = useState(false)
 
-    const [caloriesPerKg, setCaloriesPerKg] = useState(0)
-    const [startTime, endTime] = watch(['start_time', 'end_time'])
+    const [startTime, endTime, caloriesPerKg] = watch(['start_time', 'end_time', 'calories_per_kg'])
 
     const handleFetchUserProfile = async () => {
         try {
@@ -90,7 +88,7 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
     }, [])
 
     useEffect(() => {
-        if (caloriesPerKg && startTime && endTime) {
+        if (isDirty && caloriesPerKg && startTime && endTime) {
             const duration = getDuration(startTime, endTime)
             if (duration > 0) {
                 setValue('burned_calories', Number(userProfile.weight) * caloriesPerKg * duration / 60)
@@ -113,7 +111,7 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
                             value={value}
                             onChange={({ exerciseName, caloriesPerKg }) => {
                                 onChange(exerciseName)
-                                setCaloriesPerKg(caloriesPerKg)
+                                setValue('calories_per_kg', caloriesPerKg)
                             }}
                             error={errors.exercise_name ? errors.exercise_name.message : ''}
                         />
@@ -152,7 +150,7 @@ export default function ExerciseLogForm({ formValue, setFormValue, children, ...
                     render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTextInput
                             label='Estimasi kalori'
-                            value={String(value)}
+                            value={String(Math.round(value * 100) / 100)}
                             placeholder='0.0 Kal'
                             readOnly
                         />

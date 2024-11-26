@@ -1,4 +1,4 @@
-import { View, Text, Alert } from 'react-native'
+import { View, Text, Alert, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomText from '@/components/CustomText'
 import ExerciseLogForm from './ExerciseLogForm'
@@ -9,6 +9,10 @@ import CustomButton from '@/components/CustomButton'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import CustomHeader from '@/components/CustomHeader'
+import { FontAwesome } from '@expo/vector-icons'
+import { FontSize } from '@/constants/Typography'
+import { FlexStyles } from '@/constants/Flex'
+import { Colors } from '@/constants/Colors'
 
 export default function ExerciseLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -20,12 +24,13 @@ export default function ExerciseLogDetailPage() {
         end_time: '',
         exercise_name: '',
         start_time: '',
+        calories_per_kg: 0,
     })
-    const [storeLoading, setStoreLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
 
     const handleGetExerciseLogDetail = async (id: number) => {
         try {
-            const res = await getExerciseLogDetail(setStoreLoading, id)
+            const res = await getExerciseLogDetail(setUpdateLoading, id)
             setFormValue(res.data)
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -47,7 +52,7 @@ export default function ExerciseLogDetailPage() {
 
     const handleUpdateExerciseLog = async (payload: UpdateExerciseLogReq) => {
         try {
-            const res = await updateExerciseLog(setStoreLoading, payload)
+            const res = await updateExerciseLog(setUpdateLoading, payload)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -69,7 +74,7 @@ export default function ExerciseLogDetailPage() {
 
     const handleDeleteExerciseLog = async (id: number) => {
         try {
-            const res = await deleteExerciseLog(setStoreLoading, id)
+            const res = await deleteExerciseLog(setUpdateLoading, id)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -101,22 +106,25 @@ export default function ExerciseLogDetailPage() {
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <View>
                             <CustomButton
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                                onPress={() => {
-                                    handleSubmit()
-                                    handleUpdateExerciseLog({
-                                        id: Number(id),
-                                        ...values,
-                                    })
-                                }}
+                                disabled={disabled}
+                                onPress={handleSubmit(data => handleUpdateExerciseLog({
+                                    id: Number(id),
+                                    ...data,
+                                }))}
+                                loading={updateLoading}
                             />
-                            <CustomButton title='Hapus log' size='md' onPress={() => handleDeleteExerciseLog(Number(id))} />
+                            <TouchableOpacity onPress={() => handleDeleteExerciseLog(Number(id))}>
+                                <View style={[FlexStyles.flexRow, { justifyContent: 'center', gap: 8, paddingVertical: 4 }]}>
+                                    <FontAwesome name='trash' size={FontSize.md} color={Colors.light.danger} />
+                                    <CustomText size='md' weight='heavy' style={{ color: Colors.light.danger }}>Hapus log</CustomText>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     )}
                 </ExerciseLogForm>

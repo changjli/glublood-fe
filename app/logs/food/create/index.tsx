@@ -90,14 +90,12 @@ export default function Create() {
         <FoodLogForm
             formValue={formValue}
         >
-            {({ values, handleSubmit }) => (
+            {({ handleSubmit, disabled }) => (
                 <CustomButton
                     title='Simpan catatan'
                     size='md'
-                    onPress={() => {
-                        handleSubmit()
-                        handleStoreFoodLog(values)
-                    }}
+                    disabled={disabled}
+                    onPress={handleSubmit((data) => handleStoreFoodLog(data))}
                     style={{
                         marginTop: 20
                     }}

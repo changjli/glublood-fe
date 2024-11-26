@@ -48,7 +48,7 @@ export default function MedicineLogDetailPage() {
     const handleUpdateMedicineLog = async (payload: UpdateMEdicineLogReq) => {
         try {
             const res = await updateMedicineLog(setLoading, payload)
-            router.navigate('/(notes)/medicine')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -70,7 +70,7 @@ export default function MedicineLogDetailPage() {
     const handleDeleteMedicineLog = async (id: number) => {
         try {
             const res = await deleteMedicineLog(setLoading, id)
-            router.navigate('/(notes)/medicine')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -95,27 +95,24 @@ export default function MedicineLogDetailPage() {
 
     return (
         <>
-            <CustomHeader title='Edit log gula darah' />
+            <CustomHeader title='Edit log obat' />
             <Wrapper style={styles.container}>
                 <MedicineLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <View>
                             <CustomButton
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={JSON.stringify(values) == JSON.stringify(formValue)}
+                                disabled={disabled}
                                 loading={loading}
-                                onPress={() => {
-                                    handleSubmit()
-                                    handleUpdateMedicineLog({
-                                        id: Number(id),
-                                        ...values,
-                                    })
-                                }}
+                                onPress={handleSubmit(data => handleUpdateMedicineLog({
+                                    id: Number(id),
+                                    ...data,
+                                }))}
                             />
                             <CustomButton
                                 title='Hapus log'

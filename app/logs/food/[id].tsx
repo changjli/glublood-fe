@@ -136,16 +136,13 @@ export default function FoodLogDetailPage() {
         <FoodLogForm
             formValue={formValue}
         >
-            {({ values, handleSubmit }) => (
+            {({ handleSubmit, disabled }) => (
                 <>
                     <CustomButton
                         title='Simpan catatan'
                         size='md'
-                        disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                        onPress={() => {
-                            handleSubmit()
-                            handleUpdateFoodLog(values as PostFoodLogRequest)
-                        }}
+                        disabled={disabled}
+                        onPress={handleSubmit(data => handleUpdateFoodLog(data))}
                     />
 
                     <CustomButton

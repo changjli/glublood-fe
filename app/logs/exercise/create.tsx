@@ -20,6 +20,7 @@ export default function CreateExerciseLogPage() {
         end_time: '',
         exercise_name: '',
         start_time: '',
+        calories_per_kg: 0,
     })
     const [storeLoading, setStoreLoading] = useState(false)
 
@@ -72,6 +73,7 @@ export default function CreateExerciseLogPage() {
                             size='md'
                             disabled={disabled}
                             onPress={handleSubmit(data => handleStoreExerciseLog(data))}
+                            loading={storeLoading}
                         />
                     )}
                 </ExerciseLogForm>

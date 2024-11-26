@@ -66,11 +66,12 @@ export default function AddGlucoseLog() {
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
-                        <CustomButton title='+ Simpan catatan' size='md' onPress={() => {
-                            handleSubmit()
-                            handleStoreGlucoseLog(values)
-                        }} />
+                    {({ handleSubmit, disabled }) => (
+                        <CustomButton
+                            title='+ Simpan catatan'
+                            size='md'
+                            disabled={disabled}
+                            onPress={handleSubmit((data) => handleStoreGlucoseLog(data))} />
                     )}
                 </GlucoseLogForm>
             </Wrapper>

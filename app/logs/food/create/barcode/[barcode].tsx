@@ -39,7 +39,7 @@ export default function CreateBarcodePage() {
         serving_size: '',
         time: '',
         note: '',
-        type: 'auto',
+        type: 'barcode',
     })
 
     const [getLoading, setGetLoading] = useState(false)
@@ -144,14 +144,12 @@ export default function CreateBarcodePage() {
                 <FoodLogForm
                     formValue={formValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <CustomButton
                             title='Simpan catatan'
                             size='md'
-                            onPress={() => {
-                                handleSubmit()
-                                handleStoreFoodLog(values)
-                            }}
+                            disabled={disabled}
+                            onPress={handleSubmit((data) => handleStoreFoodLog(data))}
                             style={{ marginTop: 20 }}
                         />
                     )}

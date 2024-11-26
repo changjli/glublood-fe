@@ -100,21 +100,18 @@ export default function GlucoseLogDetailPage() {
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <View>
                             <CustomButton
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={JSON.stringify(values) == JSON.stringify(formValue)}
+                                disabled={disabled}
                                 loading={loading}
-                                onPress={() => {
-                                    handleSubmit()
-                                    handleUpdateGlucoseLog({
-                                        id: Number(id),
-                                        ...values,
-                                    })
-                                }}
+                                onPress={handleSubmit(data => handleUpdateGlucoseLog({
+                                    id: Number(id),
+                                    ...data,
+                                }))}
                             />
                             <CustomButton
                                 title='Hapus log'

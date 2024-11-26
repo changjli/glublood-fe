@@ -4,6 +4,7 @@ type StoreExerciseLogReq = {
     start_time: string
     end_time: string
     burned_calories: number
+    calories_per_kg: number
 }
 
 type GetExerciseLogRes = {
@@ -13,6 +14,7 @@ type GetExerciseLogRes = {
     end_time: string
     burned_calories: number
     exercise_name: string
+    calories_per_kg: number
 }
 
 type UpdateExerciseLogReq = {
@@ -22,6 +24,7 @@ type UpdateExerciseLogReq = {
     start_time: string
     end_time: string
     burned_calories: number
+    calories_per_kg: number
 }
 
 type GetExerciseLogReportByDateRes = {
