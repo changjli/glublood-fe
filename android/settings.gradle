@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'glubloodfe'
+rootProject.name = 'glublood-fe'
 
 dependencyResolutionManagement {
   versionCatalogs {
