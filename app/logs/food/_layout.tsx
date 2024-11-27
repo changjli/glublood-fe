@@ -25,6 +25,10 @@ export default function FoodLogLayout() {
                 headerTitle: '',
                 headerTransparent: true,
             }} />
+            <Stack.Screen name='create/barcode/index' options={{
+                headerTitle: '',
+                headerTransparent: true,
+            }} />
             <Stack.Screen name='create/barcode/[barcode]' options={{
                 headerTitle: '',
                 headerTransparent: true,

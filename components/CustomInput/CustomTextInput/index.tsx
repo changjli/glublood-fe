@@ -129,6 +129,8 @@ const styles = StyleSheet.create({
     errorText: {
         fontFamily: FontFamily.medium,
         color: Colors.light.danger,
+        fontSize: FontSize.sm,
+        // lineHeight: FontSize.sm,
     },
     innerContainer: {
         flex: 1,

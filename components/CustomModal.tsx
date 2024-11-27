@@ -7,9 +7,10 @@ import Modal, { ModalProps } from "react-native-modal";
 
 export type CustomModalProps = Partial<ModalProps> & {
     toggleModal: () => void
+    header?: React.ReactNode
 }
 
-export default function CustomModal({ toggleModal, ...rest }: CustomModalProps) {
+export default function CustomModal({ toggleModal, header = null, ...rest }: CustomModalProps) {
     return (
         <View>
             <Modal
@@ -21,12 +22,16 @@ export default function CustomModal({ toggleModal, ...rest }: CustomModalProps) 
                     </TouchableWithoutFeedback>
                 )}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalHeaderContainer}>
-                        <TouchableOpacity onPress={toggleModal}>
-                            <CustomText size='sm' style={{ color: Colors.light.danger }}>Batal</CustomText>
-                        </TouchableOpacity>
-                    </View>
+                <View style={[styles.modalContainer, rest.style]}>
+                    {header ? (
+                        header
+                    ) : (
+                        <View style={styles.modalHeaderContainer}>
+                            <TouchableOpacity onPress={toggleModal}>
+                                <CustomText size='sm' style={{ color: Colors.light.danger }}>Batal</CustomText>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                     {rest.children}
                 </View>
             </Modal>

@@ -29,7 +29,7 @@ const sendCodeSchema = object({
 
 export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
     const { sendCode } = useAuth()
-    const { width } = Dimensions.get('window')
+    const { width, height } = Dimensions.get('window')
     // const { storeObjectData } = useAsyncStorage()
 
     const [sendCodeLoading, setSendCodeLoading] = useState<boolean>(false)
@@ -56,29 +56,29 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
 
     return (
         <View style={{ flex: 1 }}>
-            <View className='absolute'>
+            {/* <View className='absolute'>
                 <Image source={require('../../../assets/images/backgrounds/wave-1.png')} style={{ width: width, height: 375 }} />
-            </View>
-            <Wrapper>
-                <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Daftar</CustomText>
-                <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Mulai perjalananmu dengan kami!</CustomText>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                    <Image source={require('../../../assets/images/characters/icon-regis.png')} style={{ width: 277, height: 250 }} />
-                </View>
-                <Formik
-                    initialValues={{
-                        email: '',
-                        password: '',
-                        passwordConfirmation: '',
-                    }}
-                    onSubmit={(values) => {
-                        handleSendCode(values)
-                    }}
-                    validationSchema={sendCodeSchema}
-                >
-                    {({ handleChange, handleSubmit, values, errors }) => (
-                        <WithKeyboard>
-                            <View style={{ height: 400, flexDirection: 'column', justifyContent: 'space-between' }}>
+            </View> */}
+            <WithKeyboard>
+                <Wrapper style={{ backgroundColor: 'white', height: height }}>
+                    <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Daftar</CustomText>
+                    <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Mulai perjalananmu dengan kami!</CustomText>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
+                        <Image source={require('../../../assets/images/characters/icon-regis.png')} style={{ height: 200 }} resizeMode='contain' />
+                    </View>
+                    <Formik
+                        initialValues={{
+                            email: '',
+                            password: '',
+                            passwordConfirmation: '',
+                        }}
+                        onSubmit={(values) => {
+                            handleSendCode(values)
+                        }}
+                        validationSchema={sendCodeSchema}
+                    >
+                        {({ handleChange, handleSubmit, values, errors }) => (
+                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
                                 <View style={{ flexDirection: 'column' }}>
                                     <CustomTextInput
                                         label='Email'
@@ -122,10 +122,10 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                                     </View>
                                 </View>
                             </View>
-                        </WithKeyboard>
-                    )}
-                </Formik>
-            </Wrapper>
+                        )}
+                    </Formik>
+                </Wrapper>
+            </WithKeyboard>
         </View>
     )
 }

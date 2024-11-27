@@ -13,9 +13,10 @@ import CustomModal from '@/components/CustomModal';
 interface ExercisePickerProps {
     value: string
     onChange: (value: { exerciseName: string, caloriesPerKg: number }) => void
+    error: string | undefined
 }
 
-export default function ExercisePicker({ value, onChange }: ExercisePickerProps) {
+export default function ExercisePicker({ value, onChange, error }: ExercisePickerProps) {
     const { getMasterExercises } = useMasterExercise()
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -82,6 +83,7 @@ export default function ExercisePicker({ value, onChange }: ExercisePickerProps)
                 placeholder='Tekan untuk memilih aktivitas tubuh'
                 onPress={() => setModalVisible(true)}
                 value={value}
+                error={error}
             />
             <CustomModal
                 isVisible={modalVisible}

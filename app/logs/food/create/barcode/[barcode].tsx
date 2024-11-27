@@ -5,8 +5,6 @@ import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import CustomText from '@/components/CustomText'
-import CustomTimePicker from '../../../CustomTimePicker'
-import CustomQuantityPicker from '../../../CustomQuantityPicker'
 import { Colors } from '@/constants/Colors'
 import CustomTextInput from '@/components/CustomInput/CustomTextInput'
 import CustomButton from '@/components/CustomButton'
@@ -17,6 +15,9 @@ import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../../FoodLogForm'
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString'
+import Loader from '@/components/Loader'
+import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 const storeFoodLogSchema = object({
 
@@ -25,10 +26,9 @@ const storeFoodLogSchema = object({
 export default function CreateBarcodePage() {
     const { barcode } = useLocalSearchParams()
     const { getData } = useAsyncStorage()
-
     const { getFoodByBarcode, storeFoodLog } = useFoodLog()
 
-    const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
+    const [formValue, setFormValue] = useState<PostFoodLogRequest>({
         calories: 0,
         carbohydrate: 0,
         date: '',
@@ -39,7 +39,7 @@ export default function CreateBarcodePage() {
         serving_size: '',
         time: '',
         note: '',
-        type: 'auto',
+        type: 'barcode',
     })
 
     const [getLoading, setGetLoading] = useState(false)
@@ -70,11 +70,24 @@ export default function CreateBarcodePage() {
         }
     }
 
-    const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
+    const handleStoreFoodLog = async (payload: PostFoodLogRequest) => {
         try {
-            console.log("payload", payload)
-            const res = await storeFoodLog(setGetLoading, payload)
-            router.navigate('/(notes)/food-logs')
+            const formData = new FormData()
+            formData.append('payload', JSON.stringify(payload))
+            if (payload.img) {
+                const fileResponse = await fetch(payload.img);
+                const fileBlob = await fileResponse.blob();
+
+                formData.append('food_image', {
+                    uri: payload.img,
+                    name: 'filename.jpeg',
+                    type: fileBlob.type || 'image/jpeg',
+                } as any);
+            }
+
+            console.log("payload", formData)
+            const res = await storeFoodLog(setGetLoading, formData)
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -94,8 +107,9 @@ export default function CreateBarcodePage() {
     }
 
     const handlePopulateFormValue = async () => {
-        const date = await getData('foodLogDate')
+        const date = formatDatetoStringYmd(new Date())
         const food = await handleGetMasterFoodDetail(String(barcode))
+
         setFormValue({
             ...formValue,
             calories: food.product.nutriments.energy,
@@ -104,7 +118,11 @@ export default function CreateBarcodePage() {
             protein: food.product.nutriments.proteins,
             food_name: food.product.product_name,
             date: date ?? '',
-            img: food.product.image_url
+            img: food.product.image_url,
+            // serving_qty: food.product.nutrition_data_per == '100g' ? 100 : 1,
+            // serving_size: food.product.nutrition_data_per == '100g' ? 'g' : 'serving',
+            serving_qty: 1,
+            serving_size: 'serving',
         })
     }
 
@@ -112,22 +130,32 @@ export default function CreateBarcodePage() {
         handlePopulateFormValue()
     }, [])
 
+    useEffect(() => {
+        console.log("dimana", formValue)
+    }, [formValue])
+
     return (
-        <FoodLogForm
-            formValue={formValue}
-        >
-            {({ values, handleSubmit }) => (
-                <CustomButton
-                    title='Simpan catatan'
-                    size='md'
-                    onPress={() => {
-                        handleSubmit()
-                        handleStoreFoodLog(values)
-                    }}
-                    style={{ marginTop: 20 }}
-                />
+        <>
+            {getLoading ? (
+                <Loader />
+            ) : !formValue.calories ? (
+                <Text>Not found</Text>
+            ) : (
+                <FoodLogForm
+                    formValue={formValue}
+                >
+                    {({ handleSubmit, disabled }) => (
+                        <CustomButton
+                            title='Simpan catatan'
+                            size='md'
+                            disabled={disabled}
+                            onPress={handleSubmit((data) => handleStoreFoodLog(data))}
+                            style={{ marginTop: 20 }}
+                        />
+                    )}
+                </FoodLogForm>
             )}
-        </FoodLogForm>
+        </>
     )
 }
 

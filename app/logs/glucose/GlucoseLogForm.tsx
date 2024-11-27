@@ -7,10 +7,13 @@ import { FontFamily, FontSize } from '@/constants/Typography';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import CustomTimePicker from '@/components/CustomTimePicker';
 import CustomQuantityPicker from '@/components/CustomQuantityPicker';
+import { FlexStyles } from '@/constants/Flex';
+import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface GlucoseLogFormRenderProps {
-    values: StoreGlucoseLogReq
-    handleSubmit: () => void
+    handleSubmit: UseFormHandleSubmit<StoreGlucoseLogReq, undefined>
+    disabled: boolean
 }
 
 interface GlucoseLogFormProps {
@@ -19,70 +22,93 @@ interface GlucoseLogFormProps {
     children: (props: GlucoseLogFormRenderProps) => React.ReactNode
 }
 
-const validationSchema = Yup.object().shape({
-    date: Yup.date(),
+const glucoseLogSchema = Yup.object().shape({
     glucose_rate: Yup.number().required('Tekanan gula darah wajib diisi!'),
     time: Yup.string().required('Waktu pengambilan wajib diisi!'),
-    timeSelection: Yup.string(),
-    note: Yup.string(),
+    time_selection: Yup.string(),
+    notes: Yup.string(),
 });
 
 const doseTypes = ["Sesudah Makan", "Sebelum Makan", "Puasa", "Sebelum Tidur"];
 
 export default function GlucoseLogForm({ formValue, setFormValue, children, ...rest }: GlucoseLogFormProps) {
+
+    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<StoreGlucoseLogReq>({
+        defaultValues: formValue,
+        resolver: yupResolver(glucoseLogSchema),
+        mode: 'onChange',
+    })
+
+    useEffect(() => {
+        reset(formValue)
+    }, [formValue])
+
     return (
-        <Formik
-            initialValues={formValue}
-            validationSchema={validationSchema}
-            onSubmit={(values) => { }}
-            enableReinitialize
-        >
-            {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (
-                <View>
-                    <View style={{ marginBottom: 20 }}>
+
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+            <View>
+                <Controller
+                    control={control}
+                    name='glucose_rate'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTextInput
                             label='Gula Darahmu'
                             placeholder='Contoh: 98'
                             postfix={(
                                 <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
                             )}
-                            value={values.glucose_rate ? String(values.glucose_rate) : ''}
-                            onChangeText={handleChange('glucose_rate')}
+                            value={String(value)}
+                            onChangeText={onChange}
                         />
-                    </View>
+                    )}
+                />
 
-                    <View style={{ marginBottom: 20 }}>
+                <Controller
+                    control={control}
+                    name='time'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTimePicker
-                            value={values.time}
-                            onChange={handleChange('time')}
+                            value={value}
+                            onChange={onChange}
+                            label='Pilih waktu'
                         />
-                    </View>
+                    )}
+                />
 
-                    <View style={{ marginBottom: 20 }}>
-                        <Text style={styles.labelText}>Kondisi Pengambilan</Text>
-                        <CustomQuantityPicker
-                            widthSize={200}
-                            size={values.time_selection}
-                            onChangeSize={handleChange('time_selection')}
-                            typeData={doseTypes}
-                            showQtyPicker={false}
-                        />
-                    </View>
+                <Controller
+                    control={control}
+                    name='time_selection'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
+                        <>
+                            <Text style={styles.labelText}>Kondisi Pengambilan</Text>
+                            <CustomQuantityPicker
+                                widthSize={200}
+                                size={value}
+                                onChangeSize={onChange}
+                                typeData={doseTypes}
+                                showQtyPicker={false}
+                            />
+                        </>
+                    )}
+                />
 
-                    <View style={{ marginBottom: 10 }}>
+                <Controller
+                    control={control}
+                    name='notes'
+                    render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomTextInput
                             style={styles.catatanInput}
                             label='Catatan'
                             placeholder='Masukkan catatan di bagian ini'
-                            value={values.notes}
-                            onChangeText={handleChange('notes')}
+                            value={value}
+                            onChangeText={onChange}
                         />
-                    </View>
+                    )}
+                />
 
-                    {children({ values, handleSubmit })}
-                </View>
-            )}
-        </Formik>
+            </View>
+            {children({ handleSubmit, disabled: !isDirty || !isValid })}
+        </View>
     )
 }
 

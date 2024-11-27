@@ -11,13 +11,14 @@ import Wrapper from '@/components/Layout/Wrapper'
 import CustomText from '@/components/CustomText'
 import { Colors } from '@/constants/Colors'
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { formatDatetoString } from '@/utils/formatDatetoString'
+import { formatDateIntl, formatDatetoStringYmd } from '@/utils/formatDatetoString'
 import { FlexStyles } from '@/constants/Flex'
 import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
+import { parseGlucoseReading } from '@/utils/GlucoseReadingRx'
 
 export default function index() {
     const { signOut, session } = useSession()
@@ -108,17 +109,17 @@ export default function index() {
         }
     }
 
-    const getAllReminderData = async () => { 
+    const getAllReminderData = async () => {
         const keys = await getAllKeys();
-        
+
         keys.forEach((key) => {
-            if (key.startsWith('reminder')){
+            if (key.startsWith('reminder')) {
                 reminderKeys.push(key)
             }
         });
 
         const reminderData = await getAllObjectData(reminderKeys);
-        
+
         return reminderData;
     }
 
@@ -132,13 +133,13 @@ export default function index() {
 
     useEffect(() => {
         handleGetAllFoodMenu()
-        handleGetDailyCalories(formatDatetoString(today))
-        handleGetDailyBurnedCalories(formatDatetoString(today))
+        handleGetDailyCalories(formatDatetoStringYmd(today))
+        handleGetDailyBurnedCalories(formatDatetoStringYmd(today))
         handlGetAllReminder()
     }, [])
 
     useEffect(() => {
-        if (dailyCalories) {
+        if (dailyCalories && dailyBurnedCalories) {
             if (dailyCaloriesCircularProgressRef.current) {
                 dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
             }
@@ -156,11 +157,11 @@ export default function index() {
     const mapReminderType = (value: number) => {
         switch (value) {
             case 1:
-            return 'Gula Darah';
+                return 'Gula Darah';
             case 2:
-            return 'Obat';
+                return 'Obat';
             case 3:
-            return 'Olahraga';
+                return 'Olahraga';
         }
     }
 
@@ -177,7 +178,7 @@ export default function index() {
     // Render reminder item
     const renderItem = ({ item }: { item: ReminderFormValues }) => (
         <View style={styles.reminderCard}>
-            <View style={styles.reminderLeft}>   
+            <View style={styles.reminderLeft}>
                 <View style={styles.categoryContainer}>
                     {item.reminderType.map((type, index) => (
                         <Text key={index} style={styles.category}>
@@ -191,8 +192,8 @@ export default function index() {
                 {item.notes && (
                     <Text style={styles.days}>
                         {
-                            item.notes.length > 23 ? 
-                                [item.notes.slice(0, 25) , ' ...']
+                            item.notes.length > 23 ?
+                                [item.notes.slice(0, 25), ' ...']
                                 :
                                 item.notes
                         }
@@ -210,7 +211,7 @@ export default function index() {
                     <View style={{ marginBottom: 12 }}>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
                             <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
-                            <TouchableOpacity onPress={() => router.push('/profile')}>
+                            <TouchableOpacity onPress={() => signOut()}>
                                 <Image
                                     source={require('@/assets/images/user-profile/dummy.png')}
                                     style={styles.profile}
@@ -225,9 +226,9 @@ export default function index() {
                             size={170}
                             width={20}
                             fill={0}
-                            tintColor={Colors.light.red}
+                            tintColor={'rgba(171,0,0,1)'}
                             onAnimationComplete={() => console.log('onAnimationComplete')}
-                            backgroundColor={Colors.light.gray300}
+                            backgroundColor={'rgba(171,0,0,0.2)'}
                             rotation={0}
                             lineCap='round'
                             children={() => (
@@ -236,18 +237,21 @@ export default function index() {
                                     size={130}
                                     width={20}
                                     fill={dailyCalories ? dailyCalories.consumed_calories / dailyCalories.target_calories * 100 : 0}
-                                    tintColor={Colors.light.primary}
+                                    tintColor={'rgba(218,110,53,1)'}
                                     onAnimationComplete={() => console.log('onAnimationComplete')}
-                                    backgroundColor={Colors.light.gray300}
+                                    backgroundColor={'rgba(218,110,53,0.2)'}
                                     rotation={0}
                                     lineCap='round'
+                                    children={() => (
+                                        <Image source={require('@/assets/images/icons/kembar.png')} style={{ width: 60 }} resizeMode='contain' />
+                                    )}
                                 />
                             )}
                         />
 
                         <View style={styles.summaryInnerContainer}>
                             <View style={styles.todayContainer}>
-                                <CustomText>{formatDatetoString(today)}</CustomText>
+                                <CustomText style={{ textAlign: 'center' }}>{formatDateIntl(today)}</CustomText>
                             </View>
                             <View>
                                 <View style={[FlexStyles.flexRow, { gap: 8 }]}>
@@ -264,7 +268,7 @@ export default function index() {
                     {reminderKeys.length > 0 ?
                         <View>
                             <View
-                                style={{ 
+                                style={{
                                     marginTop: 15,
                                     ...FlexStyles.flexRow,
                                     alignItems: 'center',
@@ -277,8 +281,8 @@ export default function index() {
                                 </TouchableOpacity>
                             </View>
                             <FlatList
-                                horizontal={true} 
-                                showsHorizontalScrollIndicator={false} 
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
                                 data={reminders.slice(0, 3)}
                                 renderItem={renderItem}
                                 maxToRenderPerBatch={2}
@@ -292,8 +296,8 @@ export default function index() {
                             <View style={styles.reminderContainer}>
                                 <View style={styles.empytReminderContainer}>
                                     <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 85, height: 95 }} />
-                                    <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center', fontSize: 16}}>Kamu belum tambah pengigat</CustomText>
-                                </View> 
+                                    <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center', fontSize: 16 }}>Kamu belum tambah pengigat</CustomText>
+                                </View>
                                 <TouchableOpacity
                                     style={{
                                         marginTop: 10,
@@ -317,9 +321,9 @@ export default function index() {
                                         ...FlexStyles.flexCol,
                                         alignItems: 'center',
                                     }}>
-                                        <Image source={require('@/assets/images/icons/plus.png')} style={{ width:6, height:6, tintColor: 'white'}} />
+                                        <Image source={require('@/assets/images/icons/plus.png')} style={{ width: 6, height: 6, tintColor: 'white' }} />
                                     </View>
-                                    <CustomText size='sm' style={{ color: '#DA6E35', textAlign: 'center', fontSize: 12, fontFamily: 'Helvetica-Bold'}}>Tambahkan pengingat</CustomText>
+                                    <CustomText size='sm' style={{ color: '#DA6E35', textAlign: 'center', fontSize: 12, fontFamily: 'Helvetica-Bold' }}>Tambahkan pengingat</CustomText>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -346,7 +350,7 @@ export default function index() {
                             )}
                             keyExtractor={(item, index) => index.toString()}
                             horizontal
-                            contentContainerStyle={{ gap: 12 }}
+                            contentContainerStyle={{ gap: 12, padding: 4 }}
                         />
                     </View>
                     <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
@@ -354,6 +358,11 @@ export default function index() {
                         <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
                     </TouchableOpacity>
+                    <CustomButton title='ble' onPress={() => router.push('/ble')} />
+                    <CustomButton title='tes' onPress={() => {
+                        const result = parseGlucoseReading(new Uint8Array([11, 3, 0, 232, 7, 11, 27, 7, 47, 21, 165, 1, 166, 176, 248, 0, 0]))
+                        console.log(result)
+                    }} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>

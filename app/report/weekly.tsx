@@ -9,7 +9,7 @@ import CustomBarChart from '@/components/CustomBarChart';
 import CustomCalendarPicker from '@/components/CustomCalendarPicker';
 import { VictoryChart, VictoryScatter, VictoryTheme, VictoryZoomContainer } from 'victory-native';
 import SegmentedControl from '@/components/SegmentedControl';
-import { formatDateIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
+import { formatDateStringIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated';
 import { Colors } from '@/constants/Colors';
 import useReport from '@/hooks/api/report/useReport';

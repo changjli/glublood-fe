@@ -7,7 +7,7 @@ import useGlucose from '@/hooks/api/logs/glucose/useGlucoseLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
 import GlucoseLogList from '@/components/GlucoseLogList';
 import CustomCalendar from '@/components/CustomCalendar';
 import Wrapper from '@/components/Layout/Wrapper';
@@ -48,13 +48,13 @@ export default function GlucoseLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('glucoseLogDate', formatDatetoString(selectedDate))
-        router.navigate('/logs/glucose/AddGlucoseLog')
+        await storeData('glucoseLogDate', formatDatetoStringYmd(selectedDate))
+        router.navigate('/logs/glucose/create')
     }
 
     useEffect(() => {
         if (isFocused) {
-            handleGetGlucoseLog(formatDatetoString(selectedDate))
+            handleGetGlucoseLog(formatDatetoStringYmd(selectedDate))
         }
     }, [selectedDate, isFocused])
 
@@ -78,18 +78,12 @@ export default function GlucoseLogPage() {
                         <FontAwesome name='plus' size={16} color="white" />
                     </TouchableOpacity>
                 </View>
-                {glucoseLog.length > 0 ? (
-                    <View style={{ width: '100%' }}>
-                        <GlucoseLogList
-                            data={glucoseLog}
-                        />
-                    </View>
-                ) : (
-                    <View style={styles.notFoundContainer}>
-                        <Image source={require('@/assets/images/characters/not-found.png')} />
-                        <CustomText style={{ textAlign: 'center', color: Colors.light.gray400 }}>Belum ada nutrisi yang kamu tambahkan</CustomText>
-                    </View>
-                )}
+                <View style={{ width: '100%' }}>
+                    <GlucoseLogList
+                        data={glucoseLog}
+                        loading={glucoseLogLoading}
+                    />
+                </View>
             </View>
         </>
     );

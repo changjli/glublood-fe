@@ -10,6 +10,7 @@ import axios from 'axios'
 import { Colors } from '@/constants/Colors'
 import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
+import CustomHeader from '@/components/CustomHeader'
 
 export default function FoodMenuPage() {
 
@@ -57,37 +58,39 @@ export default function FoodMenuPage() {
     }, [debounceSearch])
 
     return (
-        <Wrapper>
-            <CustomTextInput
-                placeholder='Cari menu makanan'
-                value={searchKeyword}
-                postfix={searchKeyword == '' ? (
-                    <Ionicons name='search' size={FontSize.md} />
-                ) : (
-                    <TouchableOpacity onPress={() => setSearchKeyword('')}>
-                        <Ionicons name='close' size={FontSize.md} />
-                    </TouchableOpacity>
-                )}
-                onChangeText={setSearchKeyword}
-            />
+        <>
+            <CustomHeader title='Menu Sehat' />
+            <Wrapper style={{ backgroundColor: 'white' }}>
+                <CustomTextInput
+                    placeholder='Cari menu makanan'
+                    value={searchKeyword}
+                    postfix={searchKeyword == '' ? (
+                        <Ionicons name='search' size={FontSize.md} />
+                    ) : (
+                        <TouchableOpacity onPress={() => setSearchKeyword('')}>
+                            <Ionicons name='close' size={FontSize.md} />
+                        </TouchableOpacity>
+                    )}
+                    onChangeText={setSearchKeyword}
+                />
 
-            <ScrollView>
-                <CustomText>Terdapat <CustomText weight='heavy'>100</CustomText> hasil menu makanan</CustomText>
-                <View style={styles.foodMenuListContainer}>
-                    {foodMenus.map((foodMenu, idx) => (
-                        <View style={styles.foodItemContainer} id={String(idx)}>
-                            <CustomText size='sm' weight='heavy' style={{ textAlign: 'center' }}>{foodMenu.title}</CustomText>
-                            <CustomText size='sm'>{foodMenu.calories} Kal</CustomText>
-                            <Image
-                                source={require('@/assets/images/user-profile/dummy.png')}
-                                style={styles.foodItemImage}
-                            />
-                            <CustomButton title='Lihat menu' size='sm' type='outline' style={{ paddingHorizontal: 10 }} onPress={() => router.push(`/food-menus/${foodMenu.id}`)} />
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
-        </Wrapper>
+                <ScrollView>
+                    <CustomText style={{ marginBottom: 8 }}>Terdapat <CustomText weight='heavy'>{foodMenus.length}</CustomText> hasil menu makanan</CustomText>
+                    <View style={styles.foodMenuListContainer}>
+                        {foodMenus.map((foodMenu, idx) => (
+                            <View style={styles.foodItemContainer} id={String(idx)}>
+                                <CustomText size='md' weight='heavy' style={{ textAlign: 'center', flex: 1 }}>{foodMenu.title}</CustomText>
+                                <CustomText size='sm'>{foodMenu.calories} Kal</CustomText>
+                                <Image
+                                    source={require('@/assets/images/user-profile/dummy.png')}
+                                    style={styles.foodItemImage}
+                                />
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+            </Wrapper>
+        </>
     )
 }
 
@@ -96,10 +99,11 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: 1,
     },
     foodItemContainer: {
-        backgroundColor: Colors.light.ternary,
+        backgroundColor: 'white',
         width: '48%',
         marginBottom: 12,
         display: 'flex',
@@ -107,7 +111,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         gap: 10,
-        borderRadius: 10
+        borderRadius: 10,
+        elevation: 3,
     },
     foodItemImage: {
         width: 100,

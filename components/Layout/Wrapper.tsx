@@ -5,9 +5,9 @@ interface WrapperProps extends ViewProps {
     children: React.ReactNode
 }
 
-export default function Wrapper({ children, style }: WrapperProps) {
+export default function Wrapper({ children, style, ...rest }: WrapperProps) {
     return (
-        <View style={[styles.container, style]}>
+        <View style={[styles.container, style]} {...rest}>
             {children}
         </View>
     )

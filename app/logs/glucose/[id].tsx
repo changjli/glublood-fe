@@ -7,6 +7,7 @@ import CustomButton from '@/components/CustomButton'
 import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog'
 import GlucoseLogForm from './GlucoseLogForm'
 import Wrapper from '@/components/Layout/Wrapper'
+import CustomHeader from '@/components/CustomHeader'
 
 export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -46,7 +47,7 @@ export default function GlucoseLogDetailPage() {
     const handleUpdateGlucoseLog = async (payload: UpdateGlucoseLogReq) => {
         try {
             const res = await updateGlucoseLog(setLoading, payload)
-            router.navigate('/logs/glucose/')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -68,7 +69,7 @@ export default function GlucoseLogDetailPage() {
     const handleDeleteGlucoseLog = async (id: number) => {
         try {
             const res = await deleteGlucoseLog(setLoading, id)
-            router.navigate('/logs/glucose/')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -92,28 +93,25 @@ export default function GlucoseLogDetailPage() {
     }, [])
 
     return (
-        <ScrollView>
+        <>
+            <CustomHeader title='Edit log gula darah' />
             <Wrapper style={styles.container}>
-                <CustomText size='xl' weight='heavy'>Tambah log gula darah</CustomText>
                 <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
+                    {({ handleSubmit, disabled }) => (
                         <View>
                             <CustomButton
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={JSON.stringify(values) == JSON.stringify(formValue)}
+                                disabled={disabled}
                                 loading={loading}
-                                onPress={() => {
-                                    handleSubmit()
-                                    handleUpdateGlucoseLog({
-                                        id: Number(id),
-                                        ...values,
-                                    })
-                                }}
+                                onPress={handleSubmit(data => handleUpdateGlucoseLog({
+                                    id: Number(id),
+                                    ...data,
+                                }))}
                             />
                             <CustomButton
                                 title='Hapus log'
@@ -125,7 +123,7 @@ export default function GlucoseLogDetailPage() {
                     )}
                 </GlucoseLogForm>
             </Wrapper>
-        </ScrollView>
+        </>
     )
 }
 
@@ -133,6 +131,6 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4',
+        backgroundColor: 'white',
     },
 });

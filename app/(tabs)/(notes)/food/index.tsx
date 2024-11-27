@@ -12,7 +12,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { useIsFocused } from '@react-navigation/native';
 import Wrapper from '@/components/Layout/Wrapper'
 import DynamicTextComponent from '@/components/DynamicText';
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
 import CustomCalendar from '@/components/CustomCalendar';
 import CustomText from '@/components/CustomText';
 import DailyCaloriesInput from '@/app/logs/food/DailyCaloriesInput';
@@ -83,15 +83,15 @@ export default function FoodLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('foodLogDate', formatDatetoString(selectedDate))
+        await storeData('foodLogDate', formatDatetoStringYmd(selectedDate))
         router.navigate('/logs/food/search')
     }
 
     useEffect(() => {
         if (isFocused) {
             console.log("selected date", selectedDate)
-            handleGetDailyCalories(formatDatetoString(selectedDate))
-            handleGetFoodLog(formatDatetoString(selectedDate))
+            handleGetDailyCalories(formatDatetoStringYmd(selectedDate))
+            handleGetFoodLog(formatDatetoStringYmd(selectedDate))
         }
     }, [selectedDate, isFocused])
 
@@ -108,7 +108,7 @@ export default function FoodLogPage() {
                     selectedDate={selectedDate}
                     dailyCalories={dailyCalories}
                     loading={dailyCaloriesLoading}
-                    fetchDailyCalories={() => handleGetDailyCalories(formatDatetoString(selectedDate))}
+                    fetchDailyCalories={() => handleGetDailyCalories(formatDatetoStringYmd(selectedDate))}
                 />
             </Wrapper>
             <View style={styles.logContainer}>

@@ -19,7 +19,7 @@ export default function AddGlucoseLog() {
         try {
             console.log("Data: ", data)
             const res = await storeGlucoseLog(setStoreLoading, data)
-            router.navigate('/logs/glucose/')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -59,22 +59,23 @@ export default function AddGlucoseLog() {
     }, [])
 
     return (
-        <ScrollView>
+        <>
             <CustomHeader title='Tambah log gula darah' />
             <Wrapper style={styles.container}>
                 <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
                 >
-                    {({ values, handleSubmit }) => (
-                        <CustomButton title='+ Simpan catatan' size='md' onPress={() => {
-                            handleSubmit()
-                            handleStoreGlucoseLog(values)
-                        }} />
+                    {({ handleSubmit, disabled }) => (
+                        <CustomButton
+                            title='+ Simpan catatan'
+                            size='md'
+                            disabled={disabled}
+                            onPress={handleSubmit((data) => handleStoreGlucoseLog(data))} />
                     )}
                 </GlucoseLogForm>
             </Wrapper>
-        </ScrollView>
+        </>
     );
 };
 
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#EAF3F4',
+        backgroundColor: 'white',
     },
     header: {
         fontSize: 24,

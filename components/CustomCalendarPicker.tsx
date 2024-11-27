@@ -6,7 +6,7 @@ import CustomTextInput from './CustomInput/CustomTextInput'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { FontSize } from '@/constants/Typography'
 import CustomModal from './CustomModal'
-import { formatDatetoString } from '@/utils/formatDatetoString'
+import { formatDateStringToDmy, formatDatetoStringYmd, } from '@/utils/formatDatetoString'
 import CustomButton from './CustomButton'
 
 interface CustomCalendarPickerProps {
@@ -26,14 +26,14 @@ export default function CustomCalendarPicker({ value, setValue, enableRangeInput
                 prefix={(
                     <Ionicons name='calendar' size={FontSize.lg} />
                 )}
-                value={enableRangeInput ? `${value[0] ?? 'YYYY-MM-dd'} ~ ${value[1] ?? 'YYYY-MM-dd'}` : value == '' ? 'YYYY-MM-dd' : value}
+                value={enableRangeInput ? `${value[0] ? formatDateStringToDmy(value[0]) : 'dd-MM-YYYY'} ~ ${value[1] ? formatDateStringToDmy(value[1]) : 'dd-MM-YYYY'}` : value == '' ? 'dd-MM-YYYY' : formatDateStringToDmy(value as string)}
                 onPress={() => setModalVisible(true)}
             />
             <CustomModal
                 isVisible={modalVisible}
                 toggleModal={() => setModalVisible(false)}
             >
-                {enableRangeInput && (<Text>{`${selectedDate[0] ?? 'YYYY-MM-dd'} ~ ${selectedDate[1] ?? 'YYYY-MM-dd'}`}</Text>)}
+                {enableRangeInput && (<Text>{`${selectedDate[0] ?? 'dd-MM-YYYY'} ~ ${selectedDate[1] ?? 'dd-MM-YYYY'}`}</Text>)}
                 <CalendarPicker
                     allowRangeSelection={enableRangeInput}
                     allowBackwardRangeSelect={enableRangeInput}
@@ -42,13 +42,13 @@ export default function CustomCalendarPicker({ value, setValue, enableRangeInput
                             if (enableRangeInput) {
                                 const temp = [...selectedDate]
                                 if (type === 'END_DATE') {
-                                    temp[1] = formatDatetoString(date)
+                                    temp[1] = formatDatetoStringYmd(date)
                                 } else {
-                                    temp[0] = formatDatetoString(date)
+                                    temp[0] = formatDatetoStringYmd(date)
                                 }
                                 setSelectedDate(temp)
                             } else {
-                                setSelectedDate(formatDatetoString(date))
+                                setSelectedDate(formatDatetoStringYmd(date))
                             }
                         }
                     }}

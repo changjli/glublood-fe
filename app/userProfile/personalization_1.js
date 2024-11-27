@@ -23,7 +23,7 @@ const isDescendant = [
 const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
     const [gender, setGender] = useState(values.gender || '');
     const [descendant, setDescendant] = useState(values.descendant || '');
-    
+
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [date, setDate] = useState(new Date());
 
@@ -42,7 +42,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
             setFieldValue('birthDate', selectedDate);
         }
     }
-    
+
     return (
         <View className='mt-4'>
             <Text style={styles.title}>Kelengkapan{'\n'}Data Diri</Text>
@@ -95,7 +95,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                     />
                     <View className='ml-2 flex-1'>
                         <Text
-                            style = {{ 
+                            style={{
                                 fontSize: 12,
                                 fontFamily: 'Helvetica-Bold'
                             }}
@@ -103,7 +103,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                             Tanggal Lahir
                         </Text>
                         <Pressable
-                            style={{ 
+                            style={{
                                 width: '100%',
                                 paddingHorizontal: 14,
                                 paddingVertical: 10,
@@ -114,7 +114,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                             onPress={handleOnPressDatePicker}
                         >
                             <Text
-                                style={{ 
+                                style={{
                                     fontFamily: 'Helvetica',
                                     fontSize: 16,
                                 }}
@@ -215,7 +215,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                 />
             </View>
 
-            {openDatePicker ? 
+            {openDatePicker ?
                 <DateTimePicker
                     value={values.birthDate ? values.birthDate : date}
                     mode="date"

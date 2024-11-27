@@ -13,7 +13,7 @@ import { useIsFocused } from '@react-navigation/native';
 import useExerciseLog from '@/hooks/api/logs/exercise/useExerciseLog';
 import DynamicTextComponent from '@/components/DynamicText';
 import Wrapper from '@/components/Layout/Wrapper'
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
 import CustomCalendar from '@/components/CustomCalendar';
 import ExerciseLogList from '@/components/ExerciseLogList';
 
@@ -53,14 +53,14 @@ export default function ExerciseLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('foodLogDate', formatDatetoString(selectedDate))
+        await storeData('foodLogDate', formatDatetoStringYmd(selectedDate))
         router.navigate('/logs/exercise/create')
     }
 
     useEffect(() => {
         if (isFocused) {
             console.log("selected date", selectedDate)
-            handleGetExerciseLog(formatDatetoString(selectedDate))
+            handleGetExerciseLog(formatDatetoStringYmd(selectedDate))
         }
     }, [selectedDate, isFocused])
 

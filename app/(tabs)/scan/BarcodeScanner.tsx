@@ -1,3 +1,4 @@
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 import { Colors } from '@/constants/Colors';
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import { router } from 'expo-router';
@@ -7,6 +8,8 @@ import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 're
 export default function BarcodeScanner() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false)
+
+    const { showAlert } = useCustomAlert()
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -41,8 +44,6 @@ export default function BarcodeScanner() {
                 maxY: height * 0.7,
             };
 
-            console.log(centroidX, centroidY, centralArea)
-
             // Check if the centroid is within the central area
             const isCentroidInCenter =
                 centroidX > centralArea.minX &&
@@ -52,9 +53,10 @@ export default function BarcodeScanner() {
 
             if (isCentroidInCenter) {
                 setScanned(true);
-                alert(`Barcode with type ${type} and data ${data} has been scanned!`);
+                // alert(`Barcode with type ${type} and data ${data} has been scanned!`);
+                showAlert(`Barcode with type ${type} and data ${data} has been scanned!`, 'success')
                 // Do something with the scanned data
-                router.navigate(`/(notes)/food-logs/create/barcode/${data}`)
+                router.navigate(`/logs/food/create/barcode/${data}`)
             }
         }
     }

@@ -5,7 +5,7 @@ import { Link, router } from 'expo-router';
 import useMedicine from '@/hooks/api/logs/medicine/useMedicineLog';
 import axios from 'axios'
 import { useIsFocused } from '@react-navigation/native';
-import { formatDatetoString } from '@/utils/formatDatetoString';
+import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
 import CustomCalendar from '@/components/CustomCalendar';
 import MedicineLogList from '@/components/MedicineLogList';
@@ -47,13 +47,13 @@ export default function MedicineLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('medicineLogDate', formatDatetoString(selectedDate))
-        router.navigate('/logs/medicine/AddMedicineLog')
+        await storeData('medicineLogDate', formatDatetoStringYmd(selectedDate))
+        router.navigate('/logs/medicine/create')
     }
 
     useEffect(() => {
         if (isFocused) {
-            handleGetMedicineLog(formatDatetoString(selectedDate))
+            handleGetMedicineLog(formatDatetoStringYmd(selectedDate))
         }
     }, [selectedDate, isFocused])
 

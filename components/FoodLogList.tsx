@@ -58,8 +58,7 @@ export default function FoodLogList({ data, loading }: FoodLogListProps) {
                 data.map((item, index) => (
                     renderItem({ item, index })
                 ))
-            )
-            }
+            )}
         </View>
     );
 };
