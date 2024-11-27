@@ -17,6 +17,7 @@ import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
+import { parseGlucoseReading } from '@/utils/GlucoseReadingRx'
 
 export default function index() {
     const { signOut, session } = useSession()
@@ -218,6 +219,11 @@ export default function index() {
                         <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
                         <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
                     </TouchableOpacity>
+                    <CustomButton title='ble' onPress={() => router.push('/ble')} />
+                    <CustomButton title='tes' onPress={() => {
+                        const result = parseGlucoseReading(new Uint8Array([11, 3, 0, 232, 7, 11, 27, 7, 47, 21, 165, 1, 166, 176, 248, 0, 0]))
+                        console.log(result)
+                    }} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>

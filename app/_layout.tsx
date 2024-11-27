@@ -2,6 +2,7 @@ import { View, Text, KeyboardAvoidingView } from 'react-native'
 import React, { useEffect } from 'react'
 import { Slot, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen';
+import 'expo-dev-client';
 
 import "../global.css"
 import { useFonts } from 'expo-font';
