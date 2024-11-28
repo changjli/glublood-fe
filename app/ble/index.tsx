@@ -8,13 +8,14 @@ import {
     View,
 } from "react-native";
 import DeviceModal from "./DeviceConnectionModal";
+import CustomText from "@/components/CustomText";
 
 const App = () => {
     const {
         allDevices,
         connectedDevice,
         connectToDevice,
-        color,
+        glucoseMeasurements,
         requestPermissions,
         scanForPeripherals,
     } = useBLE();
@@ -37,17 +38,13 @@ const App = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: color }]}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.heartRateTitleWrapper}>
-                {connectedDevice ? (
-                    <>
-                        <Text style={styles.heartRateTitleText}>Connected</Text>
-                    </>
-                ) : (
-                    <Text style={styles.heartRateTitleText}>
-                        Please connect the Arduino
-                    </Text>
-                )}
+                {glucoseMeasurements.map(gm => (
+                    <View>
+                        <CustomText>{gm.mgdl}</CustomText>
+                    </View>
+                ))}
             </View>
             <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
                 <Text style={styles.ctaButtonText}>Connect</Text>

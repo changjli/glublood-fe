@@ -18,7 +18,7 @@ import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
-import { parseGlucoseReading } from '@/utils/GlucoseReadingRx'
+import { parseGlucoseReading } from '@/app/ble/GlucoseReadingRx'
 
 export default function index() {
     const { signOut, session } = useSession()
