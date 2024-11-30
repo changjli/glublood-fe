@@ -37,7 +37,7 @@ export default function FirstTimeSetup() {
         lastname: Yup.string().required('Nama lengkap wajib diisi!'),
         weight: Yup.number().typeError('Wajib angka!').required('Berat badan wajib diisi!').positive().integer(),
         height: Yup.number().typeError('Wajib angka!').required('Tinggi badan wajib diisi!').positive().integer(),
-        age: Yup.number().typeError('Wajib angka!').required('Usia wajib diisi!').positive().integer(),
+        age: Yup.number().positive().integer(),
         birthDate: Yup.date().required('Tanggal lahir wajib diisi!').nullable(),
         gender: Yup.string().required('Jenis Kelamin wajib diisi!'),
         descendant: Yup.string().required('Pertanyaan keturunan wajib diisi!'),
@@ -188,7 +188,8 @@ export default function FirstTimeSetup() {
                 onSubmit={(values) => console.log("Values onSubmit Formik: ", values)}
             >
                 {formikProps => (
-                    <View className="px-5 py-16 bg-bg flex flex-1" style={{ height: '100%' }}>
+                    <View
+                        className="px-5 py-16 flex flex-1" style={{ height: '100%' }}>
                         <StepIndicator
                             currentPosition={currentPosition}
                             customStyles={customStyles}

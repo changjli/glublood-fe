@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Modal, Button, Pressable, Image } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput/userProfile';
@@ -42,6 +42,17 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
             setFieldValue('birthDate', selectedDate);
         }
     }
+
+    useEffect(() => {
+        if (values.birthDate) {
+            const birthDate = dayjs(values.birthDate);
+            const currentDate = dayjs();
+            const calculatedAge = currentDate.diff(birthDate, 'year');
+
+            // Set the age in the form values
+            setFieldValue('age', calculatedAge);
+        }
+    }, [values.birthDate, setFieldValue]);
     
     return (
         <View className='mt-4'>
@@ -85,15 +96,15 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                     />
                 </View>
                 <View className="mb-2 flex-row justify-between">
-                    <StyledCustomTextInput
+                    {/* <StyledCustomTextInput
                         classStyle='mr-2 flex-1'
                         label='Usia'
                         placeholder='Tahun'
                         value={values.age}
                         onChangeText={handleChange('age')}
                         error={errors.age}
-                    />
-                    <View className='ml-2 flex-1'>
+                    /> */}
+                    <View className='flex-1'>
                         <Text
                             style = {{ 
                                 fontSize: 12,

@@ -210,7 +210,7 @@ export default function index() {
                     <View style={{ marginBottom: 12 }}>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
                             <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
-                            <TouchableOpacity onPress={() => router.push('/profile')}>
+                            <TouchableOpacity onPress={() => router.push('/profile/')}>
                                 <Image
                                     source={require('@/assets/images/user-profile/dummy.png')}
                                     style={styles.profile}
@@ -272,7 +272,7 @@ export default function index() {
                                 }}
                             >
                                 <CustomText size='lg' weight='heavy'>Reminder</CustomText>
-                                <TouchableOpacity onPress={() => router.push('/(notes)/reminder/')}>
+                                <TouchableOpacity onPress={() => router.push('/userProfile/first_time_setup')}>
                                     <CustomText size='sm' weight='heavy' style={{ color: '#DA6E35' }}>Lihat Selengkapnya</CustomText>
                                 </TouchableOpacity>
                             </View>

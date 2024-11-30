@@ -4,6 +4,9 @@ import { Stack } from 'expo-router'
 
 export default function _layout() {
     return (
-        <Stack />
+        <Stack>
+            <Stack.Screen name='index' options={{ headerShown: false }}></Stack.Screen>
+            <Stack.Screen name='edit-profile' options={{ headerShown: false }}></Stack.Screen>
+        </Stack>
     )
 }
