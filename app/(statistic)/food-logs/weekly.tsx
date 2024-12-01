@@ -9,7 +9,7 @@ import CustomBarChart from '@/components/CustomBarChart';
 import CustomCalendarPicker from '@/components/CustomCalendarPicker';
 import { VictoryChart, VictoryScatter, VictoryTheme, VictoryZoomContainer } from 'victory-native';
 import SegmentedControl from '@/components/SegmentedControl';
-import { formatDateIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
+import { formatDateStringIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
 import { FlatList } from 'react-native-reanimated/lib/typescript/Animated';
 import { Colors } from '@/constants/Colors';
 
@@ -109,7 +109,7 @@ export default function WeeklyFoodLogStatisticPage() {
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
-                            <CustomText size='sm'>{formatDateIntl(foodLog.date)}</CustomText>
+                            <CustomText size='sm'>{formatDateStringIntl(foodLog.date)}</CustomText>
                         </View>
                     </View>
                 ))) : (

@@ -20,7 +20,7 @@ export default function Create() {
     const { storeFoodLog } = useFoodLog()
     const { getData } = useAsyncStorage()
 
-    const [formValue, setFormValue] = useState<StoreFoodLogRequest>({
+    const [formValue, setFormValue] = useState<PostFoodLogRequest>({
         calories: 0,
         carbohydrate: 0,
         date: '',
@@ -37,21 +37,21 @@ export default function Create() {
 
     const [storeLoading, setStoreLoading] = useState(false)
 
-    const handleStoreFoodLog = async (payload: StoreFoodLogRequest) => {
-        const formData = new FormData()
-        formData.append('payload', JSON.stringify(payload))
-        if (payload.img) {
-            const fileResponse = await fetch(payload.img);
-            const fileBlob = await fileResponse.blob();
-
-            formData.append('food_image', {
-                uri: payload.img,
-                name: 'filename.jpeg',
-                type: fileBlob.type || 'image/jpeg',
-            } as any);
-        }
-
+    const handleStoreFoodLog = async (payload: PostFoodLogRequest) => {
         try {
+            const formData = new FormData()
+            formData.append('payload', JSON.stringify(payload))
+            if (payload.img) {
+                const fileResponse = await fetch(payload.img);
+                const fileBlob = await fileResponse.blob();
+
+                formData.append('food_image', {
+                    uri: payload.img,
+                    name: 'filename.jpeg',
+                    type: fileBlob.type || 'image/jpeg',
+                } as any);
+            }
+
             console.log("payload", formData)
             const res = await storeFoodLog(setStoreLoading, formData)
             router.navigate('/(tabs)/(notes)')
@@ -90,14 +90,12 @@ export default function Create() {
         <FoodLogForm
             formValue={formValue}
         >
-            {({ values, handleSubmit }) => (
+            {({ handleSubmit, disabled }) => (
                 <CustomButton
                     title='Simpan catatan'
                     size='md'
-                    onPress={() => {
-                        handleSubmit()
-                        handleStoreFoodLog(values)
-                    }}
+                    disabled={disabled}
+                    onPress={handleSubmit((data) => handleStoreFoodLog(data))}
                     style={{
                         marginTop: 20
                     }}

@@ -5,8 +5,10 @@ import useProfile from '@/hooks/api/profile/useProfile';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import DynamicTextComponent from '@/components/DynamicText';
+import { useSession } from "../context/AuthenticationProvider";
 
 export default function index() {
+    const { signOut, session } = useSession();
     const { fetchUserProfile } = useProfile()
     const [fetchLoading, setFetchLoading] = useState(false)
     const [profileData, setProfileData] = useState(null)
@@ -56,7 +58,6 @@ export default function index() {
 
         }
     }
-
 
     return (
         profileData ?
@@ -525,6 +526,7 @@ export default function index() {
                                 justifyContent: 'center',
                                 alignItems: 'center'
                             }}
+                            onPress={() => signOut()}
                         >
                             <Ionicons name="log-out-outline" color='#FE3F11' size={26} />
                             <Text
@@ -554,6 +556,5 @@ export default function index() {
             </TouchableWithoutFeedback>
             :
             null
-
     )
 }

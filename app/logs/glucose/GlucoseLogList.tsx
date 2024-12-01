@@ -10,19 +10,20 @@ interface GlucoseLogListProps {
 
 export default function GlucoseLogList({ data }: GlucoseLogListProps) {
     const renderItem = ({ item, index }: { item: GetGlucoseLogRes, index: number }) => {
-        const isSameTime = item.time === data[index - 1]?.time;
+        const isSame = item.time === data[index - 1]?.time;
 
         return (
             <View style={styles.itemContainer}>
                 {/* Time Section */}
                 <View style={styles.timeSection}>
-                    {!isSameTime && (
+                    {!isSame && (
                         <Text style={styles.timeText}>{item.time}</Text>
                     )}
-                    {(index < data.length - 1 || isSameTime) && (
-                        <View style={styles.verticalLineContainer}>
-                            {!isSameTime && <View style={styles.dot} />}
-                            <View style={styles.dashedLine} />
+                    {(index < data.length - 1 || isSame) && (
+                        <View style={styles.verticalLine}>
+                            {!isSame && (
+                                <View style={styles.dot} />
+                            )}
                         </View>
                     )}
                 </View>
@@ -56,32 +57,36 @@ export default function GlucoseLogList({ data }: GlucoseLogListProps) {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        paddingVertical: 20,
     },
     itemContainer: {
-        marginBottom: 20,
-        height: 100,
         flexDirection: 'row',
+        gap: 10,
     },
     timeSection: {
-        marginRight: 20,
-        width: 50,
+        width: '20%',
         alignItems: 'center',
     },
     timeText: {
-        marginBottom: 5,
-        color: '#333',
         fontSize: 14,
+        marginBottom: 5,
+        fontFamily: FontFamily.heavy,
     },
-    verticalLineContainer: {
-        alignItems: 'center',
+    verticalLine: {
+        flex: 1,
+        width: 1,
+        borderStyle: 'dashed',
+        borderColor: Colors.light.primary,
+        borderWidth: 1.5,
     },
     dot: {
-        marginBottom: 5,
-        width: 10,
         height: 10,
+        width: 10,
         borderRadius: 5,
         backgroundColor: '#E85C32',
+        position: 'absolute',
+        top: -5,
+        left: -5,
     },
     dashedLine: {
         width: 1,
@@ -160,7 +165,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     fullWidthButton: {
-        width: '100%', 
-        marginHorizontal: 0, 
+        width: '100%',
+        marginHorizontal: 0,
     },
 });

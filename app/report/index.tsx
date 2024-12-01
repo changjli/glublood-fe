@@ -4,6 +4,7 @@ import SegmentedControl from '@/components/SegmentedControl'
 import WeeklyReportPage from './weekly'
 import MonthlyReportPage from './monthly'
 import CustomReportPage from './custom'
+import CustomHeader from '@/components/CustomHeader'
 
 const data = [
     { title: 'Mingguan', page: WeeklyReportPage },
@@ -14,6 +15,7 @@ const data = [
 export default function LogReportPage() {
     return (
         <View style={{ flex: 1 }}>
+            <CustomHeader title='Rekam Data' />
             <SegmentedControl
                 segmentedControls={data}
             />

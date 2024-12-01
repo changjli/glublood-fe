@@ -39,7 +39,7 @@ export default function FoodLogDetailPage() {
         note: '',
         type: '',
     }
-    const [formValue, setFormValue] = useState<UpdateFoodLogReq>(emptyFormValue)
+    const [formValue, setFormValue] = useState<PostFoodLogRequest>(emptyFormValue)
 
     const [getLoading, setGetLoading] = useState(false)
 
@@ -70,7 +70,7 @@ export default function FoodLogDetailPage() {
         }
     }
 
-    const handleUpdateFoodLog = async (payload: UpdateFoodLogReq) => {
+    const handleUpdateFoodLog = async (payload: PostFoodLogRequest) => {
         try {
             const formData = new FormData()
             formData.append('payload', JSON.stringify(payload))
@@ -109,7 +109,7 @@ export default function FoodLogDetailPage() {
     const handleDeleteFoodLog = async (id: number) => {
         try {
             const res = await deleteFoodLog(setGetLoading, id)
-            router.navigate('/(notes)/food-logs')
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -136,16 +136,13 @@ export default function FoodLogDetailPage() {
         <FoodLogForm
             formValue={formValue}
         >
-            {({ values, handleSubmit }) => (
+            {({ handleSubmit, disabled }) => (
                 <>
                     <CustomButton
                         title='Simpan catatan'
                         size='md'
-                        disabled={JSON.stringify(values) == JSON.stringify(formValue)}
-                        onPress={() => {
-                            handleSubmit()
-                            handleUpdateFoodLog(values as UpdateFoodLogReq)
-                        }}
+                        disabled={disabled}
+                        onPress={handleSubmit(data => handleUpdateFoodLog(data))}
                     />
 
                     <CustomButton

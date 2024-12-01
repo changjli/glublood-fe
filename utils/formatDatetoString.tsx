@@ -1,9 +1,18 @@
-export function formatDatetoString(date: Date) {
+export function formatDatetoStringYmd(date: Date) {
     let year = date.getFullYear();
     let month = String(date.getMonth() + 1).padStart(2, '0');
     let day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+}
+
+export function formatDateStringToDmy(dateString: string) {
+    const date = new Date(dateString)
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+
+    return `${day}-${month}-${year}`;
 }
 
 export function getDuration(startTime: string, endTime: string) {
@@ -29,7 +38,11 @@ export function formatDateToDay(dateStr: string) {
     return dayName
 }
 
-export const formatDateIntl = (date: string) => {
+export const formatDateIntl = (date: Date) => {
+    return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(date)
+}
+
+export const formatDateStringIntl = (date: string) => {
     return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(date))
 }
 

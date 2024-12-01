@@ -41,7 +41,7 @@ export default function CustomQuantityPicker({
                     {label}
                 </CustomText>
             }
-            {showQtyPicker ? 
+            {showQtyPicker ?
                 <View style={styles.container}>
                     {/* left */}
                     <FontAwesome name='play' style={styles.arrow} />

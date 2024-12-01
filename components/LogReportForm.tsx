@@ -5,7 +5,7 @@ import axios from 'axios';
 import CustomText from '@/components/CustomText';
 import CustomBarChart from '@/components/CustomBarChart';
 import CustomCalendarPicker from '@/components/CustomCalendarPicker';
-import { formatDateIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
+import { formatDateStringIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
 import { Colors } from '@/constants/Colors';
 import useReport from '@/hooks/api/report/useReport';
 import CustomButton from '@/components/CustomButton';

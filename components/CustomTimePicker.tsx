@@ -5,17 +5,20 @@ import { FontAwesome } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import WheelPickerExpo from 'react-native-wheel-picker-expo';
+import CustomModal from './CustomModal';
+import CustomText from './CustomText';
 
 type CustomTimePickerProps = {
     value: string
     onChange: (value: string) => void
-    error?: string
+    error?: string | undefined
+    label: string
 }
 
-const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
+const CustomTimePicker = ({ value, onChange, error, label }: CustomTimePickerProps) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedHour, setSelectedHour] = useState('01');
-    const [selectedMinute, setSelectedMinute] = useState('00');
+    const [selectedHour, setSelectedHour] = useState(value != '' ? value.split(':')[0] : '00');
+    const [selectedMinute, setSelectedMinute] = useState(value != '' ? value.split(':')[1] : '00');
 
     const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
@@ -30,71 +33,74 @@ const CustomTimePicker = ({ value, onChange }: CustomTimePickerProps) => {
         setModalVisible(!modalVisible)
     }
 
+    useEffect(() => {
+        setSelectedHour(value != '' ? value.split(':')[0] : '00')
+        setSelectedMinute(value != '' ? value.split(':')[1] : '00')
+    }, [value])
+
     return (
         <View>
             <CustomTextInput
-                label='Pilih waktu'
+                label={label}
                 placeholder='Tekan untuk pilih waktu'
                 postfix={(
                     <FontAwesome name='clock-o' size={FontSize.lg} />
                 )}
                 value={value}
                 onPress={() => setModalVisible(true)}
+                error={error}
             />
-            <Modal
-                visible={modalVisible}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setModalVisible(!modalVisible)}
-            >
-                <View style={styles.modalBackdrop}>
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalHeaderContainer}>
-                            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={{ color: 'red' }}>Batal</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={handleNext}>
-                                <Text style={{ color: 'orange' }}>Lanjut</Text>
-                            </TouchableOpacity>
-                        </View>
 
-                        <View style={styles.timePickerContainer}>
-                            <WheelPickerExpo
-                                height={200}
-                                width={70}
-                                initialSelectedIndex={hours.indexOf(selectedHour)}
-                                items={hours.map(hour => ({ label: hour, value: hour }))}
-                                onChange={({ index }) => setSelectedHour(hours[index])}
-                                renderItem={({ label }) => (
-                                    <Text style={[
-                                        styles.timePickerText,
-                                        label == selectedHour && styles.timePickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                )}
-                                selectedStyle={styles.timePickerSelected}
-                            />
-                            <WheelPickerExpo
-                                height={200}
-                                width={70}
-                                initialSelectedIndex={minutes.indexOf(selectedMinute)}
-                                items={minutes.map(minute => ({ label: minute, value: minute }))}
-                                onChange={({ index }) => setSelectedMinute(minutes[index])}
-                                renderItem={({ label }) => (
-                                    <Text style={[
-                                        styles.timePickerText,
-                                        label == selectedMinute && styles.timePickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                )}
-                                selectedStyle={styles.timePickerSelected}
-                            />
-                        </View>
+            <CustomModal
+                isVisible={modalVisible}
+                toggleModal={() => setModalVisible(false)}
+                header={(
+                    <View style={styles.modalHeaderContainer}>
+                        <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+                            <CustomText size='sm' style={{ color: Colors.light.danger }}>Batal</CustomText>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleNext}>
+                            <CustomText size='sm' style={{ color: Colors.light.primary }}>Lanjut</CustomText>
+                        </TouchableOpacity>
                     </View>
+                )}
+                style={{ height: '40%' }}
+            >
+                <View style={styles.timePickerContainer}>
+                    <WheelPickerExpo
+                        height={200}
+                        width={70}
+                        initialSelectedIndex={hours.indexOf(selectedHour)}
+                        items={hours.map(hour => ({ label: hour, value: hour }))}
+                        onChange={({ index }) => setSelectedHour(hours[index])}
+                        renderItem={({ label }) => (
+                            <Text style={[
+                                styles.timePickerText,
+                                label == selectedHour && styles.timePickerTextSelected
+                            ]}>
+                                {label}
+                            </Text>
+                        )}
+                        selectedStyle={styles.timePickerSelected}
+                    />
+                    <WheelPickerExpo
+                        height={200}
+                        width={70}
+                        initialSelectedIndex={minutes.indexOf(selectedMinute)}
+                        items={minutes.map(minute => ({ label: minute, value: minute }))}
+                        onChange={({ index }) => setSelectedMinute(minutes[index])}
+                        renderItem={({ label }) => (
+                            <Text style={[
+                                styles.timePickerText,
+                                label == selectedMinute && styles.timePickerTextSelected
+                            ]}>
+                                {label}
+                            </Text>
+                        )}
+                        selectedStyle={styles.timePickerSelected}
+                    />
                 </View>
-            </Modal>
+            </CustomModal>
         </View>
     );
 };
@@ -113,7 +119,7 @@ const styles = StyleSheet.create({
     modalHeaderContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 20
+        marginBottom: 10,
     },
     timePickerContainer: {
         flexDirection: 'row',

@@ -6,7 +6,6 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import * as Notifications from 'expo-notifications';
 import { FontSize } from '@/constants/Typography';
 import { useIsFocused } from '@react-navigation/native';
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 export default function ReminderPage() {
   const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
