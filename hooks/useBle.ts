@@ -1,5 +1,4 @@
-/* eslint-disable no-bitwise */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 
 import * as ExpoDevice from "expo-device";
@@ -11,8 +10,10 @@ import {
     Characteristic,
     Device,
 } from "react-native-ble-plx";
-import { parseGlucoseReading } from "@/utils/GlucoseReadingRx";
+import { GlucoseReading, parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
 
+// from nRF Connect
+const DEVICE_NAME = "meter+14771407"
 const GLUCOSE_SERVICE = '00001808-0000-1000-8000-00805f9b34fb'
 const MEASUREMENT_CHARACTERISTIC = '00002a18-0000-1000-8000-00805f9b34fb'
 const RECORD_CHARACTERISTIC = '00002a52-0000-1000-8000-00805f9b34fb'
@@ -22,7 +23,8 @@ const bleManager = new BleManager();
 function useBLE() {
     const [allDevices, setAllDevices] = useState<Device[]>([]);
     const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-    const [color, setColor] = useState("white");
+    const [glucoseMeasurements, setGlucoseMeasurements] = useState<GlucoseReading[]>([]);
+    const [lastSyncDate, setLastSyncDate] = useState('')
 
     const requestAndroid31Permissions = async () => {
         const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -105,7 +107,7 @@ function useBLE() {
 
             if (
                 device &&
-                (device.localName === "meter+14771407" || device.name === "meter+14771407")
+                (device.localName === DEVICE_NAME || device.name === DEVICE_NAME)
             ) {
                 setAllDevices((prevState: Device[]) => {
                     if (!isDuplicteDevice(prevState, device)) {
@@ -121,36 +123,34 @@ function useBLE() {
         characteristic: Characteristic | null
     ) => {
         if (error) {
-            console.log(error);
-            return;
-        } else if (!characteristic?.value) {
-            console.log("No Data was received");
-            return;
+            console.error("Error enabling notifications", error)
+            return
         }
-
-        console.log("jay", characteristic.value)
+        // Parse and process the glucose measurement data
+        if (characteristic && characteristic.value) {
+            const base64Data = characteristic.value
+            const binaryData = base64.decode(base64Data)
+            const byteArray = Uint8Array.from(binaryData, (char) => char.charCodeAt(0));
+            const result = parseGlucoseReading(byteArray)
+            console.log(result)
+            setGlucoseMeasurements(prev => {
+                const temp = [...prev]
+                if (result) {
+                    temp.push(result)
+                }
+                return temp
+            })
+        } else {
+            console.log('no data found')
+            return
+        }
     };
 
     async function enableGlucoseMeasurementNotifications(device: Device) {
         device.monitorCharacteristicForService(
             GLUCOSE_SERVICE,
             MEASUREMENT_CHARACTERISTIC,
-            (error, characteristic) => {
-                if (error) {
-                    console.error("Error enabling notifications", error);
-                    return;
-                }
-                // Parse and process the glucose measurement data
-                const base64Data = characteristic?.value
-                const binaryData = base64.decode(base64Data)
-                const byteArray = Uint8Array.from(binaryData, (char) => char.charCodeAt(0));
-                const result = parseGlucoseReading(byteArray)
-
-                console.log("base64Data", base64Data)
-                console.log("binaryData", binaryData)
-                console.log("byteArray", byteArray)
-                console.log(result)
-            }
+            onDataUpdate,
         );
     }
 
@@ -163,6 +163,44 @@ function useBLE() {
             RECORD_CHARACTERISTIC,
             command
         );
+
+        // TODO: fetch greater than or equal to not working
+        // console.log('masuk sini')
+        // // convert date to utc
+        // const date = new Date(lastSyncDate)
+
+        // console.log(date)
+
+        // const year = date.getUTCFullYear();
+        // const month = date.getUTCMonth() + 1;
+        // const day = date.getUTCDate();
+        // const hours = date.getUTCHours();
+        // const minutes = date.getUTCMinutes();
+        // const seconds = date.getUTCSeconds();
+
+        // // convert utc to byte 
+        // const byteArray = [
+        //     year & 0xff,
+        //     (year >> 8) & 0xff,
+        //     month,
+        //     day,
+        //     hours,
+        //     minutes,
+        //     seconds
+        // ];
+
+        // const greaterThanOrEqualTo = [0x01, 0x03, 0x02, ...byteArray]
+
+        // console.log(greaterThanOrEqualTo)
+
+        // const command = base64.encode(String.fromCharCode(...greaterThanOrEqualTo));
+        // console.log("Base64 command:", command);
+
+        // await device.writeCharacteristicWithResponseForService(
+        //     GLUCOSE_SERVICE,
+        //     RECORD_CHARACTERISTIC,
+        //     command
+        // );
 
         console.log("Requested all glucose records");
     }
@@ -184,10 +222,11 @@ function useBLE() {
         connectToDevice,
         allDevices,
         connectedDevice,
-        color,
+        glucoseMeasurements,
         requestPermissions,
         scanForPeripherals,
         startStreamingData,
+        setLastSyncDate,
     };
 }
 

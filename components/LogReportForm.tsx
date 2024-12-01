@@ -166,7 +166,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
             </View>
             <TouchableOpacity style={styles.downloadContainer} onPress={() => handleDownloadOrShare('download')}>
                 <FontAwesome name='download' size={FontSize['2xl']} color={Colors.light.primary} />
-                <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Data akan diunduh dalam format .pdf</CustomText>
+                <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Tekan untuk mengunduh data dalam format .pdf</CustomText>
             </TouchableOpacity>
         </>
     )
@@ -176,11 +176,11 @@ const styles = StyleSheet.create({
     checkboxItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: Colors.light.ternary,
+        backgroundColor: Colors.light.darkOrange50,
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderColor: Colors.light.gray500
+        borderColor: Colors.light.gray500,
     },
     checkbox: {
         borderColor: Colors.light.primary,

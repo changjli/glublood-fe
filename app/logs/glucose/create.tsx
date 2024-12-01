@@ -44,6 +44,7 @@ export default function AddGlucoseLog() {
         time: '',
         time_selection: '',
         notes: '',
+        type: 'manual',
     })
 
     const handlePopulateFormValue = async () => {

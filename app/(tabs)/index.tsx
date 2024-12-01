@@ -1,4 +1,4 @@
-import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity, Easing, Switch } from 'react-native'
+import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity, Easing, Switch, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSession } from '../context/AuthenticationProvider'
 import CustomButton from '@/components/CustomButton'
@@ -18,13 +18,14 @@ import axios from 'axios'
 import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
 import { FontSize } from '@/constants/Typography'
 import useAsyncStorage from '@/hooks/useAsyncStorage';
-import { parseGlucoseReading } from '@/utils/GlucoseReadingRx'
+import { parseGlucoseReading } from '@/app/ble/GlucoseReadingRx'
 
-export default function index() {
+export default function HomePage() {
     const { signOut, session } = useSession()
     const { getAllFoodMenu } = useFoodMenu()
     const { getDailyCaloriesByDate, getDailyBurnedCaloriesByDate } = useDailyCalories()
     const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
+    const { width } = useWindowDimensions()
 
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
@@ -208,6 +209,7 @@ export default function index() {
             <ScrollView>
                 <View style={styles.headerContainer} />
                 <Wrapper>
+                    {/* header */}
                     <View style={{ marginBottom: 12 }}>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
                             <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
@@ -220,6 +222,8 @@ export default function index() {
                         </View>
                         <CustomText style={{ color: 'white', maxWidth: '70%' }}>Hai, Jonathan jaga kesehatan dan perbanyak aktivitas tubuh</CustomText>
                     </View>
+
+                    {/* summary */}
                     <View style={styles.summaryContainer}>
                         <AnimatedCircularProgress
                             ref={dailyBurnedCaloriesCircularProgressRef}
@@ -265,71 +269,76 @@ export default function index() {
                             </View>
                         </View>
                     </View>
-                    {reminderKeys.length > 0 ?
-                        <View>
-                            <View
-                                style={{
-                                    marginTop: 15,
-                                    ...FlexStyles.flexRow,
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}
-                            >
-                                <CustomText size='lg' weight='heavy'>Reminder</CustomText>
-                                <TouchableOpacity onPress={() => router.push('/(notes)/reminder/')}>
-                                    <CustomText size='sm' weight='heavy' style={{ color: '#DA6E35' }}>Lihat Selengkapnya</CustomText>
-                                </TouchableOpacity>
-                            </View>
-                            <FlatList
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                data={reminders.slice(0, 3)}
-                                renderItem={renderItem}
-                                maxToRenderPerBatch={2}
-                                initialNumToRender={1}
-                                keyExtractor={(item) => item.time}
-                            />
-                        </View>
-                        :
-                        <View>
-                            <CustomText size='lg' weight='heavy' style={{ marginTop: 15, }}>Reminder</CustomText>
-                            <View style={styles.reminderContainer}>
-                                <View style={styles.empytReminderContainer}>
-                                    <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 85, height: 95 }} />
-                                    <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center', fontSize: 16 }}>Kamu belum tambah pengigat</CustomText>
-                                </View>
-                                <TouchableOpacity
-                                    style={{
-                                        marginTop: 10,
-                                        padding: 12,
-                                        width: 200,
-                                        borderWidth: 1,
-                                        borderColor: '#DA6E35',
-                                        borderRadius: 8,
-                                        ...FlexStyles.flexRow,
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}
-                                    onPress={() => router.push('/(notes)/reminder/')}
-                                >
-                                    <View style={{
-                                        marginRight: 5,
-                                        width: 14,
-                                        height: 14,
-                                        backgroundColor: '#DA6E35',
-                                        borderRadius: 3,
-                                        ...FlexStyles.flexCol,
-                                        alignItems: 'center',
-                                    }}>
-                                        <Image source={require('@/assets/images/icons/plus.png')} style={{ width: 6, height: 6, tintColor: 'white' }} />
-                                    </View>
-                                    <CustomText size='sm' style={{ color: '#DA6E35', textAlign: 'center', fontSize: 12, fontFamily: 'Helvetica-Bold' }}>Tambahkan pengingat</CustomText>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    }
 
-                    <View>
+                    {/* remainder */}
+                    <View style={{ marginBottom: 16 }}>
+                        {reminderKeys.length > 0 ?
+                            <View>
+                                <View
+                                    style={{
+                                        marginTop: 15,
+                                        ...FlexStyles.flexRow,
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    <CustomText size='lg' weight='heavy'>Reminder</CustomText>
+                                    <TouchableOpacity onPress={() => router.push('/(notes)/reminder/')}>
+                                        <CustomText size='sm' weight='heavy' style={{ color: '#DA6E35' }}>Lihat Selengkapnya</CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                                <FlatList
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    data={reminders.slice(0, 3)}
+                                    renderItem={renderItem}
+                                    maxToRenderPerBatch={2}
+                                    initialNumToRender={1}
+                                    keyExtractor={(item) => item.time}
+                                />
+                            </View>
+                            :
+                            <View>
+                                <CustomText size='lg' weight='heavy' style={{ marginTop: 15, }}>Reminder</CustomText>
+                                <View style={styles.reminderContainer}>
+                                    <View style={styles.empytReminderContainer}>
+                                        <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 85, height: 95 }} />
+                                        <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center', fontSize: 16 }}>Kamu belum tambah pengigat</CustomText>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={{
+                                            marginTop: 10,
+                                            padding: 12,
+                                            width: 200,
+                                            borderWidth: 1,
+                                            borderColor: '#DA6E35',
+                                            borderRadius: 8,
+                                            ...FlexStyles.flexRow,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                        }}
+                                        onPress={() => router.push('/(notes)/reminder/')}
+                                    >
+                                        <View style={{
+                                            marginRight: 5,
+                                            width: 14,
+                                            height: 14,
+                                            backgroundColor: '#DA6E35',
+                                            borderRadius: 3,
+                                            ...FlexStyles.flexCol,
+                                            alignItems: 'center',
+                                        }}>
+                                            <Image source={require('@/assets/images/icons/plus.png')} style={{ width: 6, height: 6, tintColor: 'white' }} />
+                                        </View>
+                                        <CustomText size='sm' style={{ color: '#DA6E35', textAlign: 'center', fontSize: 12, fontFamily: 'Helvetica-Bold' }}>Tambahkan pengingat</CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        }
+                    </View>
+
+                    {/* menu */}
+                    <View style={{ marginBottom: 12 }}>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
                             <CustomText size='lg' weight='heavy'>Menu Sehat</CustomText>
                             <TouchableOpacity onPress={() => router.push('/food-menus')}>
@@ -350,19 +359,20 @@ export default function index() {
                             )}
                             keyExtractor={(item, index) => index.toString()}
                             horizontal
-                            contentContainerStyle={{ gap: 12, padding: 4 }}
+                            contentContainerStyle={{ gap: 12, padding: 8 }}
                         />
                     </View>
-                    <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
-                    <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/report')}>
-                        <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
-                        <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
+
+                    <View style={{ marginBottom: 16 }}>
+                        <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
+                        <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/report')}>
+                            <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
+                            <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity onPress={() => router.push('/ble')}>
+                        <Image source={require('@/assets/images/static/content-accu-check.png')} style={{ width: '100%', height: 125, borderRadius: 16 }} />
                     </TouchableOpacity>
-                    <CustomButton title='ble' onPress={() => router.push('/ble')} />
-                    <CustomButton title='tes' onPress={() => {
-                        const result = parseGlucoseReading(new Uint8Array([11, 3, 0, 232, 7, 11, 27, 7, 47, 21, 165, 1, 166, 176, 248, 0, 0]))
-                        console.log(result)
-                    }} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>
@@ -398,7 +408,6 @@ const styles = StyleSheet.create({
     },
     foodItemContainer: {
         backgroundColor: 'white',
-        marginBottom: 12,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

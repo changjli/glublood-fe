@@ -1,6 +1,7 @@
+import { formatDateIntl, formatDateIntlWithTime } from '@/utils/formatDatetoString';
 import { getShort, getSfloat16 } from './DataTypeHelper';
 
-type GlucoseReading = {
+export type GlucoseReading = {
     sequence: number;
     year: number;
     month: number;
@@ -17,12 +18,6 @@ type GlucoseReading = {
 };
 
 export const parseGlucoseReading = (packet: Uint8Array): GlucoseReading | null => {
-    // Optional: Uncomment to ensure minimum packet length
-    /*
-    if (packet.length < 14) {
-      return null;
-    }
-    */
 
     const flags = packet[0];
     const timeOffsetPresent = (flags & 0x01) > 0;
@@ -55,7 +50,6 @@ export const parseGlucoseReading = (packet: Uint8Array): GlucoseReading | null =
         mgdl = mol * 1000 * MMOLL_TO_MGDL;
     }
 
-    // Apply JavaScript precision fix
     mgdl = parseFloat(mgdl.toFixed(5));
 
     index += 2;
@@ -75,11 +69,8 @@ export const parseGlucoseReading = (packet: Uint8Array): GlucoseReading | null =
     }
 
     // Construct the timestamp
-    const date = new Date(year, month - 1, day, hour, minute, second);
-    const time = date.toLocaleString('de-DE', { timeZone: 'UTC' });
-
-    console.log(`Glucose data: mg/dl: ${mgdl < 0 ? '-INFINITY' : mgdl}  seq: ${sequence
-        }  time: ${time}`)
+    const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+    const time = formatDateIntlWithTime(utcDate)
 
     return {
         sequence,

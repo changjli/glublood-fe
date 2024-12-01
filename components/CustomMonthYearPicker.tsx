@@ -38,6 +38,7 @@ export default function CustomMonthYearPicker({ month, year, setMonth, setyear }
                             const monhtYear = e.split(' ')
                             setyear(Number(monhtYear[0]))
                             setMonth(Number(monhtYear[1]) - 1)
+                            setPickerVisible(false)
                         }}
                         current={`${year}/${month + 1}`}
                     />
