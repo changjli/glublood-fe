@@ -526,7 +526,10 @@ export default function index() {
                                 justifyContent: 'center',
                                 alignItems: 'center'
                             }}
-                            onPress={() => signOut()}
+                            onPress={() => {
+                                signOut()
+                                router.navigate('/(auth)/login')
+                            }}
                         >
                             <Ionicons name="log-out-outline" color='#FE3F11' size={26} />
                             <Text

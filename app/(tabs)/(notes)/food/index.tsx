@@ -97,20 +97,18 @@ export default function FoodLogPage() {
 
     return (
         <>
-            <Wrapper style={{ backgroundColor: 'white', marginBottom: 20 }}>
-                <View style={{ marginBottom: 20 }}>
-                    <CustomCalendar
-                        value={selectedDate}
-                        onChange={setSelectedDate}
-                    />
-                </View>
+            <CustomCalendar
+                value={selectedDate}
+                onChange={setSelectedDate}
+            />
+            <View style={{ paddingHorizontal: 16, marginBottom: 20 }}>
                 <DailyCaloriesInput
                     selectedDate={selectedDate}
                     dailyCalories={dailyCalories}
                     loading={dailyCaloriesLoading}
                     fetchDailyCalories={() => handleGetDailyCalories(formatDatetoStringYmd(selectedDate))}
                 />
-            </Wrapper>
+            </View>
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail log nutrisi</Text>

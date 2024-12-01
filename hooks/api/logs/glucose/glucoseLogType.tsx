@@ -4,6 +4,7 @@ type StoreGlucoseLogReq = {
     time: string,
     time_selection: string,
     notes: string,
+    type: string,
 }
 
 type GetGlucoseLogRes = {
@@ -22,6 +23,7 @@ type UpdateGlucoseLogReq = {
     time: string,
     time_selection: string,
     notes: string,
+    type: string,
 }
 
 type GetGlucoseLogReportByDateRes = {

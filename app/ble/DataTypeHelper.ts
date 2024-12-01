@@ -1,9 +1,9 @@
-export function getShort(data, index) {
+export function getShort(data: Uint8Array, index: number) {
     // Little-endian ordering
     return (data[index + 1] << 8) + data[index];
 }
 
-export function getSfloat16(data, index) {
+export function getSfloat16(data: Uint8Array, index: number) {
     // Little-endian ordering
     const b0 = data[index];
     const b1 = data[index + 1];
@@ -16,15 +16,15 @@ export function getSfloat16(data, index) {
     return mantissa * Math.pow(10, exponent);
 }
 
-function unsignedByteToInt(b) {
+function unsignedByteToInt(b: number) {
     return b & 0xff;
 }
 
-function unsignedBytesToInt(b, c) {
+function unsignedBytesToInt(b: number, c: number) {
     return ((unsignedByteToInt(c) << 8) + unsignedByteToInt(b)) & 0xffff;
 }
 
-function unsignedToSigned(unsigned, size) {
+function unsignedToSigned(unsigned: number, size: number) {
     if ((unsigned & (1 << (size - 1))) != 0) {
         unsigned = -1 * ((1 << (size - 1)) - (unsigned & ((1 << (size - 1)) - 1)));
     }

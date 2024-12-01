@@ -19,6 +19,7 @@ export default function GlucoseLogDetailPage() {
         time: '',
         time_selection: '',
         notes: '',
+        type: 'manual',
     })
     const [loading, setLoading] = useState(false)
 

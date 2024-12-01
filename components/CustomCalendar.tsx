@@ -102,7 +102,7 @@ export default function CustomCalendar({ value, onChange }: CustomCalendarProps)
     }, [selectedDay])
 
     return (
-        <View>
+        <View style={{ padding: 16 }}>
             <View style={{ marginBottom: 20 }}>
                 <CustomMonthYearPicker
                     month={selectedMonth}
