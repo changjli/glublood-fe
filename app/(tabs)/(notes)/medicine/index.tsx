@@ -67,9 +67,7 @@ export default function MedicineLogPage() {
 
     return (
         <>
-            <Wrapper style={{ backgroundColor: 'white', marginBottom: 20 }}>
-                <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
-            </Wrapper>
+            <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
 
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>

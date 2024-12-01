@@ -8,12 +8,13 @@ import { router } from 'expo-router'
 
 interface CustomHeaderProps {
     title: string
+    back?: () => void
 }
 
-export default function CustomHeader({ title }: CustomHeaderProps) {
+export default function CustomHeader({ title, back }: CustomHeaderProps) {
     return (
         <View style={styles.headerContainer}>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={back ? back : () => router.back()}>
                 <Ionicons name='arrow-back' size={FontSize['2xl']} color={'white'} />
             </TouchableOpacity>
             <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>{title}</CustomText>

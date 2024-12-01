@@ -131,6 +131,36 @@ export default function useGlucoseLog() {
         return res
     }
 
+    const storeGlucoseLogBatch = async (setLoading, data) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/batch`, data)
+            .then(res => {
+                console.log('[useGlucoseLog][storeGlucoseLogBatch]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useGlucoseLog][storeGlucoseLogBatch]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const syncGlucoseLog = async (setLoading) => {
+        setLoading(true)
+        const res = await withToken.get(`${group}/sync`)
+            .then(res => {
+                console.log('[useGlucoseLog][syncGlucoseLog]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useGlucoseLog][syncGlucoseLog]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getGlucoseLogByDate,
         storeGlucoseLog,
@@ -140,5 +170,7 @@ export default function useGlucoseLog() {
         getGlucoseLogReportByDate,
         getGlucoseLogReportByMonth,
         getGlucoseLogReportByYear,
+        storeGlucoseLogBatch,
+        syncGlucoseLog,
     }
 }

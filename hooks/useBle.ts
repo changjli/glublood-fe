@@ -24,6 +24,7 @@ function useBLE() {
     const [allDevices, setAllDevices] = useState<Device[]>([]);
     const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
     const [glucoseMeasurements, setGlucoseMeasurements] = useState<GlucoseReading[]>([]);
+    const [lastSyncDate, setLastSyncDate] = useState('')
 
     const requestAndroid31Permissions = async () => {
         const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -133,11 +134,11 @@ function useBLE() {
             const result = parseGlucoseReading(byteArray)
             console.log(result)
             setGlucoseMeasurements(prev => {
+                const temp = [...prev]
                 if (result) {
-                    prev.push(result)
+                    temp.push(result)
                 }
-                console.log(prev)
-                return prev
+                return temp
             })
         } else {
             console.log('no data found')
@@ -163,6 +164,44 @@ function useBLE() {
             command
         );
 
+        // TODO: fetch greater than or equal to not working
+        // console.log('masuk sini')
+        // // convert date to utc
+        // const date = new Date(lastSyncDate)
+
+        // console.log(date)
+
+        // const year = date.getUTCFullYear();
+        // const month = date.getUTCMonth() + 1;
+        // const day = date.getUTCDate();
+        // const hours = date.getUTCHours();
+        // const minutes = date.getUTCMinutes();
+        // const seconds = date.getUTCSeconds();
+
+        // // convert utc to byte 
+        // const byteArray = [
+        //     year & 0xff,
+        //     (year >> 8) & 0xff,
+        //     month,
+        //     day,
+        //     hours,
+        //     minutes,
+        //     seconds
+        // ];
+
+        // const greaterThanOrEqualTo = [0x01, 0x03, 0x02, ...byteArray]
+
+        // console.log(greaterThanOrEqualTo)
+
+        // const command = base64.encode(String.fromCharCode(...greaterThanOrEqualTo));
+        // console.log("Base64 command:", command);
+
+        // await device.writeCharacteristicWithResponseForService(
+        //     GLUCOSE_SERVICE,
+        //     RECORD_CHARACTERISTIC,
+        //     command
+        // );
+
         console.log("Requested all glucose records");
     }
 
@@ -187,6 +226,7 @@ function useBLE() {
         requestPermissions,
         scanForPeripherals,
         startStreamingData,
+        setLastSyncDate,
     };
 }
 

@@ -66,12 +66,10 @@ export default function ExerciseLogPage() {
 
     return (
         <>
-            <Wrapper style={{ backgroundColor: 'white', marginBottom: 20 }}>
-                <CustomCalendar
-                    value={selectedDate}
-                    onChange={setSelectedDate}
-                />
-            </Wrapper>
+            <CustomCalendar
+                value={selectedDate}
+                onChange={setSelectedDate}
+            />
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail log olahraga</Text>
