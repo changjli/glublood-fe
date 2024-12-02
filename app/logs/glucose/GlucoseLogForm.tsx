@@ -59,6 +59,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                             )}
                             value={String(value)}
                             onChangeText={onChange}
+                            readOnly={formValue.type == 'auto'}
                         />
                     )}
                 />

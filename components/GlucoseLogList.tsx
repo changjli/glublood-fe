@@ -4,13 +4,18 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, LayoutAnimation, ActivityIndicator, Image } from 'react-native';
 import CustomText from './CustomText';
+import { FontAwesome } from '@expo/vector-icons';
+import { isGlucoseDanger } from '@/utils/isGlucoseDanger';
 
 interface GlucoseLogListProps {
     data: GetGlucoseLogRes[];
     loading: boolean
+    age: number
 }
 
-export default function GlucoseLogList({ data, loading }: GlucoseLogListProps) {
+export default function GlucoseLogList({ data, loading, age }: GlucoseLogListProps) {
+
+
     const renderItem = ({ item, index }: { item: GetGlucoseLogRes, index: number }) => {
         const isSame = item.time === data[index - 1]?.time;
 
@@ -32,9 +37,12 @@ export default function GlucoseLogList({ data, loading }: GlucoseLogListProps) {
 
                 <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/logs/glucose/${item.id}`)}>
                     <View style={styles.cardHeader}>
-                        <Text style={styles.doseText}>{item.glucose_rate} mg/dL</Text>
+                        <Text style={styles.glucoseRateText}>{item.glucose_rate} mg/dL</Text>
+                        {isGlucoseDanger(age, item.time_selection, item.glucose_rate) && (
+                            <FontAwesome name='warning' style={{ color: Colors.light.red500 }} />
+                        )}
                     </View>
-                    <Text style={styles.timeSelection}>{item.time_selection}</Text>
+                    <Text style={styles.timeSelection}>{item.time_selection ?? 'Lainya'}</Text>
                     <Text style={styles.notes}>{item.notes}</Text>
                 </TouchableOpacity>
             </View>
@@ -108,9 +116,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center'
     },
-    doseText: {
+    glucoseRateText: {
         color: Colors.light.primary,
-        fontSize: FontSize.sm,
+        fontSize: FontSize.md,
         fontWeight: 'bold',
     },
     editButton: {
@@ -128,7 +136,7 @@ const styles = StyleSheet.create({
     timeSelection: {
         marginBottom: 5,
         color: Colors.light.primary,
-        fontSize: FontSize.md,
+        fontSize: FontSize.sm,
         fontWeight: 'bold',
     },
     notes: {
