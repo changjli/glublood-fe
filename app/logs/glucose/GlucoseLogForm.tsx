@@ -86,8 +86,8 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                                 widthSize={200}
                                 size={value}
                                 onChangeSize={onChange}
-                                typeData={doseTypes}
-                                showQtyPicker={false}
+                                sizeData={doseTypes}
+                                showQty={false}
                             />
                         </>
                     )}

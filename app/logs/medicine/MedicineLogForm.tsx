@@ -90,6 +90,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                                 qtyData={doses}
                                 sizeData={doseTypes}
                                 isDecimal={true}
+                                others={true}
                             />
                         </>
                     )}

@@ -12,32 +12,34 @@ type CustomQuantityPickerProps = {
     widthSize?: number
     qty?: number
     size: string
-    qtyData: number[]
+    qtyData?: number[]
     sizeData: string[]
     onChangeQty?: (qty: string) => void
     onChangeSize: (size: string) => void
     label?: string
     showQty?: boolean
     isDecimal?: boolean
+    others?: boolean
 }
 
 const DECIMAL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 export default function CustomQuantityPicker({
-    widthQty,
-    widthSize,
+    widthQty = 40,
+    widthSize = 100,
     qty = 1.0,
     size,
-    qtyData,
+    qtyData = [],
     sizeData,
     onChangeQty = () => { },
     onChangeSize,
     label,
     showQty = true,
     isDecimal = false,
+    others = false,
 }: CustomQuantityPickerProps) {
-    const [qtyInteger, setQtyInteger] = useState(String(qty).split('.')[0])
-    const [qtyDecimal, setQtyDecimal] = useState(String(qty).split('.')[1] ?? '0')
+    const [qtyInteger, setQtyInteger] = useState<string>(String(qty).split('.')[0])
+    const [qtyDecimal, setQtyDecimal] = useState<string>(String(qty).split('.')[1] ?? '0')
 
     const qtyIntegerInitial = qtyData.findIndex(data => String(data) == qtyInteger) > 0 ? qtyData.findIndex(data => String(data) == qtyInteger) : 0
     const qtyDecimalInitial = DECIMAL.findIndex(data => String(data) == qtyDecimal) > 0 ? DECIMAL.findIndex(data => String(data) == qtyDecimal) : 0
@@ -56,96 +58,47 @@ export default function CustomQuantityPicker({
                 </CustomText>
             }
             <View style={styles.container}>
-                {/* {showQty && (
+                {showQty && (
                     <>
-                        <FontAwesome name='play' style={styles.arrow} />
-                        <WheelPickerExpo
+                        <FontAwesome name='play' style={[styles.arrow, { marginRight: 8 }]} />
+                        <CustomWheelPicker
+                            data={qtyData}
+                            width={widthQty}
+                            itemHeight={40}
                             initialSelectedIndex={qtyIntegerInitial}
-                            onChange={({ index }) => {
-                                setQtyInteger(String(qtyData[index]))
-                                onChangeQty(isDecimal ? qtyInteger + '.' + qtyDecimal : qtyInteger)
+                            onValueChange={({ index, item }) => {
+                                setQtyInteger(String(item))
+                                onChangeQty(isDecimal ? String(item) + '.' + qtyDecimal : String(item))
                             }}
-                            items={qtyData.map(data => ({ label: String(data), value: data }))}
-                            renderItem={({ label }) => (
-                                <View style={[
-                                    styles.pickerContainer,
-                                    label == qtyInteger && styles.pickerSelected,
-                                ]}>
-                                    <Text style={[
-                                        styles.pickerText,
-                                        label == qtyInteger && styles.pickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                </View>
-                            )}
-                            flatListProps={{
-                                nestedScrollEnabled: true,
-                            }}
-                            width={30}
                         />
                         {isDecimal && (
                             <>
-                                <View style={{ width: 5, height: 5, backgroundColor: Colors.light.primary, marginTop: 24 }} />
-                                <WheelPickerExpo
+                                <View style={{ width: 5, height: 5, backgroundColor: Colors.light.primary, marginTop: 24, marginHorizontal: 3 }} />
+                                <CustomWheelPicker
+                                    data={DECIMAL}
+                                    width={widthQty}
+                                    itemHeight={40}
                                     initialSelectedIndex={qtyDecimalInitial}
-                                    onChange={({ index }) => {
-                                        setQtyDecimal(String(DECIMAL[index]))
-                                        onChangeQty(isDecimal ? qtyInteger + '.' + qtyDecimal : qtyInteger)
+                                    onValueChange={({ index, item }) => {
+                                        setQtyDecimal(String(item))
+                                        onChangeQty(isDecimal ? qtyInteger + '.' + String(item) : qtyInteger)
                                     }}
-                                    items={DECIMAL.map(d => ({ label: String(d), value: d }))}
-                                    renderItem={({ label }) => (
-                                        <View style={[
-                                            styles.pickerContainer,
-                                            label == qtyDecimal && styles.pickerSelected,
-                                        ]}>
-                                            <Text style={[
-                                                styles.pickerText,
-                                                label == qtyDecimal && styles.pickerTextSelected
-                                            ]}>
-                                                {label}
-                                            </Text>
-                                        </View>
-                                    )}
-                                    flatListProps={{
-                                        nestedScrollEnabled: true,
-                                    }}
-                                    width={30}
                                 />
                             </>
                         )}
                     </>
                 )}
 
-                <FontAwesome name='play' style={styles.arrow} />
-                <WheelPickerExpo
-                    initialSelectedIndex={sizeInitial}
-                    onChange={({ index }) => onChangeSize(sizeData[index])}
-                    items={sizeData.map(data => ({ label: data, value: data }))}
-                    renderItem={({ label }) => (
-                        <View style={[
-                            styles.pickerContainer,
-                            label == String(size) && styles.pickerSelected,
-                        ]}>
-                            <Text style={[
-                                styles.pickerText,
-                                label == String(size) && styles.pickerTextSelected
-                            ]}>
-                                {label}
-                            </Text>
-                        </View>
-                    )}
-                    flatListProps={{
-                        nestedScrollEnabled: true,
-                    }}
-                    width={175}
-                /> */}
-
+                <FontAwesome name='play' style={[styles.arrow, { marginHorizontal: 8 }]} />
                 <CustomWheelPicker
-                    data={DECIMAL}
-                    width={50}
-                    itemHeight={30}
-                    initialSelectedIndex={2}
+                    data={sizeData}
+                    width={widthSize}
+                    itemHeight={40}
+                    initialSelectedIndex={sizeInitial}
+                    onValueChange={({ index, item }) => {
+                        onChangeSize(item)
+                    }}
+                    others={others}
                 />
             </View>
         </View>
@@ -162,7 +115,6 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         elevation: 1,
         borderRadius: 12,
-        gap: 8,
     },
     arrow: {
         color: Colors.light.primary,
