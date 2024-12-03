@@ -51,15 +51,18 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                     control={control}
                     name='glucose_rate'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <CustomTextInput
-                            label='Gula Darahmu'
-                            placeholder='Contoh: 98'
-                            postfix={(
-                                <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
-                            )}
-                            value={String(value)}
-                            onChangeText={onChange}
-                        />
+                        <View style={{ marginBottom: 15 }}>
+                            <CustomTextInput
+                                label='Gula Darahmu'
+                                placeholder='Contoh: 98'
+                                postfix={(
+                                    <Text style={{ fontFamily: FontFamily.heavy, fontSize: FontSize.md, color: '#DA6E35' }}>mg/dL</Text>
+                                )}
+                                keyboardType='numeric'
+                                value={String(value)}
+                                onChangeText={onChange}
+                            />
+                        </View>
                     )}
                 />
 
@@ -67,11 +70,13 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                     control={control}
                     name='time'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <CustomTimePicker
+                        <View style={{ marginBottom: 15 }}>
+                            <CustomTimePicker
                             value={value}
                             onChange={onChange}
-                            label='Pilih waktu'
-                        />
+                                label='Pilih waktu'
+                            />
+                        </View>
                     )}
                 />
 
@@ -79,7 +84,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                     control={control}
                     name='time_selection'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <>
+                        <View style={{ marginBottom: 15 }}>
                             <Text style={styles.labelText}>Kondisi Pengambilan</Text>
                             <CustomQuantityPicker
                                 widthSize={200}
@@ -88,7 +93,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                                 typeData={doseTypes}
                                 showQtyPicker={false}
                             />
-                        </>
+                        </View>
                     )}
                 />
 

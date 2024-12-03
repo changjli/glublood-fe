@@ -1,4 +1,4 @@
-import { View, Text, Alert, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, Alert, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomText from '@/components/CustomText'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -8,6 +8,7 @@ import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog'
 import GlucoseLogForm from './GlucoseLogForm'
 import Wrapper from '@/components/Layout/Wrapper'
 import CustomHeader from '@/components/CustomHeader'
+import CustomButtonNew from '@/components/CustomButtonNew'
 
 export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -103,21 +104,20 @@ export default function GlucoseLogDetailPage() {
                 >
                     {({ handleSubmit, disabled }) => (
                         <View>
-                            <CustomButton
-                                title='Simpan perubahan'
-                                size='md'
-                                style={{ marginBottom: 10 }}
-                                disabled={disabled}
-                                loading={loading}
+                            <CustomButtonNew
+                                store={true}
+                                imgSrc={require('@/assets/images/icons/pencil.png')}
+                                label='Simpan Perubahan'
                                 onPress={handleSubmit(data => handleUpdateGlucoseLog({
                                     id: Number(id),
                                     ...data,
                                 }))}
+                                disabled={disabled}
                             />
-                            <CustomButton
-                                title='Hapus log'
-                                size='md'
-                                loading={loading}
+                            <CustomButtonNew
+                                store={false}
+                                imgSrc={require('@/assets/images/icons/trash-bin.png')}
+                                label='Hapus log'
                                 onPress={() => handleDeleteGlucoseLog(Number(id))}
                             />
                         </View>
