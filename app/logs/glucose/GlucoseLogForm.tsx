@@ -59,6 +59,7 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                             )}
                             value={String(value)}
                             onChangeText={onChange}
+                            readOnly={formValue.type == 'auto'}
                         />
                     )}
                 />
@@ -85,8 +86,8 @@ export default function GlucoseLogForm({ formValue, setFormValue, children, ...r
                                 widthSize={200}
                                 size={value}
                                 onChangeSize={onChange}
-                                typeData={doseTypes}
-                                showQtyPicker={false}
+                                sizeData={doseTypes}
+                                showQty={false}
                             />
                         </>
                     )}

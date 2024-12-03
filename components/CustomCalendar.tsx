@@ -3,6 +3,8 @@ import { FontSize, FontFamily } from '@/constants/Typography';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import CustomMonthYearPicker from './CustomMonthYearPicker';
+import { GlucoseLogNewEntryNotification } from '@/app/ble';
+import useAsyncStorage from '@/hooks/useAsyncStorage';
 
 const today = new Date()
 const currentMonth = today.getMonth()
@@ -36,11 +38,13 @@ type DayItemProps = {
     onPress: () => void
     backgroundColor: string,
     color: string,
+    notification?: GlucoseLogNewEntryNotification
 }
 
-const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
+const DayItem = ({ item, onPress, backgroundColor, color, notification }: DayItemProps) => {
     return (
         <TouchableOpacity onPress={onPress} style={[styles.itemContainer, { backgroundColor }]}>
+            {notification && <View style={styles.badge}></View>}
             <Text style={[styles.dayText, { color }]}>
                 {dayInterpreter(item.day.getDay())}
             </Text>
@@ -53,10 +57,13 @@ const DayItem = ({ item, onPress, backgroundColor, color }: DayItemProps) => {
 
 type CustomCalendarProps = {
     value: Date,
-    onChange: (param: Date) => void
+    onChange: (param: Date) => void,
+    notifications?: GlucoseLogNewEntryNotification[],
+    getNotificationByDate?: any,
+    deleteNotificationByDate?: any,
 }
 
-export default function CustomCalendar({ value, onChange }: CustomCalendarProps) {
+export default function CustomCalendar({ value, onChange, notifications, getNotificationByDate, deleteNotificationByDate }: CustomCalendarProps) {
 
     const flatListRef = useRef<FlatList<DayItem>>(null)
 
@@ -71,14 +78,25 @@ export default function CustomCalendar({ value, onChange }: CustomCalendarProps)
     const [selectedDay, setSelectedDay] = useState(value.getDate());
 
     const renderDayItem = ({ item }: { item: DayItem }) => {
-        const backgroundColor = item.day.getDate() == selectedDay ? Colors.light.primary : 'transparent'
-        const color = item.day.getDate() == selectedDay ? 'white' : Colors.light.primary
+        const currDate = item.day.getDate()
+        const backgroundColor = currDate == selectedDay ? Colors.light.primary : 'transparent'
+        const color = currDate == selectedDay ? 'white' : Colors.light.primary
+        let notification = undefined
+        if (notifications && getNotificationByDate && deleteNotificationByDate) {
+            notification = getNotificationByDate(currDate)
+        }
 
         return (<DayItem {...{
             item,
-            onPress: () => setSelectedDay(item.day.getDate()),
+            onPress: async () => {
+                setSelectedDay(currDate)
+                if (notifications && getNotificationByDate && deleteNotificationByDate && notification) {
+                    deleteNotificationByDate(currDate)
+                }
+            },
             backgroundColor,
             color,
+            notification,
         }} />)
     }
 
@@ -138,5 +156,13 @@ const styles = StyleSheet.create({
     dateText: {
         fontFamily: FontFamily.heavy,
         fontSize: FontSize.lg,
+    },
+    badge: {
+        backgroundColor: 'red',
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        position: 'absolute',
+        right: 0,
     }
 })

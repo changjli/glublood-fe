@@ -118,6 +118,8 @@ function useBLE() {
             }
         });
 
+    const stopScan = () => bleManager.stopDeviceScan()
+
     const onDataUpdate = (
         error: BleError | null,
         characteristic: Characteristic | null
@@ -132,7 +134,6 @@ function useBLE() {
             const binaryData = base64.decode(base64Data)
             const byteArray = Uint8Array.from(binaryData, (char) => char.charCodeAt(0));
             const result = parseGlucoseReading(byteArray)
-            console.log(result)
             setGlucoseMeasurements(prev => {
                 const temp = [...prev]
                 if (result) {
@@ -164,8 +165,9 @@ function useBLE() {
             command
         );
 
+        console.log("Requested all glucose records");
+
         // TODO: fetch greater than or equal to not working
-        // console.log('masuk sini')
         // // convert date to utc
         // const date = new Date(lastSyncDate)
 
@@ -201,8 +203,6 @@ function useBLE() {
         //     RECORD_CHARACTERISTIC,
         //     command
         // );
-
-        console.log("Requested all glucose records");
     }
 
     const startStreamingData = async (device: Device) => {
@@ -226,7 +226,8 @@ function useBLE() {
         requestPermissions,
         scanForPeripherals,
         startStreamingData,
-        setLastSyncDate,
+        setAllDevices,
+        stopScan,
     };
 }
 

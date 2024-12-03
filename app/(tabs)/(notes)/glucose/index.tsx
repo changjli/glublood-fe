@@ -14,6 +14,9 @@ import Wrapper from '@/components/Layout/Wrapper';
 import { FontFamily, FontSize } from '@/constants/Typography';
 import CustomText from '@/components/CustomText';
 import { Colors } from '@/constants/Colors';
+import { GlucoseLogNewEntryNotification } from '@/app/ble';
+import { useGlucoseNewEntriesNotification } from '@/hooks/useGlucoseNewEntriesNotification';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 export default function GlucoseLogPage() {
     const { getGlucoseLogByDate } = useGlucose()
@@ -22,6 +25,8 @@ export default function GlucoseLogPage() {
     const [glucoseLog, setGlucoseLog] = useState<GetGlucoseLogRes[]>([])
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const isFocused = useIsFocused()
+    const { getNotifications, notifications, getNotificationByDate, deleteNotificationByDate } = useGlucoseNewEntriesNotification()
+    const { profile } = useUserProfile()
 
     const handleGetGlucoseLog = async (date: string) => {
         try {
@@ -53,22 +58,24 @@ export default function GlucoseLogPage() {
     }
 
     useEffect(() => {
+        getNotifications()
+    }, [])
+
+    useEffect(() => {
         if (isFocused) {
             handleGetGlucoseLog(formatDatetoStringYmd(selectedDate))
         }
     }, [selectedDate, isFocused])
 
-    useEffect(() => {
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const year = selectedDate.getFullYear();
-
-        const formattedDate = `${day}/${month}/${year}`;
-    }, [selectedDate])
-
     return (
         <>
-            <CustomCalendar value={selectedDate} onChange={setSelectedDate} />
+            <CustomCalendar
+                value={selectedDate}
+                onChange={setSelectedDate}
+                notifications={notifications}
+                getNotificationByDate={getNotificationByDate}
+                deleteNotificationByDate={deleteNotificationByDate}
+            />
             <View style={styles.logContainer}>
                 <View style={styles.logHeaderContainer}>
                     <Text style={styles.logHeaderText}>Detail Log Gula Darah</Text>
@@ -80,6 +87,7 @@ export default function GlucoseLogPage() {
                     <GlucoseLogList
                         data={glucoseLog}
                         loading={glucoseLogLoading}
+                        age={profile?.age ?? 0}
                     />
                 </View>
             </View>

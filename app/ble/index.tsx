@@ -23,6 +23,13 @@ import { GlucoseReading } from "./GlucoseReadingRx";
 import useGlucoseLog from "@/hooks/api/logs/glucose/useGlucoseLog";
 import axios from "axios";
 import { useCustomAlert } from "../context/CustomAlertProvider";
+import useAsyncStorage from "@/hooks/useAsyncStorage";
+import { useGlucoseNewEntriesNotification } from "@/hooks/useGlucoseNewEntriesNotification";
+
+export type GlucoseLogNewEntryNotification = {
+    date: string
+    count: number
+}
 
 const BlePage = () => {
     const {
@@ -32,9 +39,12 @@ const BlePage = () => {
         glucoseMeasurements,
         requestPermissions,
         scanForPeripherals,
+        setAllDevices,
+        stopScan,
     } = useBLE();
     const { storeGlucoseLogBatch, syncGlucoseLog } = useGlucoseLog()
     const { showAlert } = useCustomAlert()
+    const { storeNotifications } = useGlucoseNewEntriesNotification()
 
     const [modalVisible, setModalVisible] = useState(false)
     const [formValue, setFormValue] = useState<StoreGlucoseLogReq[]>([])
@@ -56,7 +66,7 @@ const BlePage = () => {
             glucose_rate: gr.mgdl,
             time: gr.time.split(' ')[1],
             type: 'auto',
-        }))
+        })) as StoreGlucoseLogReq[]
     }
 
     const handleOpenModal = () => {
@@ -66,12 +76,16 @@ const BlePage = () => {
 
     const handleCloseModal = () => {
         setModalVisible(false)
+        setAllDevices([])
+        stopScan()
     }
 
     const handleStoreGlucoseLog = async (data: GlucoseReading[]) => {
         try {
             const payload = convertGlucoseReadingToLog(data)
             const res = await storeGlucoseLogBatch(setStoreLoading, { items: payload })
+            await storeNotifications(payload)
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -120,12 +134,13 @@ const BlePage = () => {
 
     useEffect(() => {
         if (lastSyncDate != '') {
-            console.log('masuk kesini')
             setFilteredGlucoseMeasurements(glucoseMeasurements.filter(glucoseMeasurement => new Date(glucoseMeasurement.time) > new Date(lastSyncDate)))
         } else {
             setFilteredGlucoseMeasurements(glucoseMeasurements)
         }
     }, [glucoseMeasurements, lastSyncDate])
+
+    console.log('result', filteredGlucoseMeasurements)
 
     return (
         <>

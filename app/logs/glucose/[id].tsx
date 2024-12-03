@@ -8,10 +8,16 @@ import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog'
 import GlucoseLogForm from './GlucoseLogForm'
 import Wrapper from '@/components/Layout/Wrapper'
 import CustomHeader from '@/components/CustomHeader'
+import { Colors } from '@/constants/Colors'
+import { FontAwesome } from '@expo/vector-icons'
+import { FlexStyles } from '@/constants/Flex'
+import { isGlucoseDanger } from '@/utils/isGlucoseDanger'
+import { useUserProfile } from '@/hooks/useUserProfile'
 
 export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams()
     const { getGlucoseLogDetail, updateGlucoseLog, deleteGlucoseLog } = useGlucoseLog()
+    const { profile } = useUserProfile()
 
     const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: '',
@@ -97,6 +103,17 @@ export default function GlucoseLogDetailPage() {
         <>
             <CustomHeader title='Edit log gula darah' />
             <Wrapper style={styles.container}>
+                {isGlucoseDanger(profile?.age ?? 0, formValue.time_selection, formValue.glucose_rate) && (
+                    <View style={styles.dangerTagContainer}>
+                        <FontAwesome name='warning' color={Colors.light.red500} />
+                        <CustomText size='sm' style={{ color: Colors.light.red500 }}>Gula darahmu melebihi batas normal</CustomText>
+                    </View>
+                )}
+                {formValue.type == 'auto' && (
+                    <View style={styles.autoTagContainer}>
+                        <CustomText size='sm' style={{ color: Colors.light.gray500 }}>Log diambil menggunakan alat</CustomText>
+                    </View>
+                )}
                 <GlucoseLogForm
                     formValue={formValue}
                     setFormValue={setFormValue}
@@ -134,4 +151,23 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         backgroundColor: 'white',
     },
+    dangerTagContainer: {
+        ...FlexStyles.flexRow,
+        backgroundColor: Colors.light.red50,
+        padding: 8,
+        borderWidth: 1,
+        borderColor: Colors.light.red500,
+        borderRadius: 8,
+        marginBottom: 8,
+        gap: 4
+    },
+    autoTagContainer: {
+        ...FlexStyles.flexRow,
+        backgroundColor: Colors.light.gray300,
+        padding: 8,
+        borderWidth: 1,
+        borderColor: Colors.light.gray500,
+        borderRadius: 8,
+        gap: 4,
+    }
 });
