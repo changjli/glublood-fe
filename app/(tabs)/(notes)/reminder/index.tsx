@@ -42,13 +42,25 @@ export default function ReminderPage() {
     return reminderData;
   }
 
-  const reminderNotifications = async (reminder: ReminderFormValues, day: number) => {
+  const reminderNotificationsRepeat = async (reminder: ReminderFormValues, day: number, type: number) => {
     const [hours, minutes] = reminder.time.split(':').map(Number);
-    const title = reminder.reminderType.join(' ');
-    const body = reminder.notes;
+    var body = ''
+
+    switch (type) {
+      case 1:
+        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
+        break;
+      case 2:
+        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
+        break;
+      case 3:
+        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
+        break;
+    }
+
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: title,
+        title: "Ding! Dong! Waktunya tiba ⏰",
         body: body,
         data: { id: reminder.id },
       },
@@ -60,8 +72,42 @@ export default function ReminderPage() {
       },
     });
 
-    return notificationId;
-  }
+    return notificationId
+  };
+
+  const reminderNotificationsSingle = async (reminder: ReminderFormValues, type: number) => {
+    const [hours, minutes] = reminder.time.split(':').map(Number);
+    const year = new Date().getFullYear()
+    const month = new Date().getMonth()
+    const day = new Date().getDate()
+
+    var body = ''
+
+    switch (type) {
+      case 1:
+        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
+        break;
+      case 2:
+        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
+        break;
+      case 3:
+        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
+        break;
+    }
+
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Ding! Dong! Waktunya tiba ⏰",
+        body: body,
+        data: { id: reminder.id },
+      },
+      trigger: {
+        date: new Date(year, month, day, hours, minutes, 0),
+      },
+    });
+
+    return notificationId
+  };
 
   const cancelNotifications = async (notificationIds: string[]) => {
     for (const id of notificationIds) {
@@ -80,14 +126,23 @@ export default function ReminderPage() {
 
     if (updatedReminder) {
       if (value) {
-        for (const day of updatedReminder.repeatDays) { 
-          updatedReminder.notificationId.push(await reminderNotifications(updatedReminder, day))
+        if (updatedReminder.repeatDays.length > 0) {
+          for (const type of updatedReminder.reminderType) {
+            for (const day of updatedReminder.repeatDays) { 
+              updatedReminder.notificationId.push(await reminderNotificationsRepeat(updatedReminder, day, type))
+            }
+          }
+        } else {
+          for (const type of updatedReminder.reminderType) { 
+            updatedReminder.notificationId.push(await reminderNotificationsSingle(updatedReminder, type))
+          }
         }
 
         await storeObjectData(updatedReminder.id, updatedReminder)
       } else {
         await cancelNotifications(updatedReminder.notificationId);
         updatedReminder.notificationId = [];
+        await storeObjectData(updatedReminder.id, updatedReminder)
       }
     }
   };
