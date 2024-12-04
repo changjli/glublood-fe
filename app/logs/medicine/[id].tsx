@@ -8,6 +8,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import CustomHeader from '@/components/CustomHeader'
+import CustomButtonNew from '@/components/CustomButtonNew'
 
 export default function MedicineLogDetailPage() {
     const { id } = useLocalSearchParams()
@@ -103,21 +104,20 @@ export default function MedicineLogDetailPage() {
                 >
                     {({ handleSubmit, disabled }) => (
                         <View>
-                            <CustomButton
-                                title='Simpan perubahan'
-                                size='md'
-                                style={{ marginBottom: 10 }}
-                                disabled={disabled}
-                                loading={loading}
+                            <CustomButtonNew
+                                store={true}
+                                imgSrc={require('@/assets/images/icons/pencil.png')}
+                                label='Simpan Perubahan'
                                 onPress={handleSubmit(data => handleUpdateMedicineLog({
                                     id: Number(id),
                                     ...data,
                                 }))}
+                                disabled={disabled}
                             />
-                            <CustomButton
-                                title='Hapus log'
-                                size='md'
-                                loading={loading}
+                            <CustomButtonNew
+                                store={false}
+                                imgSrc={require('@/assets/images/icons/trash-bin.png')}
+                                label='Hapus log'
                                 onPress={() => handleDeleteMedicineLog(Number(id))}
                             />
                         </View>
