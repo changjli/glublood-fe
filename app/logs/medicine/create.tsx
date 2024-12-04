@@ -11,6 +11,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import CustomHeader from '@/components/CustomHeader';
 import WithKeyboard from '@/components/Layout/WithKeyboard';
+import CustomButtonNew from '@/components/CustomButtonNew';
 
 export default function AddMedicineLog() {
     const { storeMedicineLog } = useMedicine()
@@ -70,12 +71,12 @@ export default function AddMedicineLog() {
                     setFormValue={setFormValue}
                 >
                     {({ handleSubmit, disabled }) => (
-                        <CustomButton
-                            title='+ Simpan catatan'
-                            size='md'
-                            disabled={disabled}
+                        <CustomButtonNew
+                            store={true}
+                            imgSrc={require('@/assets/images/icons/plus.png')}
+                            label='Simpan Catatan'
                             onPress={handleSubmit(data => handleStoreMedicineLog(data))}
-                            loading={storeLoading}
+                            disabled={disabled}
                         />
                     )}
                 </MedicineLogForm>
