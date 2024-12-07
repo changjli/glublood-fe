@@ -88,11 +88,13 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                             <Text style={styles.labelText}>Dosis</Text>
                             <CustomQuantityPicker
                                 qty={value}
-                                size={type}
+                                size={type == '' ? doseTypes[0] : type}
                                 onChangeQty={onChange}
                                 onChangeSize={(v) => setValue('type', v)}
                                 qtyData={doses}
-                                typeData={doseTypes}
+                                sizeData={doseTypes}
+                                isDecimal={true}
+                                others={true}
                             />
                         </View>
                     )}

@@ -285,7 +285,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                             qty={value}
                             size={serving_size}
                             qtyData={getSizeData()}
-                            typeData={formValue.serving_size != '' ? [formValue.serving_size] : []}
+                            sizeData={formValue.serving_size != '' ? [formValue.serving_size] : []}
                             onChangeQty={onChange}
                             onChangeSize={(v) => setValue('serving_size', v)}
                             label='Pilih porsi'

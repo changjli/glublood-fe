@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons'
 import { FontFamily, FontSize } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
 import CustomText from '@/components/CustomText'
+import CustomWheelPicker from './CustomWheelPicker'
 
 type CustomQuantityPickerProps = {
     widthQty?: number
@@ -12,28 +13,43 @@ type CustomQuantityPickerProps = {
     qty?: number
     size: string
     qtyData?: number[]
-    typeData?: string[]
+    sizeData: string[]
     onChangeQty?: (qty: string) => void
     onChangeSize: (size: string) => void
     label?: string
-    showQtyPicker?: boolean
-} & (
-        | { showFirstPicker: true; qty: number; onChangeQty: (qty: string) => void }
-        | { showFirstPicker?: false }
-    )
+    showQty?: boolean
+    isDecimal?: boolean
+    others?: boolean
+}
+
+const DECIMAL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 export default function CustomQuantityPicker({
-    widthQty,
-    widthSize,
-    qty,
+    widthQty = 40,
+    widthSize = 100,
+    qty = 1.0,
     size,
-    qtyData = [1, 2, 3],
-    typeData = ['asu', 'lala'],
+    qtyData = [],
+    sizeData,
     onChangeQty = () => { },
     onChangeSize,
     label,
-    showQtyPicker = true
+    showQty = true,
+    isDecimal = false,
+    others = false,
 }: CustomQuantityPickerProps) {
+    const [qtyInteger, setQtyInteger] = useState<string>(String(qty).split('.')[0])
+    const [qtyDecimal, setQtyDecimal] = useState<string>(String(qty).split('.')[1] ?? '0')
+
+    const qtyIntegerInitial = qtyData.findIndex(data => String(data) == qtyInteger) > 0 ? qtyData.findIndex(data => String(data) == qtyInteger) : 0
+    const qtyDecimalInitial = DECIMAL.findIndex(data => String(data) == qtyDecimal) > 0 ? DECIMAL.findIndex(data => String(data) == qtyDecimal) : 0
+    const sizeInitial = sizeData.findIndex(data => data == size) > 0 ? sizeData.findIndex(data => data == size) : 0
+
+    useEffect(() => {
+        setQtyInteger(String(qty).split('.')[0])
+        setQtyDecimal(String(qty).split('.')[1] ?? '0')
+    }, [qty])
+
     return (
         <View>
             {label &&
@@ -41,85 +57,50 @@ export default function CustomQuantityPicker({
                     {label}
                 </CustomText>
             }
-            {showQtyPicker ?
-                <View style={styles.container}>
-                    {/* left */}
-                    <FontAwesome name='play' style={styles.arrow} />
-                    <WheelPickerExpo
-                        initialSelectedIndex={0}
-                        onChange={({ index }) => onChangeQty(String(qtyData[index]))}
-                        items={qtyData.map(data => ({ label: String(data), value: data }))}
-                        renderItem={({ label }) => (
-                            <View style={[
-                                styles.pickerContainer,
-                                label == String(qty) && styles.pickerSelected,
-                            ]}>
-                                <Text style={[
-                                    styles.pickerText,
-                                    label == String(qty) && styles.pickerTextSelected
-                                ]}>
-                                    {label}
-                                </Text>
-                            </View>
+            <View style={styles.container}>
+                {showQty && (
+                    <>
+                        <FontAwesome name='play' style={[styles.arrow, { marginRight: 8 }]} />
+                        <CustomWheelPicker
+                            data={qtyData}
+                            width={widthQty}
+                            itemHeight={40}
+                            initialSelectedIndex={qtyIntegerInitial}
+                            onValueChange={({ index, item }) => {
+                                setQtyInteger(String(item))
+                                onChangeQty(isDecimal ? String(item) + '.' + qtyDecimal : String(item))
+                            }}
+                        />
+                        {isDecimal && (
+                            <>
+                                <View style={{ width: 5, height: 5, backgroundColor: Colors.light.primary, marginTop: 24, marginHorizontal: 3 }} />
+                                <CustomWheelPicker
+                                    data={DECIMAL}
+                                    width={widthQty}
+                                    itemHeight={40}
+                                    initialSelectedIndex={qtyDecimalInitial}
+                                    onValueChange={({ index, item }) => {
+                                        setQtyDecimal(String(item))
+                                        onChangeQty(isDecimal ? qtyInteger + '.' + String(item) : qtyInteger)
+                                    }}
+                                />
+                            </>
                         )}
-                        flatListProps={{
-                            nestedScrollEnabled: true,
-                        }}
-                        width={75}
-                    />
-                    {/* right */}
-                    <FontAwesome name='play' style={styles.arrow} />
-                    <WheelPickerExpo
-                        initialSelectedIndex={0}
-                        onChange={({ index }) => onChangeSize(typeData[index])}
-                        items={typeData.map(data => ({ label: data, value: data }))}
-                        renderItem={({ label }) => (
-                            <View style={[
-                                styles.pickerContainer,
-                                label == String(size) && styles.pickerSelected,
-                            ]}>
-                                <Text style={[
-                                    styles.pickerText,
-                                    label == String(size) && styles.pickerTextSelected
-                                ]}>
-                                    {label}
-                                </Text>
-                            </View>
-                        )}
-                        flatListProps={{
-                            nestedScrollEnabled: true,
-                        }}
-                        width={175}
-                    />
-                </View>
-                :
-                <View style={styles.container}>
-                    {/* right */}
-                    <FontAwesome name='play' style={styles.arrow} />
-                    <WheelPickerExpo
-                        initialSelectedIndex={0}
-                        onChange={({ index }) => onChangeSize(typeData[index])}
-                        items={typeData.map(data => ({ label: data, value: data }))}
-                        renderItem={({ label }) => (
-                            <View style={[
-                                styles.pickerContainer,
-                                label == String(size) && styles.pickerSelected,
-                            ]}>
-                                <Text style={[
-                                    styles.pickerText,
-                                    label == String(size) && styles.pickerTextSelected
-                                ]}>
-                                    {label}
-                                </Text>
-                            </View>
-                        )}
-                        flatListProps={{
-                            nestedScrollEnabled: true,
-                        }}
-                        width={175}
-                    />
-                </View>
-            }
+                    </>
+                )}
+
+                <FontAwesome name='play' style={[styles.arrow, { marginHorizontal: 8 }]} />
+                <CustomWheelPicker
+                    data={sizeData}
+                    width={widthSize}
+                    itemHeight={40}
+                    initialSelectedIndex={sizeInitial}
+                    onValueChange={({ index, item }) => {
+                        onChangeSize(item)
+                    }}
+                    others={others}
+                />
+            </View>
         </View>
     )
 }
@@ -130,7 +111,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 10,
         backgroundColor: 'white',
         overflow: 'hidden',
         elevation: 1,
