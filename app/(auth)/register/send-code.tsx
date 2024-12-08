@@ -1,9 +1,9 @@
-import { View, Text, Pressable, Keyboard, GestureResponderEvent, TouchableWithoutFeedback, Alert, Image, Dimensions } from 'react-native'
+import { View, Text, Pressable, Keyboard, GestureResponderEvent, TouchableWithoutFeedback, Alert, Image, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
 import CustomText from '@/components/CustomText'
 import { Formik } from 'formik'
-import { object, string } from 'yup'
+import { object, string, ref } from 'yup'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
 import CustomButton, { StyledCustomButton } from '@/components/CustomButton'
 import useAuth from '@/hooks/api/auth/useAuth'
@@ -12,6 +12,10 @@ import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { Colors } from '@/constants/Colors'
 import Wrapper from '@/components/Layout/Wrapper'
 import WithKeyboard from '@/components/Layout/WithKeyboard'
+import { Controller, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Ionicons } from '@expo/vector-icons'
+import { FontSize } from '@/constants/Typography'
 
 type SendCodeProps = {
     setPage: (value: number) => void
@@ -22,17 +26,31 @@ type SendCodeProps = {
 }
 
 const sendCodeSchema = object({
-    email: string().required(),
-    password: string().required(),
-    passwordConfirmation: string().required(),
+    email: string().required('Email wajib diisi').email(),
+    password: string().required('Password wajib diisi'),
+    password_confirmation: string()
+        .oneOf([ref('password')], 'Konfirmasi password harus sama')
 })
 
 export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
+    const [formValue, setFormValue] = useState({
+        email: '',
+        password: '',
+        password_confirmation: '',
+    })
+
+    const { control, handleSubmit, reset, watch, setValue, setError, formState: { errors, isDirty, isValid } } = useForm({
+        defaultValues: formValue,
+        resolver: yupResolver(sendCodeSchema),
+        mode: 'onSubmit',
+    })
+
     const { sendCode } = useAuth()
     const { width, height } = Dimensions.get('window')
     // const { storeObjectData } = useAsyncStorage()
 
     const [sendCodeLoading, setSendCodeLoading] = useState<boolean>(false)
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleSendCode = async (data: sendCodeRequest) => {
         try {
@@ -46,7 +64,11 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                 // router.replace('(auth)/verify-code')
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                if (String(res.errors.email) == 'The email has already been taken.') {
+                    setError('email', { message: 'Email telah digunakan!' })
+                } else {
+                    Alert.alert('error', res.message)
+                }
             }
         } catch (err) {
             console.log('Axios Error:', err)
@@ -66,64 +88,81 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
                         <Image source={require('../../../assets/images/characters/icon-regis.png')} style={{ height: 200 }} resizeMode='contain' />
                     </View>
-                    <Formik
-                        initialValues={{
-                            email: '',
-                            password: '',
-                            passwordConfirmation: '',
-                        }}
-                        onSubmit={(values) => {
-                            handleSendCode(values)
-                        }}
-                        validationSchema={sendCodeSchema}
-                    >
-                        {({ handleChange, handleSubmit, values, errors }) => (
-                            <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
-                                <View style={{ flexDirection: 'column' }}>
+
+                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'column' }}>
+                            <Controller
+                                control={control}
+                                name='email'
+                                render={({ field: { onChange, onBlur, value, ref } }) => (
                                     <CustomTextInput
                                         label='Email'
                                         placeholder='Cth: johndoe@gmail.com'
                                         labelStyle={{ color: Colors.light.primary }}
-                                        value={values.email}
-                                        onChangeText={handleChange('email')}
-                                        error={errors.email}
+                                        value={value}
+                                        onChangeText={onChange}
+                                        error={errors.email ? errors.email.message : ''}
                                     />
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='password'
+                                render={({ field: { onChange, onBlur, value, ref } }) => (
                                     <CustomTextInput
                                         label='Kata sandi'
                                         placeholder='Masukkan minimal 6 karakter'
                                         labelStyle={{ color: Colors.light.primary }}
-                                        value={values.password}
-                                        onChangeText={handleChange('password')}
-                                        error={errors.password}
-                                        secureTextEntry
+                                        value={value}
+                                        onChangeText={onChange}
+                                        error={errors.password ? errors.password.message : ''}
+                                        postfix={showPassword ? (
+                                            <TouchableOpacity onPress={() => setShowPassword(false)}>
+                                                <Ionicons name='eye' color={Colors.light.primary} size={FontSize.lg} />
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity onPress={() => setShowPassword(true)}>
+                                                <Ionicons name='eye-off' color={Colors.light.primary} size={FontSize.lg} />
+                                            </TouchableOpacity>
+                                        )}
+                                        secureTextEntry={!showPassword}
                                     />
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='password_confirmation'
+                                render={({ field: { onChange, onBlur, value, ref } }) => (
                                     <CustomTextInput
                                         label='Konfirmasi kata sandi'
                                         placeholder='Masukkan kembali kata sandi'
                                         labelStyle={{ color: Colors.light.primary }}
-                                        value={values.passwordConfirmation}
-                                        onChangeText={handleChange('passwordConfirmation')}
-                                        error={errors.passwordConfirmation}
-                                        secureTextEntry
+                                        value={value}
+                                        onChangeText={onChange}
+                                        error={errors.password_confirmation ? errors.password_confirmation.message : ''}
+                                        secureTextEntry={!showPassword}
                                     />
-                                </View>
-                                <View>
-                                    {/* bug */}
-                                    <CustomButton title='Daftar' onPress={handleSubmit as (e?: GestureResponderEvent) => void} size='md' loading={sendCodeLoading} />
-                                    <View className='flex flex-row justify-center'>
-                                        <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
-                                            Sudah memiliki akun?
-                                        </CustomText>
-                                        <Pressable onPress={() => router.replace('/(auth)/login')}>
-                                            <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
-                                                Masuk disini
-                                            </CustomText>
-                                        </Pressable>
-                                    </View>
-                                </View>
+                                )}
+                            />
+
+                        </View>
+                        <View>
+                            {/* bug */}
+                            <CustomButton title='Daftar' onPress={handleSubmit(data => handleSendCode(data))} size='md' loading={sendCodeLoading} />
+                            <View className='flex flex-row justify-center'>
+                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
+                                    Sudah memiliki akun?
+                                </CustomText>
+                                <Pressable onPress={() => router.replace('/(auth)/login')}>
+                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
+                                        Masuk disini
+                                    </CustomText>
+                                </Pressable>
                             </View>
-                        )}
-                    </Formik>
+                        </View>
+                    </View>
                 </Wrapper>
             </WithKeyboard>
         </View>

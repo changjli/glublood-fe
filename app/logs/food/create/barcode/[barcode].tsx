@@ -43,6 +43,7 @@ export default function CreateBarcodePage() {
     })
 
     const [getLoading, setGetLoading] = useState(false)
+    const [storeLoading, setStoreLoading] = useState(false)
 
     const handleGetMasterFoodDetail = async (barcode: string) => {
         try {
@@ -86,7 +87,7 @@ export default function CreateBarcodePage() {
             }
 
             console.log("payload", formData)
-            const res = await storeFoodLog(setGetLoading, formData)
+            const res = await storeFoodLog(setStoreLoading, formData)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -136,9 +137,8 @@ export default function CreateBarcodePage() {
 
     return (
         <>
-            {getLoading ? (
-                <Loader />
-            ) : !formValue.calories ? (
+            <Loader visible={getLoading} />
+            {!formValue.calories ? (
                 <Text>Not found</Text>
             ) : (
                 <FoodLogForm
@@ -151,6 +151,7 @@ export default function CreateBarcodePage() {
                             disabled={disabled}
                             onPress={handleSubmit((data) => handleStoreFoodLog(data))}
                             style={{ marginTop: 20 }}
+                            loading={storeLoading}
                         />
                     )}
                 </FoodLogForm>

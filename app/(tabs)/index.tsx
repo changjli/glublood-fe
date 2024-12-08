@@ -45,18 +45,15 @@ export default function HomePage() {
     const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage();
     const { width } = useWindowDimensions();
 
-    const today = new Date();
-    const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([]);
-    const [dailyCalories, setDailyCalories] =
-        useState<GetDailyCaloriesResponse | null>(null);
-    const [dailyBurnedCalories, setDailyBurnedCalories] = useState(null);
-    const [getAllFoodMenuLoading, setGetAllFoodMenuLoading] = useState(false);
-    const [getDailyCaloriesLoading, setGetDailyCaloriesLoading] =
-        useState(false);
-    const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] =
-        useState(false);
-    const dailyCaloriesCircularProgressRef = useRef(null);
-    const dailyBurnedCaloriesCircularProgressRef = useRef(null);
+    const today = new Date()
+    const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
+    const [dailyCalories, setDailyCalories] = useState<GetDailyCaloriesResponse | null>(null)
+    const [dailyBurnedCalories, setDailyBurnedCalories] = useState<{ avg_burned_calories: number } | null>(null)
+    const [getAllFoodMenuLoading, setGetAllFoodMenuLoading] = useState(false)
+    const [getDailyCaloriesLoading, setGetDailyCaloriesLoading] = useState(false)
+    const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] = useState(false)
+    const dailyCaloriesCircularProgressRef = useRef(null)
+    const dailyBurnedCaloriesCircularProgressRef = useRef(null)
     const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
     const [reminderKeys, setReminderKeys] = useState<string[]>([]);
 
@@ -201,10 +198,13 @@ export default function HomePage() {
                 dailyCaloriesCircularProgressRef.current.animate(
                     (dailyCalories.consumed_calories /
                         dailyCalories.target_calories) *
-                        100,
+                    100,
                     500,
                     Easing.quad
                 );
+            }
+            if (dailyBurnedCaloriesCircularProgressRef.current) {
+                dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
             }
         }
     }, [dailyCalories]);
@@ -263,6 +263,7 @@ export default function HomePage() {
         </View>
     );
 
+
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
             <ScrollView>
@@ -304,12 +305,10 @@ export default function HomePage() {
                             ref={dailyBurnedCaloriesCircularProgressRef}
                             size={170}
                             width={20}
-                            fill={0}
-                            tintColor={"rgba(171,0,0,1)"}
-                            onAnimationComplete={() =>
-                                console.log("onAnimationComplete")
-                            }
-                            backgroundColor={"rgba(171,0,0,0.2)"}
+                            fill={dailyCalories && dailyBurnedCalories ? dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100 : 0}
+                            tintColor={'rgba(171,0,0,1)'}
+                            onAnimationComplete={() => console.log('onAnimationComplete')}
+                            backgroundColor={'rgba(171,0,0,0.2)'}
                             rotation={0}
                             lineCap="round"
                             children={() => (
@@ -320,8 +319,8 @@ export default function HomePage() {
                                     fill={
                                         dailyCalories
                                             ? (dailyCalories.consumed_calories /
-                                                  dailyCalories.target_calories) *
-                                              100
+                                                dailyCalories.target_calories) *
+                                            100
                                             : 0
                                     }
                                     tintColor={"rgba(218,110,53,1)"}
@@ -591,6 +590,7 @@ export default function HomePage() {
                             }}
                         />
                     </TouchableOpacity>
+                    <CustomButton title='Diabetes prediction' onPress={() => router.push('/prediction')} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>

@@ -89,7 +89,7 @@ export default function CustomQuantityPicker({
                     </>
                 )}
 
-                <FontAwesome name='play' style={[styles.arrow, { marginHorizontal: 8 }]} />
+                <FontAwesome name='play' style={[styles.arrow, { marginLeft: 40, marginRight: 8 }]} />
                 <CustomWheelPicker
                     data={sizeData}
                     width={widthSize}

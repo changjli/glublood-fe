@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Animated } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
+import { formatDecimalToFixed } from '@/utils/formatNumber'
 
 type ProgressBarProps = {
     data: GetDailyCaloriesResponse
@@ -17,6 +18,7 @@ export default function ProgressBar({ data }: ProgressBarProps) {
     const animation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
+        animation.setValue(0)
         Animated.timing(animation, {
             toValue: progress,
             duration: 500,
@@ -31,7 +33,7 @@ export default function ProgressBar({ data }: ProgressBarProps) {
 
     return (
         <View>
-            <Text>{data.consumed_calories} Kkal / {data.target_calories} Kkal</Text>
+            <Text>{formatDecimalToFixed(data.consumed_calories)} Kkal / {data.target_calories} Kkal</Text>
             <View style={styles.progressContainer}>
                 <Animated.View style={[styles.innerProgressContainer, { width: widthInterpolated, borderRadius: progress == 1 ? 100 : 0 }]}></Animated.View>
             </View>

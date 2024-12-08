@@ -10,12 +10,16 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FlexStyles } from '@/constants/Flex';
 import { FontSize } from '@/constants/Typography';
 import Modal from 'react-native-modal';
+import CustomButton from '@/components/CustomButton';
 
 interface ConnectModalProps {
     visible: boolean
     toggleModal: () => void
     allDevices: Device[];
     connectToDevice: (device: Device) => void;
+    scanForPeripherals: () => void
+    stopScan: () => void
+    scanLoading: boolean
 }
 
 interface BleItemProps {
@@ -24,7 +28,7 @@ interface BleItemProps {
     toggleModal: () => void
 }
 
-export default function ConnectModal({ visible, toggleModal, allDevices, connectToDevice }: ConnectModalProps) {
+export default function ConnectModal({ visible, toggleModal, allDevices, connectToDevice, scanForPeripherals, stopScan, scanLoading }: ConnectModalProps) {
 
     const renderBleItemCallback = useCallback(({ item, index }: ListRenderItemInfo<Device>) => (
         <BleItem item={item} connectToDevice={connectToDevice} toggleModal={toggleModal} />
@@ -40,11 +44,16 @@ export default function ConnectModal({ visible, toggleModal, allDevices, connect
             <CustomHeader title='Konfigurasi Alat' back={toggleModal} />
             <Wrapper style={{ flex: 1, backgroundColor: 'white', justifyContent: 'space-between' }}>
                 <Image source={require("@/assets/images/static/accucheck-behind-removebg.png")} style={{ height: 222, width: 222, alignSelf: 'center' }} />
-                <CustomText weight='heavy'>Mencari alat...</CustomText>
+                {scanLoading && (<CustomText weight='heavy'>Mencari alat...</CustomText>)}
                 <FlatList
                     data={allDevices}
                     renderItem={renderBleItemCallback}
                 />
+                {scanLoading ? (
+                    <CustomButton title='Hentikan pemindaian' type='outline' size='md' style={{ marginBottom: 20 }} onPress={stopScan} />
+                ) : (
+                    <CustomButton title='Cari ulang' type='outline' size='md' style={{ marginBottom: 20 }} onPress={scanForPeripherals} />
+                )}
             </Wrapper>
         </Modal>
     )

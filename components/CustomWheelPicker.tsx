@@ -1,4 +1,4 @@
-import { View, Text, FlatList, NativeSyntheticEvent, NativeScrollEvent, StyleSheet } from 'react-native'
+import { View, Text, FlatList, NativeSyntheticEvent, NativeScrollEvent, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomText from './CustomText';
 import { FontFamily, FontSize } from '@/constants/Typography';
@@ -26,8 +26,9 @@ export default function CustomWheelPicker<T>({
     others = false,
 }: CustomWheelPickerProp<T>) {
     const flatListRef = useRef<FlatList<T>>(null)
-    const [selectedIndex, setSelectedIndex] = useState(0)
-    const listContainerHeight = itemHeight * 3 // visible items
+    const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex)
+    const listContainerHeight = itemHeight * 3 // Visible items
+    const isFetchRef = useRef(false) // Only scroll once after fetch 
 
     // modal
     const [modalVisible, setModalVisible] = useState(false)
@@ -48,6 +49,7 @@ export default function CustomWheelPicker<T>({
             if (index !== selectedIndex) {
                 if (item == additionalData) {
                     setSelectedIndex(data.length)
+                    isFetchRef.current = true
                     handleOpenModal()
                 }
                 setSelectedIndex(index)
@@ -85,10 +87,13 @@ export default function CustomWheelPicker<T>({
     }
 
     // BUG
-    // useEffect(() => {
-    //     setSelectedIndex(initialSelectedIndex)
-    //     setTimeout(() => handleScrollTo(selectedIndex), 500)
-    // }, [initialSelectedIndex])
+    useEffect(() => {
+        if (initialSelectedIndex != selectedIndex && !isFetchRef.current) {
+            setSelectedIndex(initialSelectedIndex)
+            setTimeout(() => handleScrollTo(initialSelectedIndex), 500)
+            isFetchRef.current = true
+        }
+    }, [initialSelectedIndex])
 
     return (
         <>
@@ -113,12 +118,24 @@ export default function CustomWheelPicker<T>({
                         index,
                     })} // supaya lebih optimal
                     renderItem={({ item, index }) => (
-                        <View style={[styles.itemContainer, { width: width, height: itemHeight }]}>
-                            <Text style={[
-                                styles.itemText,
-                                index == selectedIndex && styles.itemTextSelected
-                            ]}>{String(item)}</Text>
-                        </View>
+                        <>
+                            {item == additionalData ? (
+                                <TouchableOpacity style={[styles.itemContainer, { width: width, height: itemHeight }]} onPress={handleOpenModal}>
+                                    <Text style={[
+                                        styles.itemText,
+                                        index == selectedIndex && styles.itemTextSelected
+                                    ]}>{String(item)}</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <View style={[styles.itemContainer, { width: width, height: itemHeight }]}>
+                                    <Text style={[
+                                        styles.itemText,
+                                        index == selectedIndex && styles.itemTextSelected
+                                    ]}>{String(item)}</Text>
+                                </View>
+                            )}
+
+                        </>
                     )}
                     contentContainerStyle={{
                         paddingVertical: itemHeight // supaya ga bentrok sama snap

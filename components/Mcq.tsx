@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     question: {
         fontSize: FontSize.xl,
         fontFamily: FontFamily.heavy,
-        marginBottom: 8,
+        marginBottom: 16,
     },
     answer: {
         marginBottom: 12,

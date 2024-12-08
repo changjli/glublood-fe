@@ -27,6 +27,7 @@ export default function ExerciseLogDetailPage() {
         calories_per_kg: 0,
     })
     const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
 
     const handleGetExerciseLogDetail = async (id: number) => {
         try {
@@ -74,7 +75,7 @@ export default function ExerciseLogDetailPage() {
 
     const handleDeleteExerciseLog = async (id: number) => {
         try {
-            const res = await deleteExerciseLog(setUpdateLoading, id)
+            const res = await deleteExerciseLog(setDeleteLoading, id)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -112,19 +113,21 @@ export default function ExerciseLogDetailPage() {
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={disabled}
+                                disabled={disabled || deleteLoading}
                                 onPress={handleSubmit(data => handleUpdateExerciseLog({
                                     id: Number(id),
                                     ...data,
                                 }))}
                                 loading={updateLoading}
                             />
-                            <TouchableOpacity onPress={() => handleDeleteExerciseLog(Number(id))}>
-                                <View style={[FlexStyles.flexRow, { justifyContent: 'center', gap: 8, paddingVertical: 4 }]}>
-                                    <FontAwesome name='trash' size={FontSize.md} color={Colors.light.danger} />
-                                    <CustomText size='md' weight='heavy' style={{ color: Colors.light.danger }}>Hapus log</CustomText>
-                                </View>
-                            </TouchableOpacity>
+                            <CustomButton
+                                title='Hapus log'
+                                size='md'
+                                type='delete'
+                                disabled={updateLoading}
+                                loading={deleteLoading}
+                                onPress={() => handleDeleteExerciseLog(Number(id))}
+                            />
                         </View>
                     )}
                 </ExerciseLogForm>

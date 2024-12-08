@@ -43,7 +43,7 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="index"
                     options={{
-                        title: 'Home',
+                        title: 'Beranda',
                         tabBarIcon: ({ color }) => <Ionicons name='home' size={28} color={color} />,
                         unmountOnBlur: true,
                     }}
@@ -51,21 +51,21 @@ export default function TabLayout() {
                 <Tabs.Screen
                     name="statistic"
                     options={{
-                        title: 'Statistic',
+                        title: 'Statistik',
                         tabBarIcon: ({ color }) => <Ionicons name='stats-chart' size={28} color={color} />,
                     }}
                 />
                 <Tabs.Screen
                     name="(notes)"
                     options={{
-                        title: 'Notes',
+                        title: 'Catatan',
                         tabBarIcon: ({ color }) => <Ionicons name='clipboard' size={28} color={color} />,
                     }}
                 />
                 <Tabs.Screen
                     name="scan"
                     options={{
-                        title: 'Scan',
+                        title: 'Pindai',
                         tabBarIcon: ({ color }) => <Ionicons name='scan' size={28} color={color} />,
                     }}
                 />

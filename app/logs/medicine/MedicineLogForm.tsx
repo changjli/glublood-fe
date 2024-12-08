@@ -23,8 +23,8 @@ interface MedicineLogFormProps {
 const medicineLogSchema = Yup.object().shape({
     name: Yup.string().required('Nama obat wajib diisi!'),
     time: Yup.string().required('Waktu konsumsi wajib diisi!'),
-    amount: Yup.number().required('Jumlah dosis wajib diisi'),
-    type: Yup.string().required('Tipe dosis wajib dipilih'),
+    amount: Yup.number().required('Jumlah dosis wajib diisi!'),
+    type: Yup.string().required('Tipe dosis wajib dipilih!'),
     note: Yup.string(),
 });
 

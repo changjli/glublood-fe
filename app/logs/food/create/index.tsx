@@ -99,6 +99,7 @@ export default function Create() {
                     style={{
                         marginTop: 20
                     }}
+                    loading={storeLoading}
                 />
             )}
         </FoodLogForm>

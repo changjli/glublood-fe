@@ -22,10 +22,11 @@ export default function WeeklyFoodLogStatisticPage() {
     const [foodLogReport, setFoodLogReport] = useState<GetFoodLogReportByDateRes[]>([])
     const [selectedDate, setSelectedDate] = useState<string | string[]>('')
     const [averageCalories, setAverageCalories] = useState(0)
+    const filterReport = foodLogReport.filter(foodLog => foodLog.avg_calories != 0)
 
     const addDate = (date: string) => {
         const initialDate = new Date(date);
-        initialDate.setDate(initialDate.getDate() + 7);
+        initialDate.setDate(initialDate.getDate() + 6);
         const year = initialDate.getFullYear();
         const month = String(initialDate.getMonth() + 1).padStart(2, '0');
         const day = String(initialDate.getDate()).padStart(2, '0');
@@ -63,8 +64,8 @@ export default function WeeklyFoodLogStatisticPage() {
     }, [selectedDate])
 
     useEffect(() => {
-        if (foodLogReport.length > 1) {
-            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / foodLogReport.length)
+        if (foodLogReport.length > 1 && filterReport.length > 0) {
+            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / filterReport.length)
         } else {
             setAverageCalories(0)
         }
@@ -81,7 +82,7 @@ export default function WeeklyFoodLogStatisticPage() {
                 />
 
                 <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {foodLogReport.length > 1 ? (
@@ -104,9 +105,9 @@ export default function WeeklyFoodLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {foodLogReport.length > 1 ? (foodLogReport.map((foodLog, index) => (
+                {foodLogReport.length > 1 ? (filterReport.map((foodLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateStringIntl(foodLog.date)}</CustomText>

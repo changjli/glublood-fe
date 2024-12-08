@@ -32,12 +32,14 @@ export default function GlucoseLogDetailPage() {
     const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: "",
         glucose_rate: 0,
-        time: "",
-        time_selection: "",
-        notes: "",
-        type: "manual",
-    });
-    const [loading, setLoading] = useState(false);
+        time: '',
+        time_selection: '',
+        notes: '',
+        type: 'manual',
+    })
+    const [loading, setLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
 
     const handleGetGlucoseLogDetail = async (id: number) => {
         try {
@@ -72,8 +74,8 @@ export default function GlucoseLogDetailPage() {
 
     const handleUpdateGlucoseLog = async (payload: UpdateGlucoseLogReq) => {
         try {
-            const res = await updateGlucoseLog(setLoading, payload);
-            router.navigate("/(tabs)/(notes)");
+            const res = await updateGlucoseLog(setUpdateLoading, payload)
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -103,8 +105,8 @@ export default function GlucoseLogDetailPage() {
 
     const handleDeleteGlucoseLog = async (id: number) => {
         try {
-            const res = await deleteGlucoseLog(setLoading, id);
-            router.navigate("/(tabs)/(notes)");
+            const res = await deleteGlucoseLog(setDeleteLoading, id)
+            router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -145,19 +147,19 @@ export default function GlucoseLogDetailPage() {
                     formValue.time_selection,
                     formValue.glucose_rate
                 ) && (
-                    <View style={styles.dangerTagContainer}>
-                        <FontAwesome
-                            name="warning"
-                            color={Colors.light.red500}
-                        />
-                        <CustomText
-                            size="sm"
-                            style={{ color: Colors.light.red500 }}
-                        >
-                            Gula darahmu melebihi batas normal
-                        </CustomText>
-                    </View>
-                )}
+                        <View style={styles.dangerTagContainer}>
+                            <FontAwesome
+                                name="warning"
+                                color={Colors.light.red500}
+                            />
+                            <CustomText
+                                size="sm"
+                                style={{ color: Colors.light.red500 }}
+                            >
+                                Gula darahmu melebihi batas normal
+                            </CustomText>
+                        </View>
+                    )}
                 {formValue.type == "auto" && (
                     <View style={styles.autoTagContainer}>
                         <CustomText
@@ -174,25 +176,23 @@ export default function GlucoseLogDetailPage() {
                 >
                     {({ handleSubmit, disabled }) => (
                         <View>
-                            <CustomButtonNew
-                                store={true}
-                                imgSrc={require("@/assets/images/icons/pencil.png")}
-                                label="Simpan Perubahan"
-                                onPress={handleSubmit((data) =>
-                                    handleUpdateGlucoseLog({
-                                        id: Number(id),
-                                        ...data,
-                                    })
-                                )}
-                                disabled={disabled}
+                            <CustomButton
+                                title='Simpan perubahan'
+                                size='md'
+                                style={{ marginBottom: 10 }}
+                                disabled={disabled || deleteLoading}
+                                loading={updateLoading}
+                                onPress={handleSubmit(data => handleUpdateGlucoseLog({
+                                    id: Number(id),
+                                    ...data,
+                                }))}
                             />
-                            <CustomButtonNew
-                                store={false}
-                                imgSrc={require("@/assets/images/icons/trash-bin.png")}
-                                label="Hapus log"
-                                onPress={() =>
-                                    handleDeleteGlucoseLog(Number(id))
-                                }
+                            <CustomButton
+                                title='Hapus log'
+                                size='md'
+                                disabled={updateLoading}
+                                loading={deleteLoading}
+                                onPress={() => handleDeleteGlucoseLog(Number(id))}
                             />
                         </View>
                     )}

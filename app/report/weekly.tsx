@@ -31,7 +31,7 @@ export default function WeeklyReportPage() {
 
     const addDate = (date: string) => {
         const initialDate = new Date(date);
-        initialDate.setDate(initialDate.getDate() + 7);
+        initialDate.setDate(initialDate.getDate() + 6);
         const year = initialDate.getFullYear();
         const month = String(initialDate.getMonth() + 1).padStart(2, '0');
         const day = String(initialDate.getDate()).padStart(2, '0');

@@ -24,6 +24,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
     const [month, setMonth] = useState(date.getMonth())
     const [year, setyear] = useState(date.getFullYear())
     const [averageGlucoseRate, setAverageGlucoseRate] = useState(0)
+    const filterReport = glucoseLogReport.filter(glucoseLog => glucoseLog.avg_glucose_rate != 0)
 
     const handleGetGlucoseLogReport = async () => {
         try {
@@ -53,8 +54,8 @@ export default function MonthlyGlucoseLogStatisticPage() {
     }, [month, year])
 
     useEffect(() => {
-        if (glucoseLogReport.length > 1) {
-            setAverageGlucoseRate(glucoseLogReport.reduce((acc, glr) => acc + glr.avg_glucose_rate, 0) / glucoseLogReport.length)
+        if (glucoseLogReport.length > 1 && filterReport.length > 0) {
+            setAverageGlucoseRate(glucoseLogReport.reduce((acc, glr) => acc + glr.avg_glucose_rate, 0) / filterReport.length)
         } else {
             setAverageGlucoseRate(0)
         }
@@ -71,8 +72,8 @@ export default function MonthlyGlucoseLogStatisticPage() {
                     setyear={setyear}
                 />
 
-                <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageGlucoseRate).toFixed(2)} Kalori</CustomText>
+                <CustomText>Rata-rata catatan glukosa</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageGlucoseRate).toFixed(2)} mg/dL</CustomText>
             </Wrapper>
 
             {glucoseLogReport.length > 1 &&
@@ -84,7 +85,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
                     renderLabel={(value, index) => {
                         const dateRange = value.split('~')
 
-                        return ['Minggu', resolveNumberToString(index as number), formatDateStripToSlash(dateRange[0]), formatDateStripToSlash(dateRange[1])]
+                        return [`Minggu ${index! + 1}`, formatDateStripToSlash(dateRange[0])]
                     }}
                 />
             }
@@ -92,11 +93,11 @@ export default function MonthlyGlucoseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {glucoseLogReport.map((glucoseLog, index) => (
+                {filterReport.map((glucoseLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} mg/dL`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}x</CustomText>
+                            <CustomText size='sm'>Jumlah pengambilan: {glucoseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{`Minggu ${resolveNumberToString(index)}`}</CustomText>
                         </View>
                     </View>

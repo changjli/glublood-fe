@@ -23,6 +23,8 @@ export default function MedicineLogDetailPage() {
         notes: '',
     })
     const [loading, setLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
 
     const handleGetMedicineLogDetail = async (id: number) => {
         try {
@@ -48,7 +50,7 @@ export default function MedicineLogDetailPage() {
 
     const handleUpdateMedicineLog = async (payload: UpdateMEdicineLogReq) => {
         try {
-            const res = await updateMedicineLog(setLoading, payload)
+            const res = await updateMedicineLog(setUpdateLoading, payload)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -70,7 +72,7 @@ export default function MedicineLogDetailPage() {
 
     const handleDeleteMedicineLog = async (id: number) => {
         try {
-            const res = await deleteMedicineLog(setLoading, id)
+            const res = await deleteMedicineLog(setDeleteLoading, id)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -104,20 +106,23 @@ export default function MedicineLogDetailPage() {
                 >
                     {({ handleSubmit, disabled }) => (
                         <View>
-                            <CustomButtonNew
-                                store={true}
-                                imgSrc={require('@/assets/images/icons/pencil.png')}
-                                label='Simpan Perubahan'
+                            <CustomButton
+                                title='Simpan perubahan'
+                                size='md'
+                                style={{ marginBottom: 10 }}
+                                disabled={disabled || deleteLoading}
+                                loading={updateLoading}
                                 onPress={handleSubmit(data => handleUpdateMedicineLog({
                                     id: Number(id),
                                     ...data,
                                 }))}
-                                disabled={disabled}
                             />
-                            <CustomButtonNew
-                                store={false}
-                                imgSrc={require('@/assets/images/icons/trash-bin.png')}
-                                label='Hapus log'
+                            <CustomButton
+                                title='Hapus log'
+                                size='md'
+                                type='delete'
+                                disabled={updateLoading}
+                                loading={deleteLoading}
                                 onPress={() => handleDeleteMedicineLog(Number(id))}
                             />
                         </View>

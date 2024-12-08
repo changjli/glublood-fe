@@ -46,7 +46,7 @@ export default function AddMedicineLog() {
         name: '',
         time: '',
         amount: 1,
-        type: '',
+        type: 'Tablet',
         notes: '',
     })
 
