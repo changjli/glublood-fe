@@ -1,31 +1,49 @@
-import { View, Text, Modal, StyleSheet, Pressable, FlatList, Alert, Image, ScrollView, TouchableOpacity, Easing, Switch, useWindowDimensions } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { useSession } from '../context/AuthenticationProvider'
-import CustomButton from '@/components/CustomButton'
-import { router } from 'expo-router'
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as Print from 'expo-print';
-import { shareAsync } from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
-import Wrapper from '@/components/Layout/Wrapper'
-import CustomText from '@/components/CustomText'
-import { Colors } from '@/constants/Colors'
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { formatDateIntl, formatDatetoStringYmd } from '@/utils/formatDatetoString'
-import { FlexStyles } from '@/constants/Flex'
-import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
-import axios from 'axios'
-import useDailyCalories from '@/hooks/api/daily_calories/useDailyCalories'
-import { FontSize } from '@/constants/Typography'
-import useAsyncStorage from '@/hooks/useAsyncStorage';
-import { parseGlucoseReading } from '@/app/ble/GlucoseReadingRx'
+import {
+    View,
+    Text,
+    Modal,
+    StyleSheet,
+    Pressable,
+    FlatList,
+    Alert,
+    Image,
+    ScrollView,
+    TouchableOpacity,
+    Easing,
+    Switch,
+    useWindowDimensions,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { useSession } from "../context/AuthenticationProvider";
+import CustomButton from "@/components/CustomButton";
+import { router } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as Print from "expo-print";
+import { shareAsync } from "expo-sharing";
+import * as FileSystem from "expo-file-system";
+import Wrapper from "@/components/Layout/Wrapper";
+import CustomText from "@/components/CustomText";
+import { Colors } from "@/constants/Colors";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import {
+    formatDateIntl,
+    formatDatetoStringYmd,
+} from "@/utils/formatDatetoString";
+import { FlexStyles } from "@/constants/Flex";
+import useFoodMenu from "@/hooks/api/food_menu/useFoodMenu";
+import axios from "axios";
+import useDailyCalories from "@/hooks/api/daily_calories/useDailyCalories";
+import { FontSize } from "@/constants/Typography";
+import useAsyncStorage from "@/hooks/useAsyncStorage";
+import { parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
 
 export default function HomePage() {
-    const { signOut, session } = useSession()
-    const { getAllFoodMenu } = useFoodMenu()
-    const { getDailyCaloriesByDate, getDailyBurnedCaloriesByDate } = useDailyCalories()
-    const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
-    const { width } = useWindowDimensions()
+    const { signOut, session } = useSession();
+    const { getAllFoodMenu } = useFoodMenu();
+    const { getDailyCaloriesByDate, getDailyBurnedCaloriesByDate } =
+        useDailyCalories();
+    const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage();
+    const { width } = useWindowDimensions();
 
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
@@ -37,118 +55,159 @@ export default function HomePage() {
     const dailyCaloriesCircularProgressRef = useRef(null)
     const dailyBurnedCaloriesCircularProgressRef = useRef(null)
     const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
-    const [reminderKeys, setReminderKeys] = useState<string[]>([])
+    const [reminderKeys, setReminderKeys] = useState<string[]>([]);
 
     const handleGetAllFoodMenu = async () => {
         try {
-            const res = await getAllFoodMenu(setGetAllFoodMenuLoading, '', 3)
-            setFoodMenus(res.data)
+            const res = await getAllFoodMenu(setGetAllFoodMenuLoading, "", 3);
+            setFoodMenus(res.data);
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    Alert.alert(
+                        "Bad Request",
+                        "Invalid request. Please check your input."
+                    );
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    Alert.alert(
+                        "Server Error",
+                        "A server error occurred. Please try again later."
+                    );
                 } else {
                     // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
                 }
             } else {
-                console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                console.log("Unexpected Error:", err);
+                Alert.alert(
+                    "Network Error",
+                    "Please check your internet connection."
+                );
             }
-            return []
+            return [];
         }
-    }
+    };
 
     const handleGetDailyCalories = async (date: string) => {
         try {
-            const res = await getDailyCaloriesByDate(setGetDailyCaloriesLoading, date)
-            const data: GetDailyCaloriesResponse = res.data
-            setDailyCalories(data)
+            const res = await getDailyCaloriesByDate(
+                setGetDailyCaloriesLoading,
+                date
+            );
+            const data: GetDailyCaloriesResponse = res.data;
+            setDailyCalories(data);
         } catch (err) {
-            setDailyCalories(null)
+            setDailyCalories(null);
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    Alert.alert(
+                        "Bad Request",
+                        "Invalid request. Please check your input."
+                    );
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    Alert.alert(
+                        "Server Error",
+                        "A server error occurred. Please try again later."
+                    );
                 } else {
                     // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
                 }
             } else {
-                console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                console.log("Unexpected Error:", err);
+                Alert.alert(
+                    "Network Error",
+                    "Please check your internet connection."
+                );
             }
         }
-    }
+    };
 
     const handleGetDailyBurnedCalories = async (date: string) => {
         try {
-            const res = await getDailyBurnedCaloriesByDate(setDailyCaloriesBurnedLoading, date)
-            const data = res.data
-            setDailyBurnedCalories(data)
+            const res = await getDailyBurnedCaloriesByDate(
+                setDailyCaloriesBurnedLoading,
+                date
+            );
+            const data = res.data;
+            setDailyBurnedCalories(data);
         } catch (err) {
-            setDailyBurnedCalories(null)
+            setDailyBurnedCalories(null);
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    Alert.alert(
+                        "Bad Request",
+                        "Invalid request. Please check your input."
+                    );
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    Alert.alert(
+                        "Server Error",
+                        "A server error occurred. Please try again later."
+                    );
                 } else {
                     // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
                 }
             } else {
-                console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                console.log("Unexpected Error:", err);
+                Alert.alert(
+                    "Network Error",
+                    "Please check your internet connection."
+                );
             }
         }
-    }
+    };
 
     const getAllReminderData = async () => {
         const keys = await getAllKeys();
 
         keys.forEach((key) => {
-            if (key.startsWith('reminder')) {
-                reminderKeys.push(key)
+            if (key.startsWith("reminder")) {
+                reminderKeys.push(key);
             }
         });
 
         const reminderData = await getAllObjectData(reminderKeys);
 
         return reminderData;
-    }
+    };
 
     const handlGetAllReminder = async () => {
         const reminderData = await getAllReminderData();
         if (reminderData) {
-            const remindersArray = Object.values(reminderData) as ReminderFormValues[];
+            const remindersArray = Object.values(
+                reminderData
+            ) as ReminderFormValues[];
             setReminders(remindersArray);
         }
     };
 
     useEffect(() => {
-        handleGetAllFoodMenu()
-        handleGetDailyCalories(formatDatetoStringYmd(today))
-        handleGetDailyBurnedCalories(formatDatetoStringYmd(today))
-        handlGetAllReminder()
-    }, [])
+        handleGetAllFoodMenu();
+        handleGetDailyCalories(formatDatetoStringYmd(today));
+        handleGetDailyBurnedCalories(formatDatetoStringYmd(today));
+        handlGetAllReminder();
+    }, []);
 
     useEffect(() => {
         if (dailyCalories && dailyBurnedCalories) {
             if (dailyCaloriesCircularProgressRef.current) {
-                dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
+                dailyCaloriesCircularProgressRef.current.animate(
+                    (dailyCalories.consumed_calories /
+                        dailyCalories.target_calories) *
+                    100,
+                    500,
+                    Easing.quad
+                );
             }
             if (dailyBurnedCaloriesCircularProgressRef.current) {
                 dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
             }
         }
-    }, [dailyCalories])
+    }, [dailyCalories]);
 
     // useEffect(() => {
     //     if (dailyCalories && dailyBurnedCalories) {
@@ -161,22 +220,22 @@ export default function HomePage() {
     const mapReminderType = (value: number) => {
         switch (value) {
             case 1:
-                return 'Gula Darah';
+                return "Gula Darah";
             case 2:
-                return 'Obat';
+                return "Obat";
             case 3:
-                return 'Olahraga';
+                return "Olahraga";
         }
-    }
+    };
 
     const dayMapping: { [key: number]: string } = {
-        1: 'Minggu',
-        2: 'Senin',
-        3: 'Selasa',
-        4: 'Rabu',
-        5: 'Kamis',
-        6: 'Jumat',
-        7: 'Sabtu',
+        1: "Minggu",
+        2: "Senin",
+        3: "Selasa",
+        4: "Rabu",
+        5: "Kamis",
+        6: "Jumat",
+        7: "Sabtu",
     };
 
     // Render reminder item
@@ -195,12 +254,9 @@ export default function HomePage() {
 
                 {item.notes && (
                     <Text style={styles.days}>
-                        {
-                            item.notes.length > 23 ?
-                                [item.notes.slice(0, 25), ' ...']
-                                :
-                                item.notes
-                        }
+                        {item.notes.length > 23
+                            ? [item.notes.slice(0, 25), " ..."]
+                            : item.notes}
                     </Text>
                 )}
             </View>
@@ -209,22 +265,38 @@ export default function HomePage() {
 
 
     return (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <View style={{ flex: 1, backgroundColor: "white" }}>
             <ScrollView>
                 <View style={styles.headerContainer} />
                 <Wrapper>
                     {/* header */}
                     <View style={{ marginBottom: 12 }}>
-                        <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
-                            <CustomText size='xl' weight='heavy' style={{ color: 'white' }}>Glublood</CustomText>
-                            <TouchableOpacity onPress={() => signOut()}>
+                        <View
+                            style={[
+                                FlexStyles.flexRow,
+                                { justifyContent: "space-between" },
+                            ]}
+                        >
+                            <CustomText
+                                size="xl"
+                                weight="heavy"
+                                style={{ color: "white" }}
+                            >
+                                Glublood
+                            </CustomText>
+                            <TouchableOpacity
+                                onPress={() => router.push("/profile/")}
+                            >
                                 <Image
-                                    source={require('@/assets/images/user-profile/dummy.png')}
+                                    source={require("@/assets/images/user-profile/dummy.png")}
                                     style={styles.profile}
                                 />
                             </TouchableOpacity>
                         </View>
-                        <CustomText style={{ color: 'white', maxWidth: '70%' }}>Hai, Jonathan jaga kesehatan dan perbanyak aktivitas tubuh</CustomText>
+                        <CustomText style={{ color: "white", maxWidth: "70%" }}>
+                            Hai, Jonathan jaga kesehatan dan perbanyak aktivitas
+                            tubuh
+                        </CustomText>
                     </View>
 
                     {/* summary */}
@@ -238,20 +310,32 @@ export default function HomePage() {
                             onAnimationComplete={() => console.log('onAnimationComplete')}
                             backgroundColor={'rgba(171,0,0,0.2)'}
                             rotation={0}
-                            lineCap='round'
+                            lineCap="round"
                             children={() => (
                                 <AnimatedCircularProgress
                                     ref={dailyCaloriesCircularProgressRef}
                                     size={130}
                                     width={20}
-                                    fill={dailyCalories ? dailyCalories.consumed_calories / dailyCalories.target_calories * 100 : 0}
-                                    tintColor={'rgba(218,110,53,1)'}
-                                    onAnimationComplete={() => console.log('onAnimationComplete')}
-                                    backgroundColor={'rgba(218,110,53,0.2)'}
+                                    fill={
+                                        dailyCalories
+                                            ? (dailyCalories.consumed_calories /
+                                                dailyCalories.target_calories) *
+                                            100
+                                            : 0
+                                    }
+                                    tintColor={"rgba(218,110,53,1)"}
+                                    onAnimationComplete={() =>
+                                        console.log("onAnimationComplete")
+                                    }
+                                    backgroundColor={"rgba(218,110,53,0.2)"}
                                     rotation={0}
-                                    lineCap='round'
+                                    lineCap="round"
                                     children={() => (
-                                        <Image source={require('@/assets/images/icons/kembar.png')} style={{ width: 60 }} resizeMode='contain' />
+                                        <Image
+                                            source={require("@/assets/images/icons/kembar.png")}
+                                            style={{ width: 60 }}
+                                            resizeMode="contain"
+                                        />
                                     )}
                                 />
                             )}
@@ -259,16 +343,41 @@ export default function HomePage() {
 
                         <View style={styles.summaryInnerContainer}>
                             <View style={styles.todayContainer}>
-                                <CustomText style={{ textAlign: 'center' }}>{formatDateIntl(today)}</CustomText>
+                                <CustomText style={{ textAlign: "center" }}>
+                                    {formatDateIntl(today)}
+                                </CustomText>
                             </View>
                             <View>
                                 <View style={[FlexStyles.flexRow, { gap: 8 }]}>
-                                    <View style={{ width: 12, height: 12, backgroundColor: Colors.light.primary }} />
-                                    <CustomText size='sm' style={{ color: Colors.light.primary }}>Asupan kalori</CustomText>
+                                    <View
+                                        style={{
+                                            width: 12,
+                                            height: 12,
+                                            backgroundColor:
+                                                Colors.light.primary,
+                                        }}
+                                    />
+                                    <CustomText
+                                        size="sm"
+                                        style={{ color: Colors.light.primary }}
+                                    >
+                                        Asupan kalori
+                                    </CustomText>
                                 </View>
                                 <View style={[FlexStyles.flexRow, { gap: 8 }]}>
-                                    <View style={{ width: 12, height: 12, backgroundColor: Colors.light.red }} />
-                                    <CustomText size='sm' style={{ color: Colors.light.red }}>Pembakaran kalori</CustomText>
+                                    <View
+                                        style={{
+                                            width: 12,
+                                            height: 12,
+                                            backgroundColor: Colors.light.red,
+                                        }}
+                                    />
+                                    <CustomText
+                                        size="sm"
+                                        style={{ color: Colors.light.red }}
+                                    >
+                                        Pembakaran kalori
+                                    </CustomText>
                                 </View>
                             </View>
                         </View>
@@ -276,19 +385,31 @@ export default function HomePage() {
 
                     {/* remainder */}
                     <View style={{ marginBottom: 16 }}>
-                        {reminderKeys.length > 0 ?
+                        {reminderKeys.length > 0 ? (
                             <View>
                                 <View
                                     style={{
                                         marginTop: 15,
                                         ...FlexStyles.flexRow,
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                     }}
                                 >
-                                    <CustomText size='lg' weight='heavy'>Reminder</CustomText>
-                                    <TouchableOpacity onPress={() => router.push('/(notes)/reminder/')}>
-                                        <CustomText size='sm' weight='heavy' style={{ color: '#DA6E35' }}>Lihat Selengkapnya</CustomText>
+                                    <CustomText size="lg" weight="heavy">
+                                        Reminder
+                                    </CustomText>
+                                    <TouchableOpacity
+                                        onPress={() =>
+                                            router.push("/(notes)/reminder/")
+                                        }
+                                    >
+                                        <CustomText
+                                            size="sm"
+                                            weight="heavy"
+                                            style={{ color: "#DA6E35" }}
+                                        >
+                                            Lihat Selengkapnya
+                                        </CustomText>
                                     </TouchableOpacity>
                                 </View>
                                 <FlatList
@@ -301,13 +422,31 @@ export default function HomePage() {
                                     keyExtractor={(item) => item.time}
                                 />
                             </View>
-                            :
+                        ) : (
                             <View>
-                                <CustomText size='lg' weight='heavy' style={{ marginTop: 15, }}>Reminder</CustomText>
+                                <CustomText
+                                    size="lg"
+                                    weight="heavy"
+                                    style={{ marginTop: 15 }}
+                                >
+                                    Reminder
+                                </CustomText>
                                 <View style={styles.reminderContainer}>
                                     <View style={styles.empytReminderContainer}>
-                                        <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 85, height: 95 }} />
-                                        <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center', fontSize: 16 }}>Kamu belum tambah pengigat</CustomText>
+                                        <Image
+                                            source={require("@/assets/images/characters/character-report.png")}
+                                            style={{ width: 85, height: 95 }}
+                                        />
+                                        <CustomText
+                                            size="sm"
+                                            style={{
+                                                color: Colors.light.gray400,
+                                                textAlign: "center",
+                                                fontSize: 16,
+                                            }}
+                                        >
+                                            Kamu belum tambah pengigat
+                                        </CustomText>
                                     </View>
                                     <TouchableOpacity
                                         style={{
@@ -315,48 +454,98 @@ export default function HomePage() {
                                             padding: 12,
                                             width: 200,
                                             borderWidth: 1,
-                                            borderColor: '#DA6E35',
+                                            borderColor: "#DA6E35",
                                             borderRadius: 8,
                                             ...FlexStyles.flexRow,
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
+                                            justifyContent: "center",
+                                            alignItems: "center",
                                         }}
-                                        onPress={() => router.push('/(notes)/reminder/')}
+                                        onPress={() =>
+                                            router.push("/(notes)/reminder/")
+                                        }
                                     >
-                                        <View style={{
-                                            marginRight: 5,
-                                            width: 14,
-                                            height: 14,
-                                            backgroundColor: '#DA6E35',
-                                            borderRadius: 3,
-                                            ...FlexStyles.flexCol,
-                                            alignItems: 'center',
-                                        }}>
-                                            <Image source={require('@/assets/images/icons/plus.png')} style={{ width: 6, height: 6, tintColor: 'white' }} />
+                                        <View
+                                            style={{
+                                                marginRight: 5,
+                                                width: 14,
+                                                height: 14,
+                                                backgroundColor: "#DA6E35",
+                                                borderRadius: 3,
+                                                ...FlexStyles.flexCol,
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <Image
+                                                source={require("@/assets/images/icons/plus.png")}
+                                                style={{
+                                                    width: 6,
+                                                    height: 6,
+                                                    tintColor: "white",
+                                                }}
+                                            />
                                         </View>
-                                        <CustomText size='sm' style={{ color: '#DA6E35', textAlign: 'center', fontSize: 12, fontFamily: 'Helvetica-Bold' }}>Tambahkan pengingat</CustomText>
+                                        <CustomText
+                                            size="sm"
+                                            style={{
+                                                color: "#DA6E35",
+                                                textAlign: "center",
+                                                fontSize: 12,
+                                                fontFamily: "Helvetica-Bold",
+                                            }}
+                                        >
+                                            Tambahkan pengingat
+                                        </CustomText>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        }
+                        )}
                     </View>
 
                     {/* menu */}
                     <View style={{ marginBottom: 12 }}>
-                        <View style={[FlexStyles.flexRow, { justifyContent: 'space-between' }]}>
-                            <CustomText size='lg' weight='heavy'>Menu Sehat</CustomText>
-                            <TouchableOpacity onPress={() => router.push('/food-menus')}>
-                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>Lihat Selengkapnya</CustomText>
+                        <View
+                            style={[
+                                FlexStyles.flexRow,
+                                { justifyContent: "space-between" },
+                            ]}
+                        >
+                            <CustomText size="lg" weight="heavy">
+                                Menu Sehat
+                            </CustomText>
+                            <TouchableOpacity
+                                onPress={() => router.push("/food-menus")}
+                            >
+                                <CustomText
+                                    size="sm"
+                                    weight="heavy"
+                                    style={{ color: Colors.light.primary }}
+                                >
+                                    Lihat Selengkapnya
+                                </CustomText>
                             </TouchableOpacity>
                         </View>
                         <FlatList
                             data={foodMenus}
                             renderItem={({ item, index }) => (
-                                <TouchableOpacity style={styles.foodItemContainer} id={String(index)} onPress={() => router.push(`/food-menus/${item.id}`)}>
-                                    <CustomText size='sm' weight='heavy' style={{ textAlign: 'center' }}>{item.title}</CustomText>
-                                    <CustomText size='sm'>{item.calories} Kal</CustomText>
+                                <TouchableOpacity
+                                    style={styles.foodItemContainer}
+                                    id={String(index)}
+                                    onPress={() =>
+                                        router.push(`/food-menus/${item.id}`)
+                                    }
+                                >
+                                    <CustomText
+                                        size="sm"
+                                        weight="heavy"
+                                        style={{ textAlign: "center" }}
+                                    >
+                                        {item.title}
+                                    </CustomText>
+                                    <CustomText size="sm">
+                                        {item.calories} Kal
+                                    </CustomText>
                                     <Image
-                                        source={require('@/assets/images/user-profile/dummy.png')}
+                                        source={require("@/assets/images/user-profile/dummy.png")}
                                         style={styles.foodItemImage}
                                     />
                                 </TouchableOpacity>
@@ -368,42 +557,66 @@ export default function HomePage() {
                     </View>
 
                     <View style={{ marginBottom: 16 }}>
-                        <CustomText size='lg' weight='heavy'>Rekam Data Kesehatan</CustomText>
-                        <TouchableOpacity style={styles.reportContainer} onPress={() => router.push('/report')}>
-                            <Image source={require('@/assets/images/characters/character-report.png')} style={{ width: 50, height: 50 }} />
-                            <CustomText size='sm' style={{ color: Colors.light.gray400, textAlign: 'center' }}>Laporan kesehatanmu mengenai diabetes dan aktivitas yang dilakukan</CustomText>
+                        <CustomText size="lg" weight="heavy">
+                            Rekam Data Kesehatan
+                        </CustomText>
+                        <TouchableOpacity
+                            style={styles.reportContainer}
+                            onPress={() => router.push("/report")}
+                        >
+                            <Image
+                                source={require("@/assets/images/characters/character-report.png")}
+                                style={{ width: 50, height: 50 }}
+                            />
+                            <CustomText
+                                size="sm"
+                                style={{
+                                    color: Colors.light.gray400,
+                                    textAlign: "center",
+                                }}
+                            >
+                                Laporan kesehatanmu mengenai diabetes dan
+                                aktivitas yang dilakukan
+                            </CustomText>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => router.push('/ble')}>
-                        <Image source={require('@/assets/images/static/content-accu-check.png')} style={{ width: '100%', height: 125, borderRadius: 16 }} />
+                    <TouchableOpacity onPress={() => router.push("/ble")}>
+                        <Image
+                            source={require("@/assets/images/static/content-accu-check.png")}
+                            style={{
+                                width: "100%",
+                                height: 125,
+                                borderRadius: 16,
+                            }}
+                        />
                     </TouchableOpacity>
                     <CustomButton title='Diabetes prediction' onPress={() => router.push('/prediction')} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     headerContainer: {
         backgroundColor: Colors.light.primary,
-        width: '100%',
+        width: "100%",
         height: 150,
-        position: 'absolute',
+        position: "absolute",
     },
     summaryContainer: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
         elevation: 5,
         padding: 16,
         borderRadius: 16,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 16,
     },
     summaryInnerContainer: {
-        gap: 32
+        gap: 32,
     },
     todayContainer: {
         borderWidth: 1,
@@ -412,10 +625,10 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     foodItemContainer: {
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         padding: 10,
         gap: 10,
         borderRadius: 10,
@@ -428,11 +641,11 @@ const styles = StyleSheet.create({
     },
     empytReminderContainer: {
         ...FlexStyles.flexCol,
-        alignItems: 'center',
+        alignItems: "center",
     },
     reminderContainer: {
         ...FlexStyles.flexCol,
-        alignItems: 'center',
+        alignItems: "center",
         borderWidth: 1,
         borderColor: Colors.light.primary,
         borderRadius: 10,
@@ -440,7 +653,7 @@ const styles = StyleSheet.create({
     },
     reportContainer: {
         ...FlexStyles.flexCol,
-        alignItems: 'center',
+        alignItems: "center",
         borderWidth: 1,
         borderColor: Colors.light.primary,
         padding: 8,
@@ -453,10 +666,10 @@ const styles = StyleSheet.create({
     // reminder
     reminderCard: {
         width: 250,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#FDF6EF',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: "#FDF6EF",
         marginRight: 20,
         marginVertical: 5,
         paddingVertical: 15,
@@ -467,13 +680,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     categoryContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginBottom: 5,
     },
     category: {
-        backgroundColor: '#f4a261',
-        color: 'white',
-        fontWeight: 'bold',
+        backgroundColor: "#f4a261",
+        color: "white",
+        fontWeight: "bold",
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 5,
@@ -481,17 +694,16 @@ const styles = StyleSheet.create({
     },
     time: {
         fontSize: 32,
-        fontWeight: 'bold',
-        color: '#333',
+        fontWeight: "bold",
+        color: "#333",
     },
     description: {
-        color: '#555',
+        color: "#555",
         fontSize: 14,
     },
     days: {
-        color: '#555',
+        color: "#555",
         fontSize: 14,
         marginTop: 4,
     },
-})
-
+});

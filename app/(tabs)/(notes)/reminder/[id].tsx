@@ -5,6 +5,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import ReminderForm from './ReminderForm';
 import CustomButton from '@/components/CustomButton';
 import * as Notifications from 'expo-notifications';
+import CustomButtonNew from '@/components/CustomButtonNew';
 
 export default function ReminderDetail() {
     const { id } = useLocalSearchParams();
@@ -244,17 +245,19 @@ export default function ReminderDetail() {
             >
                 {({ values, handleSubmit }) => (
                     <View style={styles.customButtonContainer}>
-                        <CustomButton
-                            title='Simpan Perubahan'
-                            size='lg'
+                        <CustomButtonNew
+                            store={true}
+                            imgSrc={require('@/assets/images/icons/pencil.png')}
+                            label='Simpan Perubahan'
                             onPress={() => {
                                 handleSubmit();
                                 handleSaveReminder(values);
                             }}
                         />
-                        <CustomButton
-                            title='Hapus log'
-                            size='lg'
+                        <CustomButtonNew
+                            store={false}
+                            imgSrc={require('@/assets/images/icons/trash-bin.png')}
+                            label='Hapus log'
                             onPress={() => {
                                 handleDeleteMedicineLog(values.id);
                                 router.navigate('/(notes)/reminder/');
@@ -273,7 +276,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f2f8f9',
     },
     customButtonContainer: {
-        height: 150,
+        paddingHorizontal: 15,
+        height: 140,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',

@@ -8,6 +8,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import CustomButton from '@/components/CustomButton'
 import CustomHeader from '@/components/CustomHeader'
+import CustomButtonNew from '@/components/CustomButtonNew'
 
 export default function MedicineLogDetailPage() {
     const { id } = useLocalSearchParams()
