@@ -1,5 +1,5 @@
 import { View, Text, Alert, StyleSheet, Image, ScrollView, GestureResponderEvent, TouchableOpacity } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import useMasterFood from '@/hooks/api/master_food/useMasterFood'
 import axios from 'axios'
@@ -22,49 +22,105 @@ import { FlexStyles } from '@/constants/Flex'
 import { FontAwesome } from '@expo/vector-icons'
 import Collapsible from 'react-native-collapsible';
 import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form'
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup'
+import { formatDecimalToFixed } from '@/utils/formatNumber'
 
 interface FoodLogFormRenderProps {
     handleSubmit: UseFormHandleSubmit<PostFoodLogRequest, undefined>
     disabled: boolean
 }
 
-
 interface FoodLogFormProps {
     formValue: PostFoodLogRequest
     children: (props: FoodLogFormRenderProps) => React.ReactNode
 }
 
+const foodLogSchema = Yup.object().shape({
+    time: Yup.string().required('Waktu wajib diisi!'),
+    food_name: Yup.string().required('Nama makanan wajib diisi!'),
+    calories: Yup.string().required('Kalori wajib diisi!'),
+    protein: Yup.string().required('Protein wajib diisi!'),
+    carbohydrate: Yup.string().required('Karbohidrate wajib diisi!'),
+    fat: Yup.string().required('Lemak wajib diisi!'),
+    serving_qty: Yup.string().required('Porsi makanan wajib diisi!'),
+    serving_size: Yup.string().required('Porsi makanan wajib diisi!'),
+});
+
 export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFormProps) {
 
     const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<PostFoodLogRequest>({
         defaultValues: formValue,
+        resolver: yupResolver(foodLogSchema),
         mode: 'onChange',
     })
 
+    const [serving_qty] = watch(['serving_qty'])
+    const [debounceQty, setDebounceQty] = useState(1)
+    const baseQtyRef = useRef(1)
+
     const [showAdditional, setShowAdditional] = useState(true)
 
-    const [serving_size] = watch('serving_size')
+    const [serving_size, calories, protein, carbohydrate, fat,
+        cholestrol, fiber, sugar, kalium, sodium
+    ] = watch(['serving_size', 'calories', 'protein', 'carbohydrate', 'fat',
+        'cholestrol', 'fiber', 'sugar', 'kalium', 'sodium'
+    ])
 
-    const getSizeData = () => {
-        const sizeData = []
-        for (let i = formValue.serving_qty; i < formValue.serving_qty * 100; i += formValue.serving_qty) {
-            sizeData.push(i)
+    const getBaseQty = () => {
+        // karena food master antara 1 atau 100 dan limitnya 99 
+        if (formValue.serving_qty < 100) {
+            return 1
+        } else {
+            return 100
         }
-        return sizeData
+    }
+
+    const getQtyData = () => {
+        let baseQty = getBaseQty()
+        const qtyData = []
+        for (let i = baseQty; i < baseQty * 100; i += baseQty) {
+            qtyData.push(i)
+        }
+        return qtyData
+    }
+
+    const calculateNutrition = (nutrition: number) => {
+        if (formValue.serving_qty == 1) {
+            return nutrition * serving_qty
+        } else if (formValue.serving_qty == 100) {
+            return nutrition * serving_qty / 100
+        } else {
+            return nutrition * serving_qty / formValue.serving_qty
+        }
     }
 
     useEffect(() => {
         reset(formValue)
     }, [formValue])
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setFieldValue('calories', values.calories * values.serving_qty)
-    //         setFieldValue('protein', values.protein * values.serving_qty)
-    //         setFieldValue('carbohydrate', values.carbohydrate * values.serving_qty)
-    //         setFieldValue('fat', values.fat * values.serving_qty)
-    //     }, 1000)
-    // }, [values.serving_qty])
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setDebounceQty(serving_qty)
+        }, 500)
+
+        return () => clearTimeout(timeout)
+    }, [serving_qty])
+
+    useEffect(() => {
+        // kalo manual ga dinamis
+        if (formValue.type == 'auto' || formValue.type == 'barcode') {
+            setValue('calories', calculateNutrition(formValue.calories))
+            setValue('protein', calculateNutrition(formValue.protein))
+            setValue('carbohydrate', calculateNutrition(formValue.carbohydrate))
+            setValue('fat', calculateNutrition(formValue.fat))
+            setValue('cholestrol', formValue.cholestrol ? calculateNutrition(formValue.cholestrol) : 0)
+            setValue('fiber', formValue.fiber ? calculateNutrition(formValue.fiber) : 0)
+            setValue('sugar', formValue.sugar ? calculateNutrition(formValue.sugar) : 0)
+            setValue('kalium', formValue.kalium ? calculateNutrition(formValue.kalium) : 0)
+            setValue('sodium', formValue.sodium ? calculateNutrition(formValue.sodium) : 0)
+        }
+    }, [debounceQty])
 
     return (
 
@@ -101,11 +157,12 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                                     placeholder='Contoh: Nasi goreng'
                                     value={value}
                                     onChangeText={onChange}
+                                    error={errors.food_name ? errors.food_name.message : ''}
                                 />
                             )}
                         />
 
-                        <CustomText size='md' weight='heavy'>Niali gizi makanan</CustomText>
+                        <CustomText size='md' weight='heavy'>Nilai gizi makanan</CustomText>
                         <View style={styles.nutrientOuterContainer}>
                             <View style={styles.nutrientContainer}>
                                 <View style={styles.nutrientInnerLeftContainer}>
@@ -202,30 +259,32 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                     <>
                         <View style={styles.headerContainer}>
                             <CustomText size='xl' weight='heavy' style={{ flex: 2 }}>{formValue.food_name}</CustomText>
-                            <View style={styles.brandCotnainer}>
-                                <CustomText>{formValue.brand}</CustomText>
-                            </View>
+                            {formValue.type == 'auto' && (
+                                <View style={styles.brandCotnainer}>
+                                    <CustomText>{formValue.brand}</CustomText>
+                                </View>
+                            )}
                         </View>
                         <View style={styles.nutrientAutoOuterContainer}>
                             <View style={[styles.nutrientAutoContainer, { width: '100%' }]}>
                                 <Image source={require('@/assets/images/foods/calorie_icon.png')} style={styles.nutrientAutoIcon} />
                                 <Text style={styles.nutrientAutoTitle}>Kalori</Text>
-                                <Text style={styles.nutrientAutoText}>{formValue.calories} Kkal/Porsi</Text>
+                                <Text style={styles.nutrientAutoText}>{formatDecimalToFixed(calories)} Kkal/Porsi</Text>
                             </View>
                             <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
                                 <Image source={require('@/assets/images/foods/protein_icon.png')} style={styles.nutrientAutoIcon} />
                                 <CustomText size='sm' weight='heavy'>Protein</CustomText>
-                                <CustomText size='sm'>{formValue.protein} g</CustomText>
+                                <CustomText size='sm'>{formatDecimalToFixed(protein)} g</CustomText>
                             </View>
                             <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
                                 <Image source={require('@/assets/images/foods/carbohydrate_icon.png')} style={styles.nutrientAutoIcon} />
                                 <CustomText size='sm' weight='heavy'>Karbohidrat</CustomText>
-                                <CustomText size='sm'>{formValue.carbohydrate} g</CustomText>
+                                <CustomText size='sm'>{formatDecimalToFixed(carbohydrate)} g</CustomText>
                             </View>
                             <View style={[styles.nutrientAutoContainer, { width: '30%' }]}>
                                 <Image source={require('@/assets/images/foods/fat_icon.png')} style={styles.nutrientAutoIcon} />
                                 <CustomText size='sm' weight='heavy'>Lemak</CustomText>
-                                <CustomText size='sm'>{formValue.fat} g</CustomText>
+                                <CustomText size='sm'>{formatDecimalToFixed(fat)} g</CustomText>
                             </View>
                         </View>
                     </>
@@ -243,23 +302,23 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                         <Collapsible collapsed={showAdditional}>
                             <View style={styles.additionalItemContainer}>
                                 <CustomText size='sm'>Kolestrol</CustomText>
-                                <CustomText size='sm'>{formValue.cholestrol} mg</CustomText>
+                                <CustomText size='sm'>{cholestrol} mg</CustomText>
                             </View>
                             <View style={styles.additionalItemContainer}>
                                 <CustomText size='sm'>Fiber</CustomText>
-                                <CustomText size='sm'>{formValue.fiber} g</CustomText>
+                                <CustomText size='sm'>{fiber} g</CustomText>
                             </View>
                             <View style={styles.additionalItemContainer}>
                                 <CustomText size='sm'>Gula</CustomText>
-                                <CustomText size='sm'>{formValue.sugar} g</CustomText>
+                                <CustomText size='sm'>{formatDecimalToFixed(sugar)} g</CustomText>
                             </View>
                             <View style={styles.additionalItemContainer}>
                                 <CustomText size='sm'>Sodium</CustomText>
-                                <CustomText size='sm'>{formValue.sodium} mg</CustomText>
+                                <CustomText size='sm'>{sodium} mg</CustomText>
                             </View>
                             <View style={[styles.additionalItemContainer, { borderBottomWidth: 0 }]}>
                                 <CustomText size='sm'>Kalium</CustomText>
-                                <CustomText size='sm'>{formValue.kalium} mg</CustomText>
+                                <CustomText size='sm'>{kalium} mg</CustomText>
                             </View>
                         </Collapsible>
                     </View>
@@ -273,6 +332,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                             value={value}
                             onChange={onChange}
                             label='Pilih waktu'
+                            error={errors.time ? errors.time.message : ''}
                         />
                     )}
                 />
@@ -282,9 +342,10 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                     name='serving_qty'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
                         <CustomQuantityPicker
+                            widthSize={150}
                             qty={value}
                             size={serving_size}
-                            qtyData={getSizeData()}
+                            qtyData={getQtyData()}
                             sizeData={formValue.serving_size != '' ? [formValue.serving_size] : []}
                             onChangeQty={onChange}
                             onChangeSize={(v) => setValue('serving_size', v)}
@@ -308,7 +369,6 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                         />
                     )}
                 />
-
 
                 {children({ handleSubmit, disabled: !isDirty || !isValid })}
             </Wrapper>

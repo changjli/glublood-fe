@@ -28,6 +28,8 @@ export default function GlucoseLogDetailPage() {
         type: 'manual',
     })
     const [loading, setLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
 
     const handleGetGlucoseLogDetail = async (id: number) => {
         try {
@@ -53,7 +55,7 @@ export default function GlucoseLogDetailPage() {
 
     const handleUpdateGlucoseLog = async (payload: UpdateGlucoseLogReq) => {
         try {
-            const res = await updateGlucoseLog(setLoading, payload)
+            const res = await updateGlucoseLog(setUpdateLoading, payload)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -75,7 +77,7 @@ export default function GlucoseLogDetailPage() {
 
     const handleDeleteGlucoseLog = async (id: number) => {
         try {
-            const res = await deleteGlucoseLog(setLoading, id)
+            const res = await deleteGlucoseLog(setDeleteLoading, id)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -124,8 +126,8 @@ export default function GlucoseLogDetailPage() {
                                 title='Simpan perubahan'
                                 size='md'
                                 style={{ marginBottom: 10 }}
-                                disabled={disabled}
-                                loading={loading}
+                                disabled={disabled || deleteLoading}
+                                loading={updateLoading}
                                 onPress={handleSubmit(data => handleUpdateGlucoseLog({
                                     id: Number(id),
                                     ...data,
@@ -134,7 +136,8 @@ export default function GlucoseLogDetailPage() {
                             <CustomButton
                                 title='Hapus log'
                                 size='md'
-                                loading={loading}
+                                disabled={updateLoading}
+                                loading={deleteLoading}
                                 onPress={() => handleDeleteGlucoseLog(Number(id))}
                             />
                         </View>

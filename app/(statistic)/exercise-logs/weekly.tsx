@@ -22,10 +22,11 @@ export default function WeeklyExerciseLogStatisticPage() {
     const [exerciseLogReport, setExerciseLogReport] = useState<GetExerciseLogReportByDateRes[]>([])
     const [selectedDate, setSelectedDate] = useState<string | string[]>('')
     const [averageBurnedCalories, setAverageBurnedCalories] = useState(0)
+    const filterReport = exerciseLogReport.filter(exerciseLog => exerciseLog.avg_burned_calories != 0)
 
     const addDate = (date: string) => {
         const initialDate = new Date(date);
-        initialDate.setDate(initialDate.getDate() + 7);
+        initialDate.setDate(initialDate.getDate() + 6);
         const year = initialDate.getFullYear();
         const month = String(initialDate.getMonth() + 1).padStart(2, '0');
         const day = String(initialDate.getDate()).padStart(2, '0');
@@ -63,8 +64,8 @@ export default function WeeklyExerciseLogStatisticPage() {
     }, [selectedDate])
 
     useEffect(() => {
-        if (exerciseLogReport.length > 1) {
-            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / exerciseLogReport.length)
+        if (exerciseLogReport.length > 1 && filterReport.length > 0) {
+            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / filterReport.length)
         } else {
             setAverageBurnedCalories(0)
         }
@@ -80,8 +81,8 @@ export default function WeeklyExerciseLogStatisticPage() {
                     enableRangeInput={false}
                 />
 
-                <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText>Rata-rata Kalori Terbakar</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {exerciseLogReport.length > 1 ? (
@@ -104,11 +105,11 @@ export default function WeeklyExerciseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {exerciseLogReport.length > 1 ? (exerciseLogReport.map((exerciseLog, index) => (
+                {exerciseLogReport.length > 1 ? (filterReport.map((exerciseLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {exerciseLog.log_count}x</CustomText>
+                            <CustomText size='sm'>Jumlah aktivitas: {exerciseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateStringIntl(exerciseLog.date)}</CustomText>
                         </View>
                     </View>

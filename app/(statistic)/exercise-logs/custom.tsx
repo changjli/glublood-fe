@@ -28,6 +28,7 @@ export default function CustomExerciseLogStatisticPage() {
     const [exerciseLogReport, setExerciseLogReport] = useState<GetExerciseLogReportByDateRes[]>([])
     const [selectedDate, setSelectedDate] = useState<string | string[]>([])
     const [averageBurnedCalories, setAverageBurnedCalories] = useState(0)
+    const filterReport = exerciseLogReport.filter(exerciseLog => exerciseLog.avg_burned_calories != 0)
 
     const handleGetExerciseLogReportByDate = async () => {
         try {
@@ -59,8 +60,8 @@ export default function CustomExerciseLogStatisticPage() {
     }, [selectedDate])
 
     useEffect(() => {
-        if (exerciseLogReport.length > 1) {
-            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / exerciseLogReport.length)
+        if (exerciseLogReport.length > 1 && filterReport.length > 0) {
+            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / filterReport.length)
         } else {
             setAverageBurnedCalories(0)
         }
@@ -76,8 +77,8 @@ export default function CustomExerciseLogStatisticPage() {
                     enableRangeInput={true}
                 />
 
-                <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText>Rata-rata Kalori Terbakar</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {exerciseLogReport.length > 1 ? (
@@ -102,11 +103,11 @@ export default function CustomExerciseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {exerciseLogReport.length > 1 ? (exerciseLogReport.map((exerciseLog, index) => (
+                {exerciseLogReport.length > 1 ? (filterReport.map((exerciseLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {exerciseLog.log_count}x</CustomText>
+                            <CustomText size='sm'>Jumlah aktivitas: {exerciseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateStringIntl(exerciseLog.date)}</CustomText>
                         </View>
                     </View>

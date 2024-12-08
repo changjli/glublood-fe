@@ -22,10 +22,11 @@ export default function WeeklyGlucoseLogStatisticPage() {
     const [glucoseLogReport, setGlucoseLogReport] = useState<GetGlucoseLogReportByDateRes[]>([])
     const [selectedDate, setSelectedDate] = useState<string | string[]>('')
     const [averageGlucoseRate, setAverageGlucoseRate] = useState(0)
+    const filterReport = glucoseLogReport.filter(glucoseLog => glucoseLog.avg_glucose_rate != 0)
 
     const addDate = (date: string) => {
         const initialDate = new Date(date);
-        initialDate.setDate(initialDate.getDate() + 7);
+        initialDate.setDate(initialDate.getDate() + 6);
         const year = initialDate.getFullYear();
         const month = String(initialDate.getMonth() + 1).padStart(2, '0');
         const day = String(initialDate.getDate()).padStart(2, '0');
@@ -63,8 +64,8 @@ export default function WeeklyGlucoseLogStatisticPage() {
     }, [selectedDate])
 
     useEffect(() => {
-        if (glucoseLogReport.length > 1) {
-            setAverageGlucoseRate(glucoseLogReport.reduce((acc, glr) => acc + glr.avg_glucose_rate, 0) / glucoseLogReport.length)
+        if (glucoseLogReport.length > 1 && filterReport.length > 0) {
+            setAverageGlucoseRate(glucoseLogReport.reduce((acc, glr) => acc + glr.avg_glucose_rate, 0) / filterReport.length)
         } else {
             setAverageGlucoseRate(0)
         }
@@ -80,8 +81,8 @@ export default function WeeklyGlucoseLogStatisticPage() {
                     enableRangeInput={false}
                 />
 
-                <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageGlucoseRate).toFixed(2)} Kalori</CustomText>
+                <CustomText>Rata-rata catatan glukosa</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageGlucoseRate).toFixed(2)} mg/dL</CustomText>
             </Wrapper>
 
             {glucoseLogReport.length > 1 ? (
@@ -104,11 +105,11 @@ export default function WeeklyGlucoseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {glucoseLogReport.length > 1 ? (glucoseLogReport.map((glucoseLog, index) => (
+                {glucoseLogReport.length > 1 ? (filterReport.map((glucoseLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} mg/dL`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {glucoseLog.log_count}x</CustomText>
+                            <CustomText size='sm'>Jumlah pengambilan: {glucoseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{formatDateStringIntl(glucoseLog.date)}</CustomText>
                         </View>
                     </View>

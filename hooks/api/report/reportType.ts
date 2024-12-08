@@ -6,3 +6,12 @@ type GetLogReportByDateReq = {
     glucose_log: boolean
     medicine_log: boolean
 }
+
+type GetLogReportByDateRes = {
+    "date": string,
+    "description": string,
+    "avg_calories"?: number,
+    "avg_burned_calories"?: number,
+    "avg_glucose_rate"?: number,
+    "medicine_details"?: string
+}

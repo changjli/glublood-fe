@@ -1,8 +1,11 @@
-import { View, Text, StyleSheet, ViewProps } from 'react-native'
+import { View, Text, StyleSheet, ViewProps, TouchableOpacity } from 'react-native'
 import React from 'react'
 import CustomText from './CustomText'
 import { Colors } from '@/constants/Colors'
 import Wrapper from './Layout/Wrapper'
+import { Ionicons } from '@expo/vector-icons'
+import { FontSize } from '@/constants/Typography'
+import { router } from 'expo-router'
 
 interface CustomProgressBarProps extends ViewProps {
     current: number
@@ -11,12 +14,13 @@ interface CustomProgressBarProps extends ViewProps {
 
 export default function CustomProgressBar({ current, total, ...rest }: CustomProgressBarProps) {
     return (
-        <Wrapper style={{ backgroundColor: Colors.light.primary, padding: 16 }} {...rest}>
+        <View style={{ backgroundColor: Colors.light.primary, padding: 16 }} {...rest}>
+            <Ionicons name='arrow-back' size={FontSize['2xl']} color={'white'} onPress={() => router.back()} />
             <CustomText size='md' weight='heavy' style={{ color: 'white' }}>Pertanyaan {current} dari {total}</CustomText>
             <View style={styles.progressContainer}>
                 <View style={[styles.innerProgressContainer, { width: `${(current / total) * 100}%` }]}></View>
             </View>
-        </Wrapper>
+        </View>
     )
 }
 

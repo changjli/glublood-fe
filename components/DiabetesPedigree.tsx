@@ -3,19 +3,29 @@ import React from 'react'
 import CustomButton from '@/components/CustomButton'
 import { FontSize, FontFamily } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
+import CustomText from '@/components/CustomText'
 
 type DiabetesPedigreeProps = {
     question: string,
     value: number | string,
+    description?: string,
     onChange: (e: number) => void,
 }
 
-export default function DiabetesPedigree({ question, value, onChange }: DiabetesPedigreeProps) {
+export default function DiabetesPedigree({ question, value, description = '', onChange }: DiabetesPedigreeProps) {
     return (
         <View>
-            <Text style={styles.question}>
+            <Text style={[styles.question, description == '' && { marginBottom: 16 }]}>
                 {question}
             </Text>
+
+            {description != '' && (
+                <View style={{ marginBottom: 16 }}>
+                    <View>
+                        <CustomText size='sm'>{description}</CustomText>
+                    </View>
+                </View>
+            )}
 
             <View className='flex-row justify-between gap-4'>
                 <Pressable
@@ -107,7 +117,6 @@ const styles = StyleSheet.create({
     question: {
         fontSize: FontSize.xl,
         fontFamily: FontFamily.heavy,
-        marginBottom: 36,
     },
     answerContainer: {
         flex: 1,

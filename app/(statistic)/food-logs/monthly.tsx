@@ -24,6 +24,7 @@ export default function MonthlyFoodLogStatisticPage() {
     const [month, setMonth] = useState(date.getMonth())
     const [year, setyear] = useState(date.getFullYear())
     const [averageCalories, setAverageCalories] = useState(0)
+    const filterReport = foodLogReport.filter(foodLog => foodLog.avg_calories != 0)
 
     const handleGetFoodLogReport = async () => {
         try {
@@ -53,8 +54,8 @@ export default function MonthlyFoodLogStatisticPage() {
     }, [month, year])
 
     useEffect(() => {
-        if (foodLogReport.length > 1) {
-            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / foodLogReport.length)
+        if (foodLogReport.length > 1 && filterReport.length > 0) {
+            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / filterReport.length)
         } else {
             setAverageCalories(0)
         }
@@ -72,7 +73,7 @@ export default function MonthlyFoodLogStatisticPage() {
                 />
 
                 <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {foodLogReport.length > 1 &&
@@ -84,7 +85,7 @@ export default function MonthlyFoodLogStatisticPage() {
                     renderLabel={(value, index) => {
                         const dateRange = value.split('~')
 
-                        return ['Minggu', resolveNumberToString(index as number), formatDateStripToSlash(dateRange[0]), formatDateStripToSlash(dateRange[1])]
+                        return [`Minggu ${index! + 1}`, formatDateStripToSlash(dateRange[0])]
                     }}
                 />
             }
@@ -92,9 +93,9 @@ export default function MonthlyFoodLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {foodLogReport.map((foodLog, index) => (
+                {filterReport.map((foodLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
                             <CustomText size='sm'>{`Minggu ${resolveNumberToString(index)}`}</CustomText>

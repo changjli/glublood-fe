@@ -201,9 +201,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                     </View>
                 </View>
             </Wrapper>
-            {(registerLoading || loginLoading || sendCodeLoading) && (
-                <Loader />
-            )}
+            <Loader visible={registerLoading || loginLoading || sendCodeLoading} />
         </View>
     )
 }

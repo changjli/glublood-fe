@@ -24,6 +24,7 @@ export default function MonthlyExerciseLogStatisticPage() {
     const [month, setMonth] = useState(date.getMonth())
     const [year, setyear] = useState(date.getFullYear())
     const [averageBurnedCalories, setAverageBurnedCalories] = useState(0)
+    const filterReport = exerciseLogReport.filter(exerciseLog => exerciseLog.avg_burned_calories != 0)
 
     const handleGetExerciseLogReport = async () => {
         try {
@@ -53,8 +54,8 @@ export default function MonthlyExerciseLogStatisticPage() {
     }, [month, year])
 
     useEffect(() => {
-        if (exerciseLogReport.length > 1) {
-            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / exerciseLogReport.length)
+        if (exerciseLogReport.length > 1 && filterReport.length > 0) {
+            setAverageBurnedCalories(exerciseLogReport.reduce((acc, elr) => acc + elr.avg_burned_calories, 0) / filterReport.length)
         } else {
             setAverageBurnedCalories(0)
         }
@@ -71,8 +72,8 @@ export default function MonthlyExerciseLogStatisticPage() {
                     setyear={setyear}
                 />
 
-                <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText>Rata-rata Kalori Terbakar</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageBurnedCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {exerciseLogReport.length > 1 &&
@@ -84,7 +85,7 @@ export default function MonthlyExerciseLogStatisticPage() {
                     renderLabel={(value, index) => {
                         const dateRange = value.split('~')
 
-                        return ['Minggu', resolveNumberToString(index as number), formatDateStripToSlash(dateRange[0]), formatDateStripToSlash(dateRange[1])]
+                        return [`Minggu ${index! + 1}`, formatDateStripToSlash(dateRange[0])]
                     }}
                 />
             }
@@ -92,11 +93,11 @@ export default function MonthlyExerciseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {exerciseLogReport.map((exerciseLog, index) => (
+                {filterReport.map((exerciseLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <CustomText size='sm'>Jumlah asupan: {exerciseLog.log_count}x</CustomText>
+                            <CustomText size='sm'>Jumlah aktivitas: {exerciseLog.log_count}x</CustomText>
                             <CustomText size='sm'>{`Minggu ${resolveNumberToString(index)}`}</CustomText>
                         </View>
                     </View>

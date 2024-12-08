@@ -42,6 +42,8 @@ export default function FoodLogDetailPage() {
     const [formValue, setFormValue] = useState<PostFoodLogRequest>(emptyFormValue)
 
     const [getLoading, setGetLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
 
     const handleGetFoodLogDetail = async (id: number) => {
         try {
@@ -75,18 +77,22 @@ export default function FoodLogDetailPage() {
             const formData = new FormData()
             formData.append('payload', JSON.stringify(payload))
             if (payload.img) {
-                const fileResponse = await fetch(payload.img);
-                const fileBlob = await fileResponse.blob();
+                try {
+                    const fileResponse = await fetch(payload.img);
+                    const fileBlob = await fileResponse.blob();
 
-                formData.append('food_image', {
-                    uri: payload.img,
-                    name: 'filename.jpeg',
-                    type: fileBlob.type || 'image/jpeg',
-                } as any);
+                    formData.append('food_image', {
+                        uri: payload.img,
+                        name: 'filename.jpeg',
+                        type: fileBlob.type || 'image/jpeg',
+                    } as any);
+                } catch (err) {
+                    console.log(err)
+                }
             }
 
             console.log("payload", formData)
-            const res = await updateFoodLog(setGetLoading, Number(id), formData)
+            const res = await updateFoodLog(setUpdateLoading, Number(id), formData)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -108,7 +114,7 @@ export default function FoodLogDetailPage() {
 
     const handleDeleteFoodLog = async (id: number) => {
         try {
-            const res = await deleteFoodLog(setGetLoading, id)
+            const res = await deleteFoodLog(setDeleteLoading, id)
             router.navigate('/(tabs)/(notes)')
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -141,16 +147,20 @@ export default function FoodLogDetailPage() {
                     <CustomButton
                         title='Simpan catatan'
                         size='md'
-                        disabled={disabled}
+                        disabled={disabled || deleteLoading}
                         onPress={handleSubmit(data => handleUpdateFoodLog(data))}
+                        loading={updateLoading}
                     />
 
                     <CustomButton
                         title='Hapus log'
                         size='md'
+                        type='delete'
                         onPress={() => {
                             handleDeleteFoodLog(Number(id))
                         }}
+                        disabled={updateLoading}
+                        loading={deleteLoading}
                     />
                 </>
             )}

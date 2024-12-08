@@ -30,7 +30,7 @@ export default function HomePage() {
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
     const [dailyCalories, setDailyCalories] = useState<GetDailyCaloriesResponse | null>(null)
-    const [dailyBurnedCalories, setDailyBurnedCalories] = useState(null)
+    const [dailyBurnedCalories, setDailyBurnedCalories] = useState<{ avg_burned_calories: number } | null>(null)
     const [getAllFoodMenuLoading, setGetAllFoodMenuLoading] = useState(false)
     const [getDailyCaloriesLoading, setGetDailyCaloriesLoading] = useState(false)
     const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] = useState(false)
@@ -144,6 +144,9 @@ export default function HomePage() {
             if (dailyCaloriesCircularProgressRef.current) {
                 dailyCaloriesCircularProgressRef.current.animate(dailyCalories.consumed_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
             }
+            if (dailyBurnedCaloriesCircularProgressRef.current) {
+                dailyBurnedCaloriesCircularProgressRef.current.animate(dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100, 500, Easing.quad)
+            }
         }
     }, [dailyCalories])
 
@@ -204,6 +207,7 @@ export default function HomePage() {
         </View>
     );
 
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <ScrollView>
@@ -229,7 +233,7 @@ export default function HomePage() {
                             ref={dailyBurnedCaloriesCircularProgressRef}
                             size={170}
                             width={20}
-                            fill={0}
+                            fill={dailyCalories && dailyBurnedCalories ? dailyBurnedCalories.avg_burned_calories / dailyCalories.target_calories * 100 : 0}
                             tintColor={'rgba(171,0,0,1)'}
                             onAnimationComplete={() => console.log('onAnimationComplete')}
                             backgroundColor={'rgba(171,0,0,0.2)'}
@@ -373,6 +377,7 @@ export default function HomePage() {
                     <TouchableOpacity onPress={() => router.push('/ble')}>
                         <Image source={require('@/assets/images/static/content-accu-check.png')} style={{ width: '100%', height: 125, borderRadius: 16 }} />
                     </TouchableOpacity>
+                    <CustomButton title='Diabetes prediction' onPress={() => router.push('/prediction')} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>

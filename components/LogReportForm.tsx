@@ -15,6 +15,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontSize } from '@/constants/Typography';
 import useProfile from '@/hooks/api/profile/useProfile';
 import generateHtml from '@/utils/generateHtml';
+import Loader from './Loader';
 
 interface SelectedOptions {
     [key: string]: boolean
@@ -30,10 +31,6 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
     const { getLogReportByDate } = useReport()
     const { fetchUserProfile } = useProfile()
 
-    const [loading, setLoading] = useState({
-        getLogReportByDate: false,
-        getUserProfile: false,
-    })
     const [selectedDate, setSelectedDate] = useState<string | string[]>([])
     const [options, setOptions] = useState([
         {
@@ -41,11 +38,11 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
             label: 'glucose_log',
             value: false,
         },
-        {
-            title: 'Obats',
-            label: 'medicine',
-            value: false
-        },
+        // {
+        //     title: 'Obat',
+        //     label: 'medicine_log',
+        //     value: false
+        // },
         {
             title: 'Olahraga',
             label: 'exercise_log',
@@ -61,6 +58,9 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
         acc[option.label] = option.value
         return acc
     }, {} as SelectedOptions))
+    const [disabled, setDisabled] = useState(true)
+    const [getProfileLoading, setGetProfileLoading] = useState(false)
+    const [downloadLoading, setDownloadLoading] = useState(false)
 
     const handleGetLogReportByDate = async () => {
         try {
@@ -75,7 +75,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
 
             console.log(payload)
 
-            const res = await getLogReportByDate(() => setLoading({ ...loading, getLogReportByDate: true }), payload)
+            const res = await getLogReportByDate(setDownloadLoading, payload)
             return res.data
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -98,7 +98,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
 
     const handleGetUserProfile = async () => {
         try {
-            const res = await fetchUserProfile(() => setLoading({ ...loading, getUserProfile: true }))
+            const res = await fetchUserProfile(setGetProfileLoading)
             return res.data
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -120,7 +120,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
     }
 
     const handleDownloadOrShare = async (type: string) => {
-        const logReports = await handleGetLogReportByDate()
+        const logReports = await handleGetLogReportByDate() as GetLogReportByDateRes[]
         const userProfile = await handleGetUserProfile()
 
         if (type == 'download') {
@@ -130,42 +130,54 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
         }
     }
 
+    useEffect(() => {
+        if (Object.keys(selectedOptions).find(key => selectedOptions[key]) && startDate != '' && endDate != '') {
+            setDisabled(false)
+        } else {
+            setDisabled(true)
+        }
+    }, [selectedOptions, startDate, endDate])
+
     return (
         <>
+            <Loader visible={downloadLoading} />
             <View style={{ marginVertical: 20 }}>
                 <CustomText weight='heavy'>Pilih Data yang Diinginkan</CustomText>
-                {options.map((option, idx) => (
-                    <View
-                        style={[
-                            styles.checkboxItemContainer,
-                            idx == 0 && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
-                            idx == options.length - 1 && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 }
-                        ]}
-                        id={String(idx)}
-                    >
-                        <CustomText>{option.title}</CustomText>
-                        <Checkbox
-                            style={styles.checkbox}
-                            value={selectedOptions[option.label]}
-                            onValueChange={() => {
-                                const temp = { ...selectedOptions }
-                                temp[option.label] = !selectedOptions[option.label]
-                                setSelectedOptions(temp)
-                            }}
-                            color={selectedOptions[option.label] ? Colors.light.primary : undefined}
-                        />
-                    </View>
-                ))}
+                <View style={styles.checkBoxContainer}>
+                    {options.map((option, idx) => (
+                        <View
+                            style={[
+                                styles.checkboxItemContainer,
+                                idx == 0 && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+                                idx == options.length - 1 && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 }
+                            ]}
+                            id={String(idx)}
+                        >
+                            <CustomText>{option.title}</CustomText>
+                            <Checkbox
+                                style={styles.checkbox}
+                                value={selectedOptions[option.label]}
+                                onValueChange={() => {
+                                    const temp = { ...selectedOptions }
+                                    temp[option.label] = !selectedOptions[option.label]
+                                    setSelectedOptions(temp)
+                                }}
+                                color={selectedOptions[option.label] ? Colors.light.primary : undefined}
+                            />
+                        </View>
+                    ))}
+                </View>
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <CustomText weight='heavy'>Data Kesehatan</CustomText>
-                <TouchableOpacity>
-                    <FontAwesome name='share' size={FontSize.md} color={Colors.light.primary} onPress={() => handleDownloadOrShare('share')} />
-                </TouchableOpacity>
+                <FontAwesome name='share' size={FontSize.md} color={disabled ? Colors.light.gray400 : Colors.light.primary} onPress={!disabled ? () => handleDownloadOrShare('share') : undefined} />
             </View>
-            <TouchableOpacity style={styles.downloadContainer} onPress={() => handleDownloadOrShare('download')}>
-                <FontAwesome name='download' size={FontSize['2xl']} color={Colors.light.primary} />
+            <TouchableOpacity style={[
+                styles.downloadContainer,
+                { borderColor: disabled ? Colors.light.gray400 : Colors.light.primary }
+            ]} onPress={!disabled ? () => handleDownloadOrShare('download') : undefined}>
+                <FontAwesome name='download' size={FontSize['2xl']} color={disabled ? Colors.light.gray300 : Colors.light.primary} />
                 <CustomText size='sm' style={{ color: Colors.light.gray400 }}>Tekan untuk mengunduh data dalam format .pdf</CustomText>
             </TouchableOpacity>
         </>
@@ -173,14 +185,19 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
 }
 
 const styles = StyleSheet.create({
+    checkBoxContainer: {
+        backgroundColor: 'white',
+        elevation: 3,
+        borderRadius: 20,
+    },
     checkboxItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: Colors.light.darkOrange50,
+        alignItems: 'center',
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderColor: Colors.light.gray500,
+        borderColor: Colors.light.gray300,
     },
     checkbox: {
         borderColor: Colors.light.primary,
@@ -192,7 +209,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: Colors.light.primary,
         borderRadius: 8,
     },
 })
