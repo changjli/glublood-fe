@@ -15,6 +15,7 @@ export type CustomTextInputProps = TextInputProps & {
     postfix?: React.ReactNode
     containerStyle?: StyleProp<ViewStyle>
     textStyle?: StyleProp<TextStyle>
+    keyboardType?: string,
 }
 
 export default function CustomTextInput({
@@ -26,6 +27,7 @@ export default function CustomTextInput({
     containerStyle,
     style,
     onChangeText,
+    keyboardType = 'default',
     ...rest
 }: CustomTextInputProps) {
     const isError = error != null && error != ''
@@ -67,6 +69,7 @@ export default function CustomTextInput({
                     onBlur={() => setIsFocus(!isFocus)}
                     onChangeText={onChangeText}
                     style={[styles.innerContainer, style]}
+                    keyboardType={keyboardType}
                     {...rest}
                 />
                 {

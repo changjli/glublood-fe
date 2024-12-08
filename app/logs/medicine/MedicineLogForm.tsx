@@ -53,13 +53,15 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     control={control}
                     name='name'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <CustomTextInput
-                            label='Nama Obat'
-                            placeholder='Cth: Insulin'
-                            value={value}
-                            onChangeText={onChange}
-                            error={errors.name ? errors.name.message : ''}
-                        />
+                        <View style={{ marginBottom: 10 }}>
+                            <CustomTextInput
+                                label='Nama Obat'
+                                placeholder='Cth: Insulin'
+                                value={value}
+                                onChangeText={onChange}
+                                error={errors.name ? errors.name.message : ''}
+                            />
+                        </View>
                     )}
                 />
 
@@ -67,12 +69,14 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     control={control}
                     name='time'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <CustomTimePicker
-                            value={value}
-                            onChange={onChange}
-                            label='Pilih waktu'
-                            error={errors.time ? errors.time.message : ''}
-                        />
+                        <View style={{ marginBottom: 10 }}>
+                            <CustomTimePicker
+                                value={value}
+                                onChange={onChange}
+                                label='Pilih waktu'
+                                error={errors.time ? errors.time.message : ''}
+                            />
+                        </View>
                     )}
                 />
 
@@ -80,7 +84,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                     control={control}
                     name='amount'
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <>
+                        <View style={{ marginBottom: 10 }}>
                             <Text style={styles.labelText}>Dosis</Text>
                             <CustomQuantityPicker
                                 qty={value}
@@ -92,7 +96,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                                 isDecimal={true}
                                 others={true}
                             />
-                        </>
+                        </View>
                     )}
                 />
 

@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     },
     iconStyle: {
         color: 'white',
-        fontSize: 24,
+        fontSize: 40,
     },
     textStyle: {
         color: 'white',

@@ -9,6 +9,7 @@ import useGlucoseLog from '@/hooks/api/logs/glucose/useGlucoseLog';
 import GlucoseLogForm from './GlucoseLogForm';
 import Wrapper from '@/components/Layout/Wrapper';
 import CustomHeader from '@/components/CustomHeader';
+import CustomButtonNew from '@/components/CustomButtonNew';
 
 export default function AddGlucoseLog() {
     const { storeGlucoseLog } = useGlucoseLog()
@@ -68,11 +69,13 @@ export default function AddGlucoseLog() {
                     setFormValue={setFormValue}
                 >
                     {({ handleSubmit, disabled }) => (
-                        <CustomButton
-                            title='+ Simpan catatan'
-                            size='md'
+                        <CustomButtonNew
+                            store={true}
+                            imgSrc={require('@/assets/images/icons/plus.png')}
+                            label='Simpan Catatan'
+                            onPress={handleSubmit((data) => handleStoreGlucoseLog(data))}
                             disabled={disabled}
-                            onPress={handleSubmit((data) => handleStoreGlucoseLog(data))} />
+                        />
                     )}
                 </GlucoseLogForm>
             </Wrapper>

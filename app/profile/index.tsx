@@ -4,12 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 import useProfile from '@/hooks/api/profile/useProfile';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import DynamicTextComponent from '@/components/DynamicText';
+import { useSession } from "../context/AuthenticationProvider";
 
 export default function index() {
+    const { signOut, session } = useSession();
     const { fetchUserProfile } = useProfile()
     const [fetchLoading, setFetchLoading] = useState(false)
     const [profileData, setProfileData] = useState(null)
-    const [visibleModal, setVisibleModal] = useState(true)
+    const [visibleModal, setVisibleModal] = useState(false)
     const [image, setImage] = useState<string | null>(null);
 
     useEffect(() => {
@@ -56,7 +59,6 @@ export default function index() {
         }
     }
 
-
     return (
         profileData ?
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -64,464 +66,498 @@ export default function index() {
                     style={{
                         width: '100%',
                         height: '100%',
-                        paddingHorizontal: 16,
-                        paddingVertical: 16,
-                        display: 'flex',
-                        backgroundColor: 'bg',
+                        backgroundColor: 'white',
+                        display: 'flex', 
+                        justifyContent: 'space-between'
                     }}
                 >
-                    <Modal
-                        transparent={true}
-                        visible={visibleModal}
-                        animationType="fade"
+                    <View
                         style={{
-                            backgroundColor: 'black'
+                            width: '100%',
+                            display: 'flex',
                         }}
                     >
-                        <View
+                        <DynamicTextComponent
+                            text='Profil'
+                            img={require('@/assets/images/backgrounds/bg-profile.png')}
+                            back={true}
+                            style={{ height: 220 }}
+                        />
+                        <Modal
+                            transparent={true}
+                            visible={visibleModal}
+                            animationType="fade"
                             style={{
-                                width: '100%',
-                                height: '100%',
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                backgroundColor: 'black'
                             }}
                         >
                             <View
                                 style={{
-                                    margin: 'auto',
-                                    paddingHorizontal: 10,
-                                    width: 250,
-                                    borderRadius: 20,
-                                    backgroundColor: 'white',
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
                                 }}
                             >
                                 <View
                                     style={{
-                                        marginTop: 10,
-                                        marginBottom: 15,
-                                        width: '100%',
+                                        margin: 'auto',
+                                        paddingHorizontal: 10,
+                                        width: 250,
+                                        borderRadius: 20,
+                                        backgroundColor: 'white',
+                                    }}
+                                >
+                                    <View
+                                        style={{
+                                            marginTop: 10,
+                                            marginBottom: 15,
+                                            width: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'flex-end',
+                                            alignContent: 'center',
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                marginRight: 35,
+                                                paddingTop: 10,
+                                                fontSize: 20,
+                                                fontFamily: 'Helvetica-Bold',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            Foto Profil
+                                        </Text>
+                                        <TouchableOpacity onPress={() => setVisibleModal(false)}>
+                                            <Ionicons name={'close-outline'} size={30} className='text-center' />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View
+                                        style={{
+                                            marginBottom: 20,
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-around',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <TouchableOpacity
+                                            style={{
+                                                marginLeft: 20,
+                                                paddingHorizontal: 15,
+                                                paddingBottom: 10,
+                                                backgroundColor: '#FFF8E1',
+                                                borderRadius: 10,
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            }}
+                                            onPress={() => uploadImage()}
+                                        >
+                                            <Ionicons name={'camera'} size={30} className='mt-2' color={'#DA6E35'} />
+                                            <Text>Camera</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{
+                                                marginRight: 20,
+                                                paddingHorizontal: 15,
+                                                paddingBottom: 10,
+                                                backgroundColor: '#FFF8E1',
+                                                borderRadius: 10,
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            <Ionicons name={'image'} size={30} className='mt-2' color={'#DA6E35'} />
+                                            <Text>Image</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
+
+                        {/* Profile Image */}
+                        <View
+                            style={{
+                                position: 'relative',
+                                marginTop: -55,
+                                marginBottom: 15,
+                                marginLeft: 14,
+                                width: 130,
+                            }}
+                        >
+                            <Image
+                                source={image ? { uri: image } : require('@/assets/images/user-profile/dummy.png')}
+                                style={{
+                                    width: 110,
+                                    height: 110,
+                                    borderColor: '#EEEEEE',
+                                    borderWidth: 4,
+                                    borderRadius: 70,
+                                }}
+                            />
+                            <TouchableOpacity
+                                style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    right: 0,
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 20,
+                                    backgroundColor: 'white',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                                onPress={() => setVisibleModal(true)}
+                            >
+                                <Ionicons name="camera-outline" color='#DD6A19' size={26} className='text-center' />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* general info container */}
+                        <View
+                            style={{
+                                marginHorizontal: 'auto',
+                                padding: 15,
+                                width: '90%',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                borderColor: '#DA6E35',
+                            }}
+                        >
+                            <View className='flex flex-row justify-space-between'>
+                                <View
+                                    style={{
+                                        width: '60%',
                                         display: 'flex',
                                         flexDirection: 'row',
-                                        justifyContent: 'flex-end',
+                                        justifyContent: 'flex-start',
                                         alignContent: 'center',
                                     }}
                                 >
                                     <Text
                                         style={{
-                                            marginRight: 35,
-                                            paddingTop: 10,
+                                            marginRight: 5,
                                             fontSize: 20,
                                             fontFamily: 'Helvetica-Bold',
-                                            textAlign: 'center'
                                         }}
                                     >
-                                        Foto Profil
+                                        {profileData['firstname']} {profileData['lastname']}
                                     </Text>
-                                    <TouchableOpacity onPress={() => setVisibleModal(false)}>
-                                        <Ionicons name={'close-outline'} size={30} className='text-center' />
-                                    </TouchableOpacity>
+                                    <Ionicons name={profileData['gender'] === "male" ? 'male-outline' : 'female-outline'} size={20} className='mt-2' />
                                 </View>
-                                <View
+                                <TouchableOpacity
                                     style={{
-                                        marginBottom: 20,
+                                        marginLeft: 'auto',
+                                        paddingHorizontal: 15,
+                                        paddingVertical: 6,
+                                        borderWidth: 1,
+                                        borderColor: '#DA6E35',
+                                        borderRadius: 7,
                                         display: 'flex',
                                         flexDirection: 'row',
-                                        justifyContent: 'space-around',
-                                        alignItems: 'center'
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}
+                                    onPress={() => router.navigate('/profile/edit-profile')}
+                                >
+                                    <Ionicons name="pencil" color='#DA6E35' size={16} className='text-center' />
+                                    <Text
+                                        style={{
+                                            marginLeft: 5,
+                                            color: '#DA6E35',
+                                            fontSize: 12,
+                                            fontFamily: 'Helvetica-Bold',
+                                        }}
+                                    >
+                                        Edit
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View className='mt-2'>
+                                <Text
+                                    style={{
+                                        marginRight: '60%',
+                                        paddingHorizontal: 13,
+                                        paddingVertical: 8,
+                                        backgroundColor: '#FFF8E1',
+                                        borderRadius: 12,
+                                        color: '#DA6E35',
+                                        fontSize: 16,
+                                        fontFamily: 'Helvetica-Bold',
+                                        textAlign: 'center',
                                     }}
                                 >
-                                    <TouchableOpacity
+                                    {profileData['is_diabetes'] ? 'Terindikasi' : 'Non-Diabetes'}
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                    marginTop: 20,
+                                    paddingHorizontal: 10,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <View>
+                                    <View
                                         style={{
-                                            marginLeft: 20,
-                                            paddingHorizontal: 15,
-                                            paddingBottom: 10,
-                                            backgroundColor: '#FFF8E1',
-                                            borderRadius: 10,
                                             display: 'flex',
-                                            alignItems: 'center'
-                                        }}
-                                        onPress={() => uploadImage()}
-                                    >
-                                        <Ionicons name={'camera'} size={30} className='mt-2' color={'#DA6E35'} />
-                                        <Text>Camera</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={{
-                                            marginRight: 20,
-                                            paddingHorizontal: 15,
-                                            paddingBottom: 10,
-                                            backgroundColor: '#FFF8E1',
-                                            borderRadius: 10,
-                                            display: 'flex',
+                                            flexGrow: 1,
+                                            flexDirection: 'row',
                                             alignItems: 'center'
                                         }}
                                     >
-                                        <Ionicons name={'image'} size={30} className='mt-2' color={'#DA6E35'} />
-                                        <Text>Image</Text>
-                                    </TouchableOpacity>
+                                        <Text
+                                            style={{
+                                                fontSize: 24,
+                                                fontFamily: 'Helvetica-Bold',
+                                            }}
+                                        >
+                                            {profileData['age']}
+                                        </Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontFamily: 'Helvetica',
+                                            }}
+                                        > tahun</Text>
+                                    </View>
+                                    <Text
+                                        style={{
+                                            marginTop: -7,
+                                            fontSize: 12,
+                                            fontFamily: 'Helvetica',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Umur
+                                    </Text>
+                                </View>
+                                <View>
+                                    <View
+                                        style={{
+                                            display: 'flex',
+                                            flexGrow: 1,
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                fontSize: 24,
+                                                fontFamily: 'Helvetica-Bold',
+                                            }}
+                                        >
+                                            {Math.floor(profileData['height'])}
+                                        </Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontFamily: 'Helvetica',
+                                            }}
+                                        > cm</Text>
+                                    </View>
+                                    <Text
+                                        style={{
+                                            marginTop: -7,
+                                            fontSize: 12,
+                                            fontFamily: 'Helvetica',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Tinggi
+                                    </Text>
+                                </View>
+                                <View>
+                                    <View
+                                        style={{
+                                            display: 'flex',
+                                            flexGrow: 1,
+                                            flexDirection: 'row',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <Text
+                                            style={{
+                                                fontSize: 24,
+                                                fontFamily: 'Helvetica-Bold',
+                                            }}
+                                        >
+                                            {Math.floor(profileData['weight'])}
+                                        </Text>
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontFamily: 'Helvetica',
+                                            }}
+                                        > kg</Text>
+                                    </View>
+                                    <Text
+                                        style={{
+                                            marginTop: -7,
+                                            fontSize: 12,
+                                            fontFamily: 'Helvetica',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Berat
+                                    </Text>
                                 </View>
                             </View>
                         </View>
-                    </Modal>
-                    <View
-                        style={{
-                            position: 'relative',
-                            marginBottom: 30,
-                            width: 130,
-                        }}
-                    >
-                        <Image
-                            source={image ? { uri: image } : require('@/assets/images/user-profile/dummy.png')}
-                            style={{
-                                width: 130,
-                                height: 130,
-                                borderColor: '#EEEEEE',
-                                borderWidth: 4,
-                                borderRadius: 75,
-                            }}
-                        />
+
+                        {/* button prediction history */}
                         <TouchableOpacity
                             style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                right: 0,
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                                backgroundColor: 'white',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
+                                marginTop: 20,
+                                paddingHorizontal: 25,
+                                backgroundColor: '#FAFAFA',
                             }}
-                            onPress={() => setVisibleModal(true)}
                         >
-                            <Ionicons name="camera-outline" color='#DD6A19' size={26} className='text-center' />
-                        </TouchableOpacity>
-                    </View>
-                    {/* general info container */}
-                    <View
-                        style={{
-                            padding: 15,
-                            width: '100%',
-                            borderWidth: 1,
-                            borderRadius: 6,
-                            borderColor: '#DA6E35',
-                        }}
-                    >
-                        <View className='flex flex-row justify-space-between'>
                             <View
                                 style={{
-                                    width: '60%',
+                                    paddingVertical: 10,
+                                    borderBottomColor: '#DBDFEA',
+                                    borderBottomWidth: 1,
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    alignContent: 'center',
+                                    alignItems: 'center',
                                 }}
                             >
                                 <Text
                                     style={{
-                                        marginRight: 5,
-                                        fontSize: 20,
-                                        fontFamily: 'Helvetica-Bold',
+                                        padding: 7,
+                                        backgroundColor: '#F09F47',
+                                        borderRadius: 7,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignContent: 'center',
                                     }}
                                 >
-                                    {profileData['firstname']} {profileData['lastname']}
+                                    <Ionicons name="timer-outline" color='#FFFFFF' size={20} className='text-center' />
                                 </Text>
-                                <Ionicons name={profileData['gender'] === "male" ? 'male-outline' : 'female-outline'} size={20} className='mt-2' />
+                                <Text className='ml-3 text-[16px] font-helvetica'>Histori Prediksi</Text>
+                                <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
                             </View>
-                            <TouchableOpacity
+                        </TouchableOpacity>
+
+                        {/* button daftar simpan menu */}
+                        <TouchableOpacity
+                            style={{
+                                paddingHorizontal: 25,
+                                backgroundColor: '#FAFAFA',
+                            }}
+                        >
+                            <View
                                 style={{
-                                    marginLeft: 'auto',
-                                    paddingHorizontal: 15,
-                                    paddingVertical: 6,
-                                    borderWidth: 1,
-                                    borderColor: '#DA6E35',
-                                    borderRadius: 7,
+                                    paddingVertical: 10,
+                                    borderBottomColor: '#DBDFEA',
+                                    borderBottomWidth: 1,
                                     display: 'flex',
-                                    justifyContent: 'center',
-                                    alignContent: 'center',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
                                 }}
-                                onPress={() => router.navigate('profile/edit-profile')}
                             >
                                 <Text
                                     style={{
-                                        color: '#DA6E35',
-                                        fontSize: 12,
-                                        fontFamily: 'Helvetica-Bold',
+                                        padding: 7,
+                                        backgroundColor: '#4ADE8B',
+                                        borderRadius: 7,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignContent: 'center',
                                     }}
                                 >
-                                    Edit
+                                    <Ionicons name="bookmarks" color='#FFFFFF' size={20} className='text-center' />
                                 </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View className='mt-2'>
+                                <Text className='ml-3 text-[16px] font-helvetica'>Daftar Simpan Menu</Text>
+                                <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* button ubah kata sandi */}
+                        <TouchableOpacity
+                            style={{
+                                paddingHorizontal: 25,
+                                backgroundColor: '#FAFAFA',
+                            }}
+                        >
+                            <View
+                                style={{
+                                    paddingVertical: 10,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        padding: 7,
+                                        backgroundColor: '#525252',
+                                        borderRadius: 7,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignContent: 'center',
+                                    }}
+                                >
+                                    <Ionicons name="lock-closed" color='#FFFFFF' size={20} className='text-center' />
+                                </Text>
+                                <Text className='ml-3 text-[16px] font-helvetica text-left'>Ubah Kata Sandi</Text>
+                                <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
+                            </View>
+                        </TouchableOpacity>
+                        
+                    </View>
+                    
+                    <View style={{ paddingBottom: 20 }}>
+                        {/* Sign Out Button */}
+                        <TouchableOpacity
+                            style={{
+                                marginHorizontal: 16,
+                                paddingVertical: 10,
+                                borderWidth: 1,
+                                borderColor: '#FE3F11',
+                                borderRadius: 10,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                            onPress={() => {
+                                signOut()
+                                router.navigate('/(auth)/login')
+                            }}
+                        >
+                            <Ionicons name="log-out-outline" color='#FE3F11' size={26} />
                             <Text
                                 style={{
-                                    marginRight: '60%',
-                                    paddingHorizontal: 15,
-                                    paddingVertical: 10,
-                                    backgroundColor: '#F4C687',
-                                    color: '#DA6E35',
-                                    fontSize: 16,
+                                    marginLeft: 5,
+                                    color: '#FE3F11',
+                                    fontSize: 20,
                                     fontFamily: 'Helvetica-Bold',
                                     textAlign: 'center',
                                 }}
                             >
-                                {profileData['is_diabetes'] ? 'Diabetes' : 'Non-Diabetes'}
+                                Keluar
                             </Text>
-                        </View>
-                        <View
-                            style={{
-                                marginTop: 20,
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <View>
-                                <View
-                                    style={{
-                                        display: 'flex',
-                                        flexGrow: 1,
-                                        flexDirection: 'row',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontSize: 24,
-                                            fontFamily: 'Helvetica-Bold',
-                                        }}
-                                    >
-                                        {profileData['age']}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 16,
-                                            fontFamily: 'Helvetica',
-                                        }}
-                                    > tahun</Text>
-                                </View>
-                                <Text
-                                    style={{
-                                        marginTop: -7,
-                                        fontSize: 12,
-                                        fontFamily: 'Helvetica',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    Umur
-                                </Text>
-                            </View>
-                            <View>
-                                <View
-                                    style={{
-                                        display: 'flex',
-                                        flexGrow: 1,
-                                        flexDirection: 'row',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontSize: 24,
-                                            fontFamily: 'Helvetica-Bold',
-                                        }}
-                                    >
-                                        {profileData['height']}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 16,
-                                            fontFamily: 'Helvetica',
-                                        }}
-                                    > cm</Text>
-                                </View>
-                                <Text
-                                    style={{
-                                        marginTop: -7,
-                                        fontSize: 12,
-                                        fontFamily: 'Helvetica',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    Tinggi
-                                </Text>
-                            </View>
-                            <View>
-                                <View
-                                    style={{
-                                        display: 'flex',
-                                        flexGrow: 1,
-                                        flexDirection: 'row',
-                                        alignItems: 'center'
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontSize: 24,
-                                            fontFamily: 'Helvetica-Bold',
-                                        }}
-                                    >
-                                        {profileData['weight']}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            fontSize: 16,
-                                            fontFamily: 'Helvetica',
-                                        }}
-                                    > kg</Text>
-                                </View>
-                                <Text
-                                    style={{
-                                        marginTop: -7,
-                                        fontSize: 12,
-                                        fontFamily: 'Helvetica',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    Berat
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                    {/* button prediction history */}
-                    <TouchableOpacity
-                        style={{
-                            marginTop: 20,
-                            paddingHorizontal: 8,
-                            paddingVertical: 10,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
-                    >
+                        </TouchableOpacity>
                         <Text
                             style={{
-                                padding: 10,
-                                backgroundColor: '#F9DCAF',
-                                borderRadius: 100,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                            }}
-                        >
-                            <Ionicons name="timer-outline" color='#DD6A19' size={24} className='text-center' />
-                        </Text>
-                        <Text className='ml-3 text-[16px] font-helvetica-bold'>Histori prediksi</Text>
-                        <Ionicons name="chevron-forward-outline" color='#000000' size={30} className='ml-auto text-center' />
-                    </TouchableOpacity>
-                    {/* button daftar dimpan menu */}
-                    <TouchableOpacity
-                        style={{
-                            marginTop: 5,
-                            paddingHorizontal: 8,
-                            paddingVertical: 10,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                padding: 10,
-                                backgroundColor: '#BBF7D4',
-                                borderRadius: 100,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                            }}
-                        >
-                            <Ionicons name="bookmarks-outline" color='#16A354' size={24} className='text-center' />
-                        </Text>
-                        <Text className='ml-3 text-[16px] font-helvetica-bold'>Daftar simpan menu</Text>
-                        <Ionicons name="chevron-forward-outline" color='#000000' size={30} className='ml-auto text-center' />
-                    </TouchableOpacity>
-                    {/* button ubah kata sandi */}
-                    <TouchableOpacity
-                        style={{
-                            marginTop: 5,
-                            paddingHorizontal: 8,
-                            paddingVertical: 10,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                padding: 10,
-                                backgroundColor: '#BDBDBD',
-                                borderRadius: 100,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                            }}
-                        >
-                            <Ionicons name="lock-closed-outline" color='#525252' size={24} className='text-center' />
-                        </Text>
-                        <Text className='ml-3 text-[16px] font-helvetica-bold text-left'>Ubah kata sandi</Text>
-                        <Ionicons name="chevron-forward-outline" color='#000000' size={30} className='ml-auto text-center' />
-                    </TouchableOpacity>
-                    {/* button FAQ */}
-                    <TouchableOpacity
-                        style={{
-                            marginTop: 5,
-                            paddingHorizontal: 8,
-                            paddingVertical: 10,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                padding: 10,
-                                backgroundColor: '#f2e0ac',
-                                borderRadius: 100,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignContent: 'center',
-                            }}
-                        >
-                            <Ionicons name="reader-outline" color='#A27906' size={24} className='text-center' />
-                        </Text>
-                        <Text className='ml-3 text-[16px] font-helvetica-bold'>FAQ</Text>
-                        <Ionicons name="chevron-forward-outline" color='#000000' size={30} className='ml-auto text-center' />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{
-                            marginTop: 'auto',
-                            paddingVertical: 10,
-                            borderWidth: 1,
-                            borderColor: '#DA6E35',
-                            borderRadius: 10,
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: '#DA6E35',
-                                fontSize: 20,
-                                fontFamily: 'Helvetica-Bold',
+                                color: '#969696',
+                                fontSize: 16,
+                                fontFamily: 'Helvetica',
                                 textAlign: 'center',
                             }}
                         >
-                            Keluar
+                            Versi 1.0
                         </Text>
-                    </TouchableOpacity>
-                    <Text
-                        style={{
-                            color: '#969696',
-                            fontSize: 16,
-                            fontFamily: 'Helvetica',
-                            textAlign: 'center',
-                        }}
-                    >
-                        Versi 1.0
-                    </Text>
+                    </View>
                 </View>
             </TouchableWithoutFeedback>
             :
             null
-
     )
 }
