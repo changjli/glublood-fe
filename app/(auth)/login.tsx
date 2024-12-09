@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native'
+import { View, Text, TouchableWithoutFeedback, Keyboard, GestureResponderEvent, Alert, Pressable, Image, KeyboardAvoidingView, Platform, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import CustomTextInput, { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput'
@@ -90,11 +90,14 @@ export default function LoginPage() {
                                             error={errors.password}
                                             secureTextEntry
                                         />
-                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                        <TouchableOpacity
+                                            style={{ flexDirection: 'row', justifyContent: 'flex-end' }}
+                                            onPress={() => router.push("/forgot-password/")}
+                                        >
                                             <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
                                                 Lupa kata sandi?
                                             </CustomText>
-                                        </View>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                                 <View>
