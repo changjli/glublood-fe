@@ -7,6 +7,21 @@ export default function usePrediction() {
 
     const group = 'api/diabetes-prediction'
 
+    const doPrediction = async (setLoading: (loading: boolean) => void, payload: predictionRequest) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/predict`, payload)
+            .then(res => {
+                console.log('[usePrediction][store]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[usePrediction][store]', err.response?.data)
+                setLoading(false)
+                return err.response?.data
+            })
+        return res
+    }
+
     const storePrediction = async (setLoading: (loading: boolean) => void, payload: predictionRequest) => {
         setLoading(true)
         const res = await withToken.post(`${group}`, payload)
@@ -23,6 +38,7 @@ export default function usePrediction() {
     }
 
     return {
+        doPrediction,
         storePrediction,
     }
 }

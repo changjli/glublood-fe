@@ -24,7 +24,7 @@ function useBLE() {
     const [allDevices, setAllDevices] = useState<Device[]>([]);
     const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
     const [glucoseMeasurements, setGlucoseMeasurements] = useState<GlucoseReading[]>([]);
-    const [lastSyncDate, setLastSyncDate] = useState('')
+    const [scanLoading, setScanLoading] = useState(false)
 
     const requestAndroid31Permissions = async () => {
         const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -99,15 +99,18 @@ function useBLE() {
     const isDuplicteDevice = (devices: Device[], nextDevice: Device) =>
         devices.findIndex((device) => nextDevice.id === device.id) > -1;
 
-    const scanForPeripherals = () =>
+    const scanForPeripherals = () => {
+        setAllDevices([])
+        setConnectedDevice(null)
+        setScanLoading(true)
         bleManager.startDeviceScan(null, null, (error, device) => {
             if (error) {
                 console.log(error);
             }
 
             if (
-                device &&
-                (device.localName === DEVICE_NAME || device.name === DEVICE_NAME)
+                device
+                && (device.localName === DEVICE_NAME || device.name === DEVICE_NAME)
             ) {
                 setAllDevices((prevState: Device[]) => {
                     if (!isDuplicteDevice(prevState, device)) {
@@ -117,8 +120,16 @@ function useBLE() {
                 });
             }
         });
+        const timeout = setTimeout(() => {
+            stopScan()
+        }, 60000)
+        clearTimeout(timeout)
+    }
 
-    const stopScan = () => bleManager.stopDeviceScan()
+    const stopScan = () => {
+        bleManager.stopDeviceScan()
+        setScanLoading(false)
+    }
 
     const onDataUpdate = (
         error: BleError | null,
@@ -228,6 +239,7 @@ function useBLE() {
         startStreamingData,
         setAllDevices,
         stopScan,
+        scanLoading,
     };
 }
 

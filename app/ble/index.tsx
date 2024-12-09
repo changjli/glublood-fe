@@ -41,6 +41,7 @@ const BlePage = () => {
         scanForPeripherals,
         setAllDevices,
         stopScan,
+        scanLoading,
     } = useBLE();
     const { storeGlucoseLogBatch, syncGlucoseLog } = useGlucoseLog()
     const { showAlert } = useCustomAlert()
@@ -193,6 +194,10 @@ const BlePage = () => {
                 toggleModal={handleCloseModal}
                 allDevices={allDevices}
                 connectToDevice={connectToDevice}
+                scanForPeripherals={scanForPeripherals}
+                stopScan={stopScan}
+                scanLoading={scanLoading}
+
             />
         </>
     );

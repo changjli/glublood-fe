@@ -28,6 +28,7 @@ export default function YearlyFoodLogStatisticPage() {
     const date = new Date()
     const [selectedYear, setSelectedYear] = useState(date.getFullYear())
     const [averageCalories, setAverageCalories] = useState(0)
+    const filterReport = foodLogReport.filter(foodLog => foodLog.avg_calories != 0)
 
     const handleGetFoodLogReport = async () => {
         try {
@@ -57,8 +58,8 @@ export default function YearlyFoodLogStatisticPage() {
     }, [selectedYear])
 
     useEffect(() => {
-        if (foodLogReport.length > 1) {
-            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / foodLogReport.length)
+        if (foodLogReport.length > 1 && filterReport.length > 0) {
+            setAverageCalories(foodLogReport.reduce((acc, flr) => acc + flr.avg_calories, 0) / filterReport.length)
         } else {
             setAverageCalories(0)
         }
@@ -75,7 +76,7 @@ export default function YearlyFoodLogStatisticPage() {
                 />
 
                 <CustomText>Rata-rata Asupan Makanan</CustomText>
-                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kalori</CustomText>
+                <CustomText size='lg' weight='heavy'>{Number(averageCalories).toFixed(2)} Kkal</CustomText>
             </Wrapper>
 
             {foodLogReport.length > 1 &&
@@ -91,9 +92,9 @@ export default function YearlyFoodLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {foodLogReport.map((foodLog, index) => (
+                {filterReport.map((foodLog, index) => (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
-                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kalori`}</CustomText>
+                        <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(foodLog.avg_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah asupan: {foodLog.log_count}x</CustomText>
                             <CustomText size='sm'>{resolveMonthAbbreviation(index)}</CustomText>

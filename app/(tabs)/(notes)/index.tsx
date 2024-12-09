@@ -43,6 +43,7 @@ export default function LogPage() {
                                     title={tab.title}
                                     style={styles.tabItemContainer}
                                     type={selectedTab.title == tab.title ? 'primary' : 'outline'}
+                                    size='sm'
                                     onPress={() => setSelectedTab(tab)}
                                 />
                             ))}

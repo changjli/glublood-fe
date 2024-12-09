@@ -1,19 +1,19 @@
 import { resolveTimingColor } from "./resolver";
 
-const generateHtml = (datas: any, options: { [key: string]: boolean }, userProfile: any, startDate: string, endDate: string) => {
+const generateHtml = (datas: GetLogReportByDateRes[], options: { [key: string]: boolean }, userProfile: any, startDate: string, endDate: string) => {
     // Get average 
     let avg = { calories: '', burned_calories: '', glucose_rate: '' }
 
     let total = datas.reduce((acc, data) => {
-        acc.calories += data.avg_calories
-        acc.burned_calories += data.avg_burned_calories
-        acc.glucose_rate += data.avg_glucose_rate
+        acc.calories += data.avg_calories ?? 0
+        acc.burned_calories += data.avg_burned_calories ?? 0
+        acc.glucose_rate += data.avg_glucose_rate ?? 0
         return acc
     }, { calories: 0, burned_calories: 0, glucose_rate: 0 })
 
-    avg.calories = Number(total.calories / datas.length).toFixed(2)
-    avg.burned_calories = Number(total.burned_calories / datas.length).toFixed(2)
-    avg.glucose_rate = Number(total.glucose_rate / datas.length).toFixed(2)
+    avg.calories = Number(total.calories / datas.filter(data => data.avg_calories != 0).length).toFixed(2)
+    avg.burned_calories = Number(total.burned_calories / datas.filter(data => data.avg_burned_calories != 0).length).toFixed(2)
+    avg.glucose_rate = Number(total.glucose_rate / datas.filter(data => data.avg_glucose_rate != 0).length).toFixed(2)
 
     return `
     <html>
@@ -85,8 +85,8 @@ const generateHtml = (datas: any, options: { [key: string]: boolean }, userProfi
                         <tr>
                             <th style="border: 1px solid black; font-weight: bold" colSpan="2">Hari dan Waktu</th>
                             ${options.glucose_log ? `<th style="border: 1px solid black; font-weight: bold">Gula Darah (mg/dL)</th>` : ``}
-                            ${options.food_log ? `<th style="border: 1px solid black; font-weight: bold">Kalori Nutrisi (Kal)</th>` : ``}
-                            ${options.exercise_log ? `<th style="border: 1px solid black; font-weight: bold">Aktivitas Fisik (Kal)</th>` : ``}
+                            ${options.food_log ? `<th style="border: 1px solid black; font-weight: bold">Kalori Nutrisi (Kkal)</th>` : ``}
+                            ${options.exercise_log ? `<th style="border: 1px solid black; font-weight: bold">Aktivitas Fisik (Kkal)</th>` : ``}
                             ${options.medicine_log ? `<th style="border: 1px solid black; font-weight: bold">Konsumsi Obat</th>` : ``}
                         </tr>
                     </thead>

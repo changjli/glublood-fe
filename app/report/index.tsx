@@ -9,7 +9,7 @@ import CustomHeader from '@/components/CustomHeader'
 const data = [
     { title: 'Mingguan', page: WeeklyReportPage },
     { title: 'Bulanan', page: MonthlyReportPage },
-    { title: 'Custom', page: CustomReportPage },
+    { title: 'Kustom', page: CustomReportPage },
 ]
 
 export default function LogReportPage() {

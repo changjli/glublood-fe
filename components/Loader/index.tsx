@@ -1,12 +1,18 @@
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native'
 import React from 'react'
 import { Colors } from '@/constants/Colors'
+import Modal, { ModalProps } from "react-native-modal";
 
-export default function Loader() {
+export default function Loader({ visible }: { visible: boolean }) {
     return (
-        <View style={styles.backdrop}>
-            <ActivityIndicator color={'white'} size={30} />
-        </View>
+        <Modal
+            isVisible={visible}
+            animationIn={'fadeIn'}
+            animationOut={'fadeOut'}
+            collapsable={false}
+        >
+            <ActivityIndicator color={Colors.light.primary} size={30} />
+        </Modal>
     )
 }
 

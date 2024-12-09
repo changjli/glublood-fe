@@ -23,11 +23,11 @@ interface ExerciseLogFormProps {
 }
 
 const exerciseLogSchema = object({
-    exercise_name: string().required('Exercise name is required'),
-    date: string().required('Date is required'),
+    exercise_name: string().required('Nama olahraga wajib diisi!'),
+    date: string().required('Tanggal wajib diisi!'),
     start_time: string()
-        .required('Start time is required')
-        .test('is-less', 'Start time must be before end time', function (value) {
+        .required('Waktu mulai wajib diisi!')
+        .test('is-less', 'Waktu mulai harus kurang dari waktu selesai!', function (value) {
             const { end_time } = this.parent
             if (!end_time || !value) return true;
             const end = new Date(`1970-01-01T${end_time}:00`);
@@ -36,7 +36,7 @@ const exerciseLogSchema = object({
         }),
     end_time: string()
         .required('End time is required')
-        .test('is-greater', 'End time must be after start time', function (value) {
+        .test('is-greater', 'Waktu selesai harus lebih dari waktu mulai!', function (value) {
             const { start_time } = this.parent
             if (!start_time || !value) return true;
             const start = new Date(`1970-01-01T${start_time}:00`);
