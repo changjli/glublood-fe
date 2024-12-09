@@ -163,7 +163,7 @@ export default function VerifyCode({ setPage, setCredentials, credentials }: Ver
                 </View>
             </Wrapper>
             {(sendCodeLoading) && (
-                <Loader />
+                <Loader visible={sendCodeLoading}/>
             )}
         </View>
     )
