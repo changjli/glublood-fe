@@ -1,12 +1,13 @@
-import { View, Text, Keyboard } from 'react-native'
+import { View, Text, Keyboard, Alert, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import EmailRequest from '@/app/forgot-password/email-request'
-import VerifyCode from '@/app/forgot-password/verify-code'
-import ResetPassword from '@/app/forgot-password/reset-password'
+import PasswordRequest from '@/app/change-password/password-request'
+import VerifyCode from '@/app/change-password/verify-code'
 import SuccessPage from '@/app/forgot-password/success'
 import { router } from 'expo-router'
+import { useSession } from '../context/AuthenticationProvider'
 
-export default function ForgorPassword() {
+export default function ChangePassword() {
+    const { signOut } = useSession();
     const [page, setPage] = useState<number>(1)
 
     const [credentials, setCredentials] = useState<{
@@ -20,9 +21,10 @@ export default function ForgorPassword() {
     })
 
     useEffect(() => {
-        if (page === 4) {
+        if (page === 3) {
             const timer = setTimeout(() => {
-                router.back();
+                signOut()
+                router.replace('/(auth)/login');
             }, 3000);
 
             return () => clearTimeout(timer); 
@@ -31,10 +33,9 @@ export default function ForgorPassword() {
 
     const renderPage = () => {
         const pages: Record<number, JSX.Element> = {
-            1: <EmailRequest setPage={setPage} setCredentials={setCredentials} />,
-            2: <VerifyCode setPage={setPage} setCredentials={setCredentials} credentials={credentials} />,
-            3: <ResetPassword setPage={setPage} credentials={credentials} />,
-            4: <SuccessPage />,
+            1: <PasswordRequest setPage={setPage} setCredentials={setCredentials} />,
+            2: <VerifyCode setPage={setPage} credentials={credentials} />,
+            3: <SuccessPage />
         };
 
         return pages[page]

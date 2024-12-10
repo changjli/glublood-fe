@@ -484,6 +484,7 @@ export default function index() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push("/change-password/")}
                         >
                             <View
                                 style={{
