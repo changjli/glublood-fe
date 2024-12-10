@@ -6,6 +6,7 @@ import useWithToken from '@/configs/axios/withToken'
 
 export default function useAuth() {
 
+    const withToken = useWithToken()
     const group = 'api/'
 
     const login = async (setLoading: (loading: boolean) => void, payload: loginRequest) => {
@@ -47,6 +48,21 @@ export default function useAuth() {
                 return res.data
             }).catch(err => {
                 console.log('[useAuth][send-code]', err.response?.data)
+                setLoading(false)
+                return err.response?.data
+            })
+        return res
+    }
+
+    const getAuthenticatedUser = async (setLoading: (loading: boolean) => void, payload: sendCodeRequest) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}get-auth`, payload)
+            .then(res => {
+                console.log('[useAuth][get-user]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useAuth][get-user]', err.response?.data)
                 setLoading(false)
                 return err.response?.data
             })
@@ -102,6 +118,7 @@ export default function useAuth() {
         login,
         register,
         sendCode,
+        getAuthenticatedUser,
         forgotPassword,
         verifyForgotPassword,
         resetPassword,
