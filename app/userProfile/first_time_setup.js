@@ -230,8 +230,13 @@ export default function FirstTimeSetup() {
                 >
                     {(formikProps) => (
                         <View
-                            className="px-5 py-16 flex flex-1"
-                            style={{ height: "100%" }}
+                            style={{
+                                paddingHorizontal: 20,
+                                paddingVertical: 64,
+                                height: "100%",
+                                display: 'flex',
+                                flexGrow: 1,
+                            }}
                         >
                             <StepIndicator
                                 currentPosition={currentPosition}
@@ -273,7 +278,7 @@ export default function FirstTimeSetup() {
                                         name="arrow-back"
                                         color="#DA6E35"
                                         size={24}
-                                        className="text-center"
+                                        style={{ textAlign: 'center' }}
                                     />
                                 </TouchableOpacity>
                                 <TouchableOpacity
@@ -296,7 +301,11 @@ export default function FirstTimeSetup() {
                                 >
                                     {currentPosition === 3 ? (
                                         <Text
-                                            className="font-helvetica-bold text-center text-white"
+                                            style={{ 
+                                                color: 'white',
+                                                fontFamily: 'Helvetica-Bold',
+                                                textAlign: 'center',
+                                            }}
                                             onPress={() =>
                                                 router.navigate("/prediction")
                                             }
@@ -308,7 +317,7 @@ export default function FirstTimeSetup() {
                                             name="arrow-forward"
                                             color="#ffffff"
                                             size={24}
-                                            className="text-center"
+                                            style={{ textAlign: 'center' }}
                                         />
                                     )}
                                 </TouchableOpacity>

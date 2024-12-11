@@ -8,7 +8,14 @@ const Personalization3_2 = () => {
             <Text style={styles.title}>Pengecekkan{'\n'}diabetes</Text>
             <Text style={styles.subTitle}>Yuk periksa indikasi kesehatanmu</Text>
             <View className='mt-4'>
-                <View className='flex flex-column justify-center items-center'>
+                <View
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
                     <Image
                         source={require('@/assets/svgs/userProfile/KarakterPengecekkan.png')}
                         style={styles.img}
