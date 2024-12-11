@@ -57,9 +57,21 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     />
                 </TouchableOpacity>
                 {errors.selectPatient &&
-                    <View className='flex flex-row items-center gap-1'>
+                    <View
+                        className="gap-1"
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}
+                    >
                         <Ionicons name='warning' size={16} color='red' />
-                        <Text className='font-helvetica text-red-500'>
+                        <Text 
+                            style={{ 
+                                color: '#EF4444',
+                                fontFamily: 'Helvetica',
+                            }}
+                        >
                             {errors.selectPatient}
                         </Text>
                     </View>

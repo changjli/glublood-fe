@@ -484,6 +484,7 @@ export default function index() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push("/change-password/")}
                         >
                             <View
                                 style={{
@@ -528,7 +529,7 @@ export default function index() {
                             }}
                             onPress={() => {
                                 signOut()
-                                router.navigate('/(auth)/login')
+                                router.replace('/(auth)/login')
                             }}
                         >
                             <Ionicons name="log-out-outline" color='#FE3F11' size={26} />
