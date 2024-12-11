@@ -70,7 +70,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                 Berkaitan dengan informasi pribadi Anda
             </Text>
             <View>
-                <View className="mb-2 flex-row justify-between">
+                <View
+                    className="mb-2"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
                     <StyledCustomTextInput
                         classStyle="mr-2 flex-1"
                         label="Nama depan"
@@ -88,7 +95,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         error={errors.lastname}
                     />
                 </View>
-                <View className="mb-2 flex-row justify-between">
+                <View
+                    className="mb-2"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
                     <StyledCustomTextInput
                         classStyle="mr-2 flex-1"
                         label="Berat Badan"
@@ -106,7 +120,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         error={errors.height}
                     />
                 </View>
-                <View className="mb-2 flex-row justify-between">
+                <View
+                    className="mb-2"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
                     {/* <StyledCustomTextInput
                         classStyle='mr-2 flex-1'
                         label='Usia'
@@ -115,7 +136,11 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         onChangeText={handleChange('age')}
                         error={errors.age}
                     /> */}
-                    <View className="flex-1">
+                    <View
+                        style={{ 
+                            flexGrow: 1
+                        }}
+                    >
                         <Text
                             style={{
                                 fontSize: 12,
@@ -147,13 +172,25 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                             </Text>
                         </Pressable>
                         {errors.birthDate && (
-                            <View className="flex flex-row items-center gap-1">
+                            <View
+                                className="gap-1"
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
                                 <Ionicons
                                     name="warning"
                                     size={16}
                                     color="red"
                                 />
-                                <Text className="font-helvetica text-red-500">
+                                <Text
+                                    style={{ 
+                                        color: '#EF4444',
+                                        fontFamily: 'Helvetica',
+                                    }}
+                                >
                                     {errors.birthDate}
                                 </Text>
                             </View>
@@ -162,7 +199,13 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                 </View>
                 <View className="mb-4">
                     <Text style={styles.headerTextInput}>Jenis Kelamin</Text>
-                    <View className="flex-row justify-between">
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}
+                    >
                         {isGender.map((item, index) => (
                             <TouchableOpacity
                                 key={item.value}
@@ -183,12 +226,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 }}
                             >
                                 <Text
-                                    className="text-sm font-helvetica-bold text-center"
                                     style={{
                                         color:
                                             gender === item.value
                                                 ? "#ffffff"
                                                 : "#EC8F5E",
+                                        fontSize: 14,
+                                        fontFamily: 'Helvetica-Bold',
+                                        textAlign: 'center',
                                     }}
                                 >
                                     {item.label}
@@ -197,9 +242,21 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         ))}
                     </View>
                     {errors.gender && (
-                        <View className="flex flex-row items-center gap-1">
+                        <View
+                            className="gap-1"
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}
+                        >
                             <Ionicons name="warning" size={16} color="red" />
-                            <Text className="font-helvetica text-red-500">
+                            <Text
+                                style={{ 
+                                    color: '#EF4444',
+                                    fontFamily: 'Helvetica',
+                                }}
+                            >
                                 {errors.gender}
                             </Text>
                         </View>
@@ -210,7 +267,13 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         Apakah Anda memiliki keturunan dengan riwayat penyakit
                         diabetes?
                     </Text>
-                    <View className="flex-row justify-between">
+                    <View
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}
+                    >
                         {isDescendant.map((item, index) => (
                             <TouchableOpacity
                                 key={item.value}
@@ -231,12 +294,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 }}
                             >
                                 <Text
-                                    className="text-sm font-helvetica-bold text-center"
                                     style={{
                                         color:
                                             descendant === item.value
                                                 ? "#ffffff"
                                                 : "#EC8F5E",
+                                        fontSize: 14,
+                                        fontFamily: 'Helvetica-Bold',
+                                        textAlign: 'center',
                                     }}
                                 >
                                     {item.label}
@@ -245,9 +310,21 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         ))}
                     </View>
                     {errors.descendant && (
-                        <View className="flex flex-row items-center gap-1">
+                        <View
+                            className="gap-1"
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}
+                        >
                             <Ionicons name="warning" size={16} color="red" />
-                            <Text className="font-helvetica text-red-500">
+                            <Text
+                                style={{ 
+                                    color: '#EF4444',
+                                    fontFamily: 'Helvetica',
+                                }}
+                            >
                                 {errors.descendant}
                             </Text>
                         </View>
