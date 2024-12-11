@@ -139,7 +139,15 @@ export default function CreateBarcodePage() {
         <>
             <Loader visible={getLoading} />
             {!formValue.calories ? (
-                <Text>Not found</Text>
+                <>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={require('@/assets/images/characters/404.png')} style={{ marginBottom: 4 }} />
+                        <CustomText style={{ textAlign: 'center', paddingHorizontal: 20 }}>Maaf, data makanan yang kamu pindai tidak ada di penyimpanan kami</CustomText>
+                    </View>
+                    <View style={{ padding: 16 }}>
+                        <CustomButton title='Tambahkan secara manual' onPress={() => router.push('/logs/food/create')} />
+                    </View>
+                </>
             ) : (
                 <FoodLogForm
                     formValue={formValue}

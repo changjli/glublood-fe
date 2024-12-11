@@ -17,8 +17,8 @@ export default function FoodMenuDetailPage() {
     const [foodMenu, setFoodMenu] = useState<FoodMenu>()
     const [getFoodMenuDetailLoading, setGetFoodMenuDetailLoading] = useState(false)
     const [isCollapsed, setIsCollapsed] = useState({
-        ingredients: false,
-        steps: false,
+        ingredients: true,
+        steps: true,
     })
 
     const handleGetFoodMenuDetail = async () => {
