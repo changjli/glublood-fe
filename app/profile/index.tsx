@@ -7,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import DynamicTextComponent from '@/components/DynamicText';
 import { useSession } from "../context/AuthenticationProvider";
 
-export default function index() {
+export default function EditProfilePage() {
     const { signOut, session } = useSession();
     const { fetchUserProfile } = useProfile()
     const [fetchLoading, setFetchLoading] = useState(false)
@@ -67,7 +67,7 @@ export default function index() {
                         width: '100%',
                         height: '100%',
                         backgroundColor: 'white',
-                        display: 'flex', 
+                        display: 'flex',
                         justifyContent: 'space-between'
                     }}
                 >
@@ -416,6 +416,7 @@ export default function index() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push('/prediction')}
                         >
                             <View
                                 style={{
@@ -510,9 +511,9 @@ export default function index() {
                                 <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
                             </View>
                         </TouchableOpacity>
-                        
+
                     </View>
-                    
+
                     <View style={{ paddingBottom: 20 }}>
                         {/* Sign Out Button */}
                         <TouchableOpacity

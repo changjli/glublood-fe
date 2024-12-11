@@ -590,7 +590,6 @@ export default function HomePage() {
                             }}
                         />
                     </TouchableOpacity>
-                    <CustomButton title='Diabetes prediction' onPress={() => router.push('/prediction')} />
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>

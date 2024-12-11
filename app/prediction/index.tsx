@@ -71,10 +71,7 @@ export default function PredictionPage() {
                             onPress={() => router.push(`/prediction/${item.id}`)}
                         >
                             <CustomText>{resolveDiabetesResult(item.result)}</CustomText>
-                            <View style={[FlexStyles.flexRow, { gap: 4 }]}>
-                                <CustomText>{formatDateStringIntl(item.created_at)}</CustomText>
-                                <Ionicons name='chevron-forward' size={20} color={Colors.light.primary} />
-                            </View>
+                            <CustomText>{formatDateStringIntl(item.created_at)}</CustomText>
                         </TouchableOpacity>
                     )}
                     keyExtractor={(item) => String(item.id)}
