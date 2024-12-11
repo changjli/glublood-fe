@@ -260,7 +260,7 @@ export default function FirstTimeSetup() {
                                         {
                                             display:
                                                 currentPosition == 0 ||
-                                                currentPosition == 3
+                                                    currentPosition == 3
                                                     ? "none"
                                                     : "flex",
                                         },
@@ -298,7 +298,7 @@ export default function FirstTimeSetup() {
                                         <Text
                                             className="font-helvetica-bold text-center text-white"
                                             onPress={() =>
-                                                router.navigate("/prediction")
+                                                router.navigate("/prediction/predict")
                                             }
                                         >
                                             Mulai Pengecekkan
