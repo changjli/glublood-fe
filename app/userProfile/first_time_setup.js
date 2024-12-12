@@ -301,7 +301,7 @@ export default function FirstTimeSetup() {
                                 >
                                     {currentPosition === 3 ? (
                                         <Text
-                                            style={{ 
+                                            style={{
                                                 color: 'white',
                                                 fontFamily: 'Helvetica-Bold',
                                                 textAlign: 'center',

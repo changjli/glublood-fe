@@ -76,8 +76,8 @@ const Personalization3_1 = ({ setFieldValue, values, errors }) => {
                         }}
                     >
                         <Ionicons name='warning' size={16} color='red' />
-                        <Text 
-                            style={{ 
+                        <Text
+                            style={{
                                 color: '#EF4444',
                                 fontFamily: 'Helvetica',
                             }}
@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
     title: {
         marginBottom: -5,
         fontSize: 32,
-        fontFamily: ['Helvetica-Bold'],
+        fontFamily: 'Helvetica-Bold',
     },
     subTitle: {
         marginBottom: 14,
         color: '#969696',
         fontSize: 14,
-        fontFamily: ['Helvetica'],
+        fontFamily: 'Helvetica',
     },
     selectionButton: {
         height: 140,
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         width: 230,
         color: '#EC8F5E',
         fontSize: 16,
-        fontFamily: ['Helvetica-Bold'],
+        fontFamily: 'Helvetica-Bold',
         textAlign: 'center',
     },
 });
