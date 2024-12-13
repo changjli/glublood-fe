@@ -36,6 +36,7 @@ import useDailyCalories from "@/hooks/api/daily_calories/useDailyCalories";
 import { FontSize } from "@/constants/Typography";
 import useAsyncStorage from "@/hooks/useAsyncStorage";
 import { parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
+import { useCustomAlert } from "../context/CustomAlertProvider";
 
 export default function HomePage() {
     const { signOut, session } = useSession();
@@ -44,6 +45,7 @@ export default function HomePage() {
         useDailyCalories();
     const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage();
     const { width } = useWindowDimensions();
+    const { showAlert } = useCustomAlert()
 
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
@@ -76,7 +78,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -113,7 +115,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -149,7 +151,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);

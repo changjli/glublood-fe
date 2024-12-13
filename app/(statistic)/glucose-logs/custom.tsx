@@ -11,9 +11,11 @@ import { VictoryChart, VictoryScatter, VictoryTheme, VictoryZoomContainer } from
 import SegmentedControl from '@/components/SegmentedControl';
 import { formatDateStringIntl, formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
 import { Colors } from '@/constants/Colors';
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 export default function CustomGlucoseLogStatisticPage() {
     const { getGlucoseLogReportByDate } = useGlucoseLog()
+    const { showAlert } = useCustomAlert()
 
     const [range, setRange] = useState('')
     const rangeData = [
@@ -40,15 +42,15 @@ export default function CustomGlucoseLogStatisticPage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }

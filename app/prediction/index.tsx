@@ -13,9 +13,11 @@ import { FontSize } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
 import { router } from 'expo-router'
 import CustomButton from '@/components/CustomButton'
+import { useCustomAlert } from '../context/CustomAlertProvider'
 
 export default function PredictionPage() {
     const { getPredictionByUser } = usePrediction()
+    const { showAlert } = useCustomAlert()
 
     const [predictions, setPredictions] = useState<PredictionResponse[]>([])
     const [getPredictionLoading, setGetPredictionLoading] = useState(false)
@@ -29,15 +31,15 @@ export default function PredictionPage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }

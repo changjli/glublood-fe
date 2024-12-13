@@ -22,12 +22,14 @@ import { FlexStyles } from "@/constants/Flex";
 import { isGlucoseDanger } from "@/utils/isGlucoseDanger";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import CustomButtonNew from "@/components/CustomButtonNew";
+import { useCustomAlert } from "@/app/context/CustomAlertProvider";
 
 export default function GlucoseLogDetailPage() {
     const { id } = useLocalSearchParams();
     const { getGlucoseLogDetail, updateGlucoseLog, deleteGlucoseLog } =
         useGlucoseLog();
     const { profile } = useUserProfile();
+    const { showAlert } = useCustomAlert()
 
     const [formValue, setFormValue] = useState<StoreGlucoseLogReq>({
         date: "",
@@ -60,7 +62,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -91,7 +93,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -122,7 +124,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);

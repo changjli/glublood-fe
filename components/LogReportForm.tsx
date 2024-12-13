@@ -16,6 +16,7 @@ import { FontSize } from '@/constants/Typography';
 import useProfile from '@/hooks/api/profile/useProfile';
 import generateHtml from '@/utils/generateHtml';
 import Loader from './Loader';
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 interface SelectedOptions {
     [key: string]: boolean
@@ -30,6 +31,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
 
     const { getLogReportByDate } = useReport()
     const { fetchUserProfile } = useProfile()
+    const { showAlert } = useCustomAlert()
 
     const [selectedDate, setSelectedDate] = useState<string | string[]>([])
     const [options, setOptions] = useState([
@@ -82,15 +84,15 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
             return []
         }
@@ -105,15 +107,15 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
             return []
         }

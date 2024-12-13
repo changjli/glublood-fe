@@ -12,9 +12,11 @@ import SegmentedControl from '@/components/SegmentedControl';
 import CustomMonthYearPicker from '@/components/CustomMonthYearPicker';
 import { formatDateStripToSlash } from '@/utils/formatDatetoString';
 import { resolveMonthAbbreviation } from '@/utils/resolver';
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 export default function YearlyFoodLogStatisticPage() {
     const { getFoodLogReportByYear } = useFoodLog()
+    const { showAlert } = useCustomAlert()
 
     const years = Array.from({ length: 100 }, (_, i) => ({
         label: `${new Date().getFullYear() - i}`,
@@ -40,15 +42,15 @@ export default function YearlyFoodLogStatisticPage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }

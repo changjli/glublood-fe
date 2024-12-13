@@ -8,6 +8,7 @@ import useAuth from '@/hooks/api/auth/useAuth'
 import Wrapper from '@/components/Layout/Wrapper'
 import Loader from '@/components/Loader'
 import axios from 'axios'
+import { useCustomAlert } from '../context/CustomAlertProvider'
 
 type VerifyCodeProps = {
     setPage: (value: number) => void
@@ -51,6 +52,7 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
     const [timeFlag, setTimeFlag] = useState(false)
 
     const { sendCode, verifyForgotPassword, resetPassword } = useAuth()
+    const { showAlert } = useCustomAlert()
 
     const [sendCodeLoading, setSendCodeLoading] = useState(false)
     const [resetPasswordLoading, setResetPasswordLoading] = useState(false)
@@ -88,7 +90,7 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
             if (res.status === 200) {
                 handleResetPassword({
                     email: credentials.email,
-                    code: id.code, 
+                    code: id.code,
                     password: credentials.password,
                 })
             }
@@ -98,15 +100,15 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
             return null
         }
@@ -123,25 +125,25 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
             return res.data
         } catch (err) {
             if (axios.isAxiosError(err)) {
-            const status = err.response?.status;
+                const status = err.response?.status;
 
-            if (status === 400) {
-                Alert.alert('Bad Request', 'Invalid request. Please check your input.');
-            } else if (status === 500) {
-                Alert.alert('Server Error', 'A server error occurred. Please try again later.');
-            } else {
-                // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
-            }
+                if (status === 400) {
+                    showAlert('Invalid request. Please check your input.', 'error');
+                } else if (status === 500) {
+                    showAlert('A server error occurred. Please try again later.', 'error');
+                } else {
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
             return null
         }
     }
 
     const handleSubmit = async () => {
-        handleVerifyChangePasswordCode({ email: credentials.email, code: verificationCode})
+        handleVerifyChangePasswordCode({ email: credentials.email, code: verificationCode })
     }
 
     useEffect(() => {
@@ -190,7 +192,7 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
                 </View>
             </Wrapper>
             {(sendCodeLoading) && (
-                <Loader visible={sendCodeLoading}/>
+                <Loader visible={sendCodeLoading} />
             )}
         </View>
     )
