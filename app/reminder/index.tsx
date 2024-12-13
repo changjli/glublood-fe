@@ -27,18 +27,18 @@ export default function ReminderPage() {
     }
   }, [isFocused]);
 
-  const getAllReminderData = async () => { 
+  const getAllReminderData = async () => {
     const keys = await getAllKeys();
     const reminderKeys: string[] = []
-    
+
     keys.forEach((key) => {
-        if (key.startsWith('reminder')){
+      if (key.startsWith('reminder')) {
         reminderKeys.push(key)
-        }
+      }
     });
 
     const reminderData = await getAllObjectData(reminderKeys);
-    
+
     return reminderData;
   }
 
@@ -128,12 +128,12 @@ export default function ReminderPage() {
       if (value) {
         if (updatedReminder.repeatDays.length > 0) {
           for (const type of updatedReminder.reminderType) {
-            for (const day of updatedReminder.repeatDays) { 
+            for (const day of updatedReminder.repeatDays) {
               updatedReminder.notificationId.push(await reminderNotificationsRepeat(updatedReminder, day, type))
             }
           }
         } else {
-          for (const type of updatedReminder.reminderType) { 
+          for (const type of updatedReminder.reminderType) {
             updatedReminder.notificationId.push(await reminderNotificationsSingle(updatedReminder, type))
           }
         }
@@ -174,13 +174,13 @@ export default function ReminderPage() {
       style={
         styles.reminderContainer
       }
-      onPress={() => router.navigate(`/(notes)/reminder/${item.id}`)}
-      // onPress={() => router.navigate('/(notes)/reminder/TestNotification')}
+      onPress={() => router.navigate(`/reminder/${item.id}`)}
+    // onPress={() => router.navigate('/(notes)/reminder/TestNotification')}
     >
       <View style={[
-          styles.reminderLeft,
-          { opacity: item.isEnabled ? 1 : 0.5 }
-        ]}
+        styles.reminderLeft,
+        { opacity: item.isEnabled ? 1 : 0.5 }
+      ]}
       >
         <View style={styles.categoryContainer}>
           {item.reminderType.map((type, index) => (
@@ -189,24 +189,24 @@ export default function ReminderPage() {
             </Text>
           ))}
         </View>
-  
+
         <Text style={styles.time}>{item.time}</Text>
-  
+
         {item.repeatDays.length > 0 &&
           (item.repeatDays.length == 7 ? <Text style={styles.days}>Setiap Hari</Text> : <Text style={styles.days}>Setiap {item.repeatDays.map((num) => dayMapping[num]).join(', ')}</Text>)
         }
         {item.notes && (
           <Text style={styles.days}>
             {
-              item.notes.length > 23 ? 
-                [item.notes.slice(0, 25) , ' ...']
+              item.notes.length > 23 ?
+                [item.notes.slice(0, 25), ' ...']
                 :
                 item.notes
             }
           </Text>
         )}
       </View>
-  
+
       <Switch
         value={item.isEnabled}
         onValueChange={(value) => handleSwitchToggle(item.id, value)}
@@ -221,12 +221,12 @@ export default function ReminderPage() {
       <View style={styles.header}>
         <View style={styles.buttonNavigate}>
           <TouchableOpacity
-            onPress={() => router.back()}  
+            onPress={() => router.back()}
           >
             <Ionicons name='arrow-back' size={40} color={'white'} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => router.navigate('/(notes)/reminder/AddReminder')}
+            onPress={() => router.navigate('/reminder/AddReminder')}
             style={{
               paddingVertical: 5,
               paddingHorizontal: 7,
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f2f8f9',
   },
-  header:{
+  header: {
     paddingTop: 30,
     paddingBottom: 20,
     paddingHorizontal: 20,

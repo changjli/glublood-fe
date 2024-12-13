@@ -209,7 +209,7 @@ export default function ReminderDetail() {
 
             await storeObjectData(uniqueKey, values);
             console.log('Reminder saved successfully!');
-            router.navigate('/(notes)/reminder/');
+            router.navigate('/reminder/');
             // console.log(await AsyncStorage.getAllKeys())
             // await AsyncStorage.clear();
         } catch (err) {
@@ -260,7 +260,7 @@ export default function ReminderDetail() {
                             label='Hapus log'
                             onPress={() => {
                                 handleDeleteMedicineLog(values.id);
-                                router.navigate('/(notes)/reminder/');
+                                router.navigate('/reminder/');
                             }}
                         />
                     </View>

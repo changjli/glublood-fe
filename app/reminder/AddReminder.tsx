@@ -17,7 +17,7 @@ export default function AddReminder() {
     const formattedTime = values.time.replace(':', '');
     const formattedRepeatDays = values.repeatDays.sort((a, b) => a - b).join('');
     const reminderType = values.reminderType.sort((a, b) => a - b).join('');
-    
+
     return `reminders${formattedTime}-${formattedRepeatDays}-${reminderType}`;
   };
 
@@ -92,15 +92,15 @@ export default function AddReminder() {
     setStoreLoading(true);
     try {
       var uniqueKey = generateUniqueKey(values);
-      
+
       console.log("Unique Key", uniqueKey)
       console.log("Values", values)
 
       const keys = await getAllKeys();
       const reminderKeys: string[] = []
-      
+
       keys.forEach((key) => {
-        if (key.startsWith('reminder')){
+        if (key.startsWith('reminder')) {
           reminderKeys.push(key)
         }
       });
@@ -108,17 +108,17 @@ export default function AddReminder() {
       const storedKeys = uniqueKey.replace('reminders', '');
       const [time, repeatDays, type] = storedKeys.split('-');
 
-      function combineUniqueDigits(str1:string, str2:string) {
+      function combineUniqueDigits(str1: string, str2: string) {
         const combinedDigits = new Set();
-      
+
         for (const digit of str1) {
           combinedDigits.add(digit);
         }
-      
+
         for (const digit of str2) {
           combinedDigits.add(digit);
         }
-      
+
         return Array.from(combinedDigits).join('');
       }
 
@@ -141,7 +141,7 @@ export default function AddReminder() {
 
             const combinedRepeatDays = combineUniqueDigits(repeatDays, tempKey.split('-')[1])
             values.repeatDays = combinedRepeatDays.split('').map(Number)
-            
+
             uniqueKey = generateUniqueKey(values);
             console.log("uniqueKey: ", uniqueKey);
 
@@ -161,25 +161,25 @@ export default function AddReminder() {
       if (values.repeatDays[0] == 1 && values.repeatDays.length > 1) {
         const rotatedList = values.repeatDays.slice(1).concat(values.repeatDays[0]);
         values.repeatDays = rotatedList
-      } 
-      
+      }
+
       if (values.repeatDays.length > 0) {
-        for (const type of values.reminderType) { 
-          for (const day of values.repeatDays) { 
+        for (const type of values.reminderType) {
+          for (const day of values.repeatDays) {
             values.notificationId.push(await reminderNotificationsRepeat(values, day, type))
           }
         }
       } else {
-        for (const type of values.reminderType) { 
+        for (const type of values.reminderType) {
           values.notificationId.push(await reminderNotificationsSingle(values, type))
         }
       }
-      
+
       console.log("[AddReminder] Last value: ", values)
 
       await storeObjectData(uniqueKey, values);
       console.log('Reminder saved successfully!');
-      router.navigate('/(notes)/reminder/');
+      router.navigate('/reminder/');
       // console.log(await AsyncStorage.getAllKeys())
       // await AsyncStorage.clear();
     } catch (err) {
@@ -215,7 +215,7 @@ export default function AddReminder() {
                 handleSubmit();
                 handleSaveReminder(values);
               }}
-              // disabled={disabled}
+            // disabled={disabled}
             />
           </View>
         )}

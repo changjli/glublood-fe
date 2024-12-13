@@ -400,7 +400,7 @@ export default function HomePage() {
                                     </CustomText>
                                     <TouchableOpacity
                                         onPress={() =>
-                                            router.push("/(notes)/reminder/")
+                                            router.push("/reminder")
                                         }
                                     >
                                         <CustomText
@@ -461,7 +461,7 @@ export default function HomePage() {
                                             alignItems: "center",
                                         }}
                                         onPress={() =>
-                                            router.push("/(notes)/reminder/")
+                                            router.push("/reminder")
                                         }
                                     >
                                         <View
