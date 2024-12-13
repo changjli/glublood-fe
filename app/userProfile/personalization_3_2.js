@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
     title: {
         marginBottom: -5,
         fontSize: 32,
-        fontFamily: ['Helvetica-Bold'],
+        fontFamily: 'Helvetica-Bold',
     },
     subTitle: {
         marginBottom: 14,
         color: '#969696',
         fontSize: 14,
-        fontFamily: ['Helvetica'],
+        fontFamily: 'Helvetica',
     },
     img: {
         width: 200,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         color: 'black',
         fontSize: 16,
-        fontFamily: ['Helvetica'],
+        fontFamily: 'Helvetica',
         textAlign: 'center',
     },
 });

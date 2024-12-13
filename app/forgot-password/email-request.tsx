@@ -9,6 +9,7 @@ import axios from 'axios'
 import useAuth from '@/hooks/api/auth/useAuth'
 import VerifyCode from '@/app/forgot-password/verify-code'
 import { router } from 'expo-router';
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 type SendCodeProps = {
   setPage: (value: number) => void
@@ -20,12 +21,14 @@ type SendCodeProps = {
 }
 
 const emailSchema = Yup.object({
-    email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string().email('Invalid email address').required('Email is required'),
 })
 
 export default function EmailRequest({ setPage, setCredentials }: SendCodeProps) {
   const { forgotPassword } = useAuth()
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
+  const { showAlert } = useCustomAlert()
+
 
   const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ForgotPasswordRequest>({
     defaultValues: { email: '' },
@@ -53,15 +56,15 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
         const status = err.response?.status;
 
         if (status === 400) {
-            Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+          showAlert('Invalid request. Please check your input.', 'error');
         } else if (status === 500) {
-            Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+          showAlert('A server error occurred. Please try again later.', 'error');
         } else {
-            // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+          showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
         }
       } else {
         console.log('Unexpected Error:', err);
-        Alert.alert('Network Error', 'Please check your internet connection.');
+        showAlert('Please check your internet connection.', 'error');
       }
 
       return null
@@ -82,7 +85,7 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
 
       <Image
         source={require('@/assets/images/forgot-password/forgot.png')}
-        style={ styles.img }
+        style={styles.img}
       />
 
       <Controller

@@ -10,6 +10,7 @@ import useAuth from '@/hooks/api/auth/useAuth'
 import VerifyCode from '@/app/forgot-password/verify-code'
 import { router } from 'expo-router';
 import CustomText from '@/components/CustomText';
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 type Password = {
   oldPassword: string,
@@ -27,17 +28,18 @@ type SendCodeProps = {
 
 const passwordSchema = Yup.object({
   oldPassword: Yup.string().required('Password lama wajib diisi'),
-  newPassword: Yup.string().required('Password baru wajib diisi'), 
+  newPassword: Yup.string().required('Password baru wajib diisi'),
 })
 
 const { width, height } = Dimensions.get("window");
 
 export default function PasswordRequest({ setPage, setCredentials }: SendCodeProps) {
   const { forgotPassword, getAuthenticatedUser } = useAuth()
-  const [ getUserLoading, setGetUserLoading] = useState<boolean>(false);
-  const [ forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
+  const [getUserLoading, setGetUserLoading] = useState<boolean>(false);
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+  const { showAlert } = useCustomAlert()
 
   const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<Password>({
     defaultValues: {
@@ -64,15 +66,15 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
         const status = err.response?.status;
 
         if (status === 400) {
-            Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+          showAlert('Invalid request. Please check your input.', 'error');
         } else if (status === 500) {
-            Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+          showAlert('A server error occurred. Please try again later.', 'error');
         } else {
-            // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+          showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
         }
       } else {
         console.log('Unexpected Error:', err);
-        Alert.alert('Network Error', 'Please check your internet connection.');
+        showAlert('Please check your internet connection.', 'error');
       }
 
       return null
@@ -85,7 +87,7 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
       const data: ForgotPasswordRequest = res.data
       if (res.status === 200) {
         setCredentials({ email: data.email, password: newPass, code: '' });
-        handleForgotPasswword({email: data.email})
+        handleForgotPasswword({ email: data.email })
         setPage(2)
       }
       console.log("[ForgotPasswordRequest]: ", id)
@@ -95,15 +97,15 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
         const status = err.response?.status;
 
         if (status === 400) {
-            Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+          showAlert('Invalid request. Please check your input.', 'error');
         } else if (status === 500) {
-            Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+          showAlert('A server error occurred. Please try again later.', 'error');
         } else {
-            // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+          showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
         }
       } else {
         console.log('Unexpected Error:', err);
-        Alert.alert('Network Error', 'Please check your internet connection.');
+        showAlert('Please check your internet connection.', 'error');
       }
 
       return null
@@ -131,7 +133,7 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
       <View style={{ paddingHorizontal: 20, height: 670 }}>
         <Image
           source={require('@/assets/images/forgot-password/forgot.png')}
-          style={ styles.img }
+          style={styles.img}
         />
 
         <Controller
@@ -152,15 +154,15 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
                   secureTextEntry={!isOldPasswordVisible}
                 />
                 <TouchableOpacity
-                  style={{ 
-                      position: 'absolute',
-                      top: 15,
-                      right: 12,
+                  style={{
+                    position: 'absolute',
+                    top: 15,
+                    right: 12,
                   }}
                   onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
                 >
                   {
-                    isOldPasswordVisible ? 
+                    isOldPasswordVisible ?
                       <Ionicons name='eye' size={20} color='#969696' />
                       :
                       <Ionicons name='eye-off' size={20} color='#969696' />
@@ -193,15 +195,15 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
                     secureTextEntry={!isNewPasswordVisible}
                   />
                   <TouchableOpacity
-                    style={{ 
-                        position: 'absolute',
-                        top: 15,
-                        right: 12,
+                    style={{
+                      position: 'absolute',
+                      top: 15,
+                      right: 12,
                     }}
                     onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
                   >
                     {
-                      isNewPasswordVisible ? 
+                      isNewPasswordVisible ?
                         <Ionicons name='eye' size={20} color='#969696' />
                         :
                         <Ionicons name='eye-off' size={20} color='#969696' />
@@ -212,11 +214,11 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
             )}
           />
           {errors.newPassword && (
-            <Text style={[styles.errorText, {marginBottom: 0}]}>{errors.newPassword.message}</Text>
+            <Text style={[styles.errorText, { marginBottom: 0 }]}>{errors.newPassword.message}</Text>
           )}
 
           <TouchableOpacity
-            style={{ 
+            style={{
               position: 'absolute',
               bottom: 0,
               right: 0,
@@ -239,8 +241,8 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
           style={styles.button}
           onPress={handleSubmit((data) => {
             const passRequest: sendCodeRequest = {
-                email: 'a',
-                password: data.oldPassword,
+              email: 'a',
+              password: data.oldPassword,
             };
             handleGetAuth(passRequest, data.newPassword);
           })}

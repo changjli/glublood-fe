@@ -30,7 +30,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     </Text>
                     <Image
                         source={require('@/assets/svgs/userProfile/Non-Diabetes.png')}
-                        style={ styles.img }
+                        style={styles.img}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -53,7 +53,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     </Text>
                     <Image
                         source={require('@/assets/svgs/userProfile/Diabetes.png')}
-                        style={ styles.img }
+                        style={styles.img}
                     />
                 </TouchableOpacity>
                 {errors.selectPatient &&
@@ -66,8 +66,8 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                         }}
                     >
                         <Ionicons name='warning' size={16} color='red' />
-                        <Text 
-                            style={{ 
+                        <Text
+                            style={{
                                 color: '#EF4444',
                                 fontFamily: 'Helvetica',
                             }}
@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
     title: {
         marginBottom: -5,
         fontSize: 32,
-        fontFamily: ['Helvetica-Bold'],
+        fontFamily: 'Helvetica-Bold',
     },
     subTitle: {
         marginBottom: 14,
         color: '#969696',
         fontSize: 14,
-        fontFamily: ['Helvetica'],
+        fontFamily: 'Helvetica',
     },
     selectionButton: {
         marginBottom: 20,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         color: '#EC8F5E',
         fontSize: 18,
-        fontFamily: ['Helvetica-Bold'],
+        fontFamily: 'Helvetica-Bold',
         textAlign: 'center',
     },
     img: {

@@ -11,10 +11,12 @@ import CustomText from '@/components/CustomText'
 import Wrapper from '@/components/Layout/Wrapper'
 import { Colors } from '@/constants/Colors'
 import { FlexStyles } from '@/constants/Flex'
+import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 export default function Search() {
 
     const { searchMasterFood } = useMasterFood()
+    const { showAlert } = useCustomAlert()
 
     const [search, setSearch] = useState('')
     const [masterFoods, setMasterFoods] = useState<SearchMasterFoodResponse[]>([])
@@ -32,15 +34,15 @@ export default function Search() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }
