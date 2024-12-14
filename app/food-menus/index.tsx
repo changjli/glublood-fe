@@ -12,6 +12,7 @@ import CustomButton from '@/components/CustomButton'
 import { router } from 'expo-router'
 import CustomHeader from '@/components/CustomHeader'
 import { useCustomAlert } from '../context/CustomAlertProvider'
+import { slugify } from '@/utils/slugify'
 
 export default function FoodMenuPage() {
 
@@ -38,7 +39,7 @@ export default function FoodMenuPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -81,14 +82,16 @@ export default function FoodMenuPage() {
                     <CustomText style={{ marginBottom: 8 }}>Terdapat <CustomText weight='heavy'>{foodMenus.length}</CustomText> hasil menu makanan</CustomText>
                     <View style={styles.foodMenuListContainer}>
                         {foodMenus.map((foodMenu, idx) => (
-                            <View style={styles.foodItemContainer} id={String(idx)}>
+                            <TouchableOpacity style={styles.foodItemContainer} id={String(idx)} onPress={() => router.push(`/food-menus/${foodMenu.id}`)}>
                                 <CustomText size='md' weight='heavy' style={{ textAlign: 'center', flex: 1 }}>{foodMenu.title}</CustomText>
                                 <CustomText size='sm'>{foodMenu.calories} Kal</CustomText>
                                 <Image
-                                    source={require('@/assets/images/user-profile/dummy.png')}
+                                    source={{
+                                        uri: `${process.env.EXPO_PUBLIC_API_URL}${foodMenu.image}`
+                                    }}
                                     style={styles.foodItemImage}
                                 />
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </View>
                 </ScrollView>

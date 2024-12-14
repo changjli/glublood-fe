@@ -8,10 +8,11 @@ import { FontAwesome } from '@expo/vector-icons';
 interface CustomImagePickerProps {
     image: string,
     onChange: (value: string) => void
+    readOnly: boolean
     children: React.ReactNode
 }
 
-export default function CustomImagePicker({ image, onChange, children }: CustomImagePickerProps) {
+export default function CustomImagePicker({ image, onChange, readOnly, children }: CustomImagePickerProps) {
     const [modalVisible, setModalVisible] = useState(false)
 
     const uploadImage = async (mode: string) => {
@@ -87,7 +88,7 @@ export default function CustomImagePicker({ image, onChange, children }: CustomI
                 </View>
             </Modal>
             <TouchableOpacity
-                onPress={() => setModalVisible(true)}
+                onPress={() => readOnly ? undefined : setModalVisible(true)}
             >
                 {children}
             </TouchableOpacity>

@@ -42,7 +42,7 @@ export default function MonthlyFoodLogStatisticPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -86,8 +86,7 @@ export default function MonthlyFoodLogStatisticPage() {
                     average={averageCalories}
                     renderLabel={(value, index) => {
                         const dateRange = value.split('~')
-
-                        return [`Minggu ${index! + 1}`, formatDateStripToSlash(dateRange[0])]
+                        return [formatDateStripToSlash(dateRange[0])]
                     }}
                 />
             }

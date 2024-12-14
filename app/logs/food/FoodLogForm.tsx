@@ -130,7 +130,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                 control={control}
                 name='img'
                 render={({ field: { onChange, onBlur, value, ref } }) => (
-                    <CustomImagePicker image={value ?? ''} onChange={onChange}>
+                    <CustomImagePicker image={value ?? ''} onChange={onChange} readOnly={formValue.type == 'auto'}>
                         <Image
                             source={{
                                 uri: value ? value.includes('/storage/') ? process.env.EXPO_PUBLIC_API_URL + value : value : 'https://placehold.jp/300x400.png'

@@ -1,6 +1,6 @@
 import { View, Text, Alert, ImageBackground, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import axios from 'axios'
 import useFoodMenu from '@/hooks/api/food_menu/useFoodMenu'
 import Wrapper from '@/components/Layout/Wrapper'
@@ -10,6 +10,8 @@ import { FontFamily, FontSize } from '@/constants/Typography'
 import { Colors } from '@/constants/Colors'
 import Collapsible from 'react-native-collapsible';
 import { useCustomAlert } from '../context/CustomAlertProvider'
+import CustomHeader from '@/components/CustomHeader'
+import { FlexStyles } from '@/constants/Flex'
 
 export default function FoodMenuDetailPage() {
     const { id } = useLocalSearchParams()
@@ -37,7 +39,7 @@ export default function FoodMenuDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -55,16 +57,24 @@ export default function FoodMenuDetailPage() {
         <View style={{ flex: 1 }}>
             <ImageBackground
                 source={{
-                    uri: 'https://placehold.jp/300x400.png'
+                    uri: `${process.env.EXPO_PUBLIC_API_URL}${foodMenu?.image}`
                 }}
                 style={{ flex: 1 }}
             >
+                <View style={[FlexStyles.flexRow, { width: '100%', padding: 16, justifyContent: 'space-between' }]}>
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Ionicons name='arrow-back' size={FontSize['2xl']} color={'white'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <FontAwesome name='thumbs-up' size={FontSize['xl']} color={'white'} />
+                    </TouchableOpacity>
+                </View>
                 <Wrapper style={{ justifyContent: 'flex-end', paddingBottom: 50 }}>
                     <View style={styles.foodMenuOuterContainer}>
                         <ScrollView style={styles.foodMenuContainer}>
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <CustomText size='lg' weight='heavy' style={{ color: 'white' }}>{foodMenu?.title}</CustomText>
-                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                <CustomText size='lg' weight='heavy' style={{ color: 'white', maxWidth: '60%' }}>{foodMenu?.title}</CustomText>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                                     <Ionicons name='time' size={FontSize.lg} color={'white'} />
                                     <CustomText style={{ color: 'white' }}>{foodMenu?.duration}</CustomText>
                                 </View>
@@ -180,7 +190,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     informationContainer: {
-        backgroundColor: 'rgba(244, 198, 135, 0.2)',
+        backgroundColor: 'rgba(244, 198, 135, 0.7)',
         borderRadius: 12,
         marginBottom: 12,
     },
