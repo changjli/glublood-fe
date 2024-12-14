@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const Personalization3_1 = ({ setFieldValue, values, errors }) => {
+const Personalization3_1 = ({ setFieldValue, setFieldTouched, values, touched, errors }) => {
     const [selectedDiabetesType, setSelectedDiabetesType] = useState(values.selectDiabetesType || '');
 
     return (
@@ -17,6 +17,7 @@ const Personalization3_1 = ({ setFieldValue, values, errors }) => {
                         { backgroundColor: selectedDiabetesType === 1 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
+                        setFieldTouched("selectDiabetesType", true);
                         setSelectedDiabetesType(1);
                         setFieldValue('selectDiabetesType', 1);
                     }}
@@ -45,6 +46,7 @@ const Personalization3_1 = ({ setFieldValue, values, errors }) => {
                         { backgroundColor: selectedDiabetesType === 2 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
+                        setFieldTouched("selectDiabetesType", true);
                         setSelectedDiabetesType(2);
                         setFieldValue('selectDiabetesType', 2);
                     }}
@@ -66,7 +68,7 @@ const Personalization3_1 = ({ setFieldValue, values, errors }) => {
                         Kondisi dimana insulin dalam tubuh tidak bekerja efektif atau tidak cukup
                     </Text>
                 </TouchableOpacity>
-                {errors.selectDiabetesType &&
+                {touched.selectDiabetesType && errors.selectDiabetesType &&
                     <View
                         className="gap-1"
                         style={{

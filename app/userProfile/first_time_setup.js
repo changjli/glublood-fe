@@ -44,7 +44,7 @@ export default function FirstTimeSetup() {
 
     const validationSchema = Yup.object().shape({
         firstname: Yup.string().required("Nama lengkap wajib diisi!"),
-        lastname: Yup.string().required("Nama lengkap wajib diisi!"),
+        lastname: Yup.string(),
         weight: Yup.number()
             .typeError("Wajib angka!")
             .required("Berat badan wajib diisi!")
@@ -59,22 +59,18 @@ export default function FirstTimeSetup() {
         birthDate: Yup.date().required("Tanggal lahir wajib diisi!").nullable(),
         gender: Yup.string().required("Jenis Kelamin wajib diisi!"),
         descendant: Yup.string().required("Pertanyaan keturunan wajib diisi!"),
-        diseaseHistory: Yup.string().required("Riwayat Penyakit wajib diis!"),
+        diseaseHistory: Yup.string(),
         selectPatient: Yup.number().required("Wajib diisi!"),
-        selectDiabetesType: Yup.number().when("selectPatient", {
-            is: 1,
-            then: (schema) => schema.required("Wajib diisi!"),
-            otherwise: (schema) => schema,
-        }),
+        selectDiabetesType: Yup.number().required("Wajib diisi!"),
     });
 
     // Validation Personalization
     const validatePersonalization = async (formikProps, personalization) => {
         const personalization1 = [
-            "name",
+            "firstname",
+            "lastname",
             "weight",
             "height",
-            "age",
             "birthDate",
             "gender",
             "descendant",
@@ -111,7 +107,7 @@ export default function FirstTimeSetup() {
     };
 
     // Stepindicator state
-    const [currentPosition, setCurrentPosition] = useState(0);
+    const [currentPosition, setCurrentPosition] = useState(1);
 
     // Pages
     const formikSteps = [
@@ -124,18 +120,13 @@ export default function FirstTimeSetup() {
     const pageMover = (step) => {
         setCurrentPosition((prevPosition) => {
             const newPosition = prevPosition + step;
-            return newPosition < 0 ? 0 : newPosition > 3 ? 3 : newPosition;
+            console.log(newPosition);
+            return newPosition < 1 ? 1 : newPosition > 4 ? 4 : newPosition;
         });
     };
 
     // User Profile Handler
     const userProfileHandler = (formikValues) => {
-        // let descendant;
-        // if(formikValues.descendant === 'yes') {
-        //     descendant = 1
-        // } else {
-        //     descendant = 0
-        // }
         return {
             firstname: formikValues.firstname,
             lastname: formikValues.lastname,
@@ -144,7 +135,8 @@ export default function FirstTimeSetup() {
             age: formikValues.age,
             DOB: formikValues.birthDate,
             gender: formikValues.gender,
-            is_descendant_diabetes: formikValues.descendant,
+            is_descendant_diabetes:
+                formikValues.descendant === 1 ? true : false,
             is_diabetes: formikValues.selectPatient,
             medical_history: formikValues.diseaseHistory,
             diabetes_type: formikValues.selectDiabetesType,
@@ -156,21 +148,23 @@ export default function FirstTimeSetup() {
             let errors;
 
             switch (currentPosition) {
-                case 0:
+                case 1:
                     errors = await validatePersonalization(formikProps, 1);
                     break;
-                case 1:
+                case 2:
                     errors = await validatePersonalization(formikProps, 2);
                     break;
-                case 2:
+                case 3:
                     errors = await validatePersonalization(formikProps, 3);
                     break;
             }
+
+            // Check if there are any errors
             if (Object.keys(errors).length === 0) {
                 console.log(formikProps.values);
 
                 if (
-                    currentPosition === 1 &&
+                    currentPosition === 2 &&
                     formikProps.values.selectPatient === 0
                 ) {
                     formikProps.setFieldValue("selectDiabetesType", 0);
@@ -184,19 +178,25 @@ export default function FirstTimeSetup() {
                     return;
                 }
 
-                if (currentPosition === 2) {
-                    router.navigate("/(tabs)");
+                if (
+                    currentPosition === 3 &&
+                    formikProps.values.selectDiabetesType !== -1
+                ) {
                     formikProps.handleSubmit(
                         handleStoreUserProfile(
                             userProfileHandler(formikProps.values)
                         )
                     );
+
+                    router.push("/(tabs)/");
                     return;
                 }
 
                 pageMover(step);
             } else {
                 console.log(errors);
+                // Prevent moving to next page if there are errors
+                return;
             }
         } else {
             if (formikProps.values.selectPatient === 0) {
@@ -218,112 +218,217 @@ export default function FirstTimeSetup() {
                         age: "",
                         birthDate: new Date(),
                         gender: "",
-                        descendant: "",
+                        descendant: "-",
                         diseaseHistory: "",
-                        selectPatient: "",
-                        selectDiabetesType: 0,
+                        selectPatient: "-",
+                        selectDiabetesType: -1,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values) =>
                         console.log("Values onSubmit Formik: ", values)
                     }
                 >
-                    {(formikProps) => (
-                        <View
-                            style={{
-                                paddingHorizontal: 20,
-                                paddingVertical: 64,
-                                height: "100%",
-                                display: 'flex',
-                                flexGrow: 1,
-                            }}
-                        >
-                            <StepIndicator
-                                currentPosition={currentPosition}
-                                customStyles={customStyles}
-                                stepCount="3"
-                            />
-                            {React.createElement(
-                                formikSteps[currentPosition].component,
-                                formikProps
-                            )}
+                    {(formikProps) => {
+                        // Determine if next button should be disabled based on current step and validation
+                        const isNextButtonDisabled = () => {
+                            switch (currentPosition) {
+                                case 1:
+                                    return (
+                                        formikProps.errors.firstname ||
+                                        formikProps.errors.lastname ||
+                                        formikProps.errors.weight ||
+                                        formikProps.errors.height ||
+                                        formikProps.errors.birthDate ||
+                                        formikProps.errors.gender ||
+                                        formikProps.errors.descendant
+                                    );
+                                case 2:
+                                    return formikProps.errors.selectPatient;
+                                case 3:
+                                    return formikProps.errors
+                                        .selectDiabetesType;
+                                default:
+                                    return false;
+                            }
+                        };
+
+                        return (
                             <View
                                 style={{
-                                    marginTop: 12,
+                                    height: "100%",
                                     display: "flex",
-                                    flexDirection: "row",
-                                    justifyContent:
-                                        currentPosition == 3
-                                            ? "flex-end"
-                                            : "space-between",
-                                    alignItems: "flex-end",
+                                    flex: 1,
                                 }}
                             >
-                                <TouchableOpacity
-                                    style={[
-                                        styles.prevButton,
-                                        {
-                                            display:
-                                                currentPosition == 0 ||
-                                                    currentPosition == 3
-                                                    ? "none"
-                                                    : "flex",
-                                        },
-                                    ]}
-                                    onPress={() =>
-                                        pageController(-1, formikProps)
-                                    }
+                                <View
+                                    style={{
+                                        position: "relative",
+                                        zIndex: 1,
+                                        paddingBottom: 15,
+                                        height: 85,
+                                        backgroundColor: "#DA6E35",
+                                        justifyContent: "flex-end",
+                                    }}
                                 >
-                                    <Ionicons
-                                        name="arrow-back"
-                                        color="#DA6E35"
-                                        size={24}
-                                        style={{ textAlign: 'center' }}
+                                    <TouchableOpacity
+                                        style={{
+                                            position: "absolute",
+                                            zIndex: 1,
+                                            top: 38,
+                                            left: 57,
+                                        }}
+                                        disabled={true}
+                                    >
+                                        {currentPosition > 1 && (
+                                            <Ionicons
+                                                name="checkmark"
+                                                color="#197340"
+                                                size={24}
+                                            />
+                                        )}
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{
+                                            position: "absolute",
+                                            zIndex: 1,
+                                            top: 38,
+                                            left: 194,
+                                        }}
+                                        disabled={true}
+                                    >
+                                        {currentPosition > 2 && (
+                                            <Ionicons
+                                                name="checkmark"
+                                                color="#197340"
+                                                size={24}
+                                            />
+                                        )}
+                                    </TouchableOpacity>
+                                    <StepIndicator
+                                        currentPosition={currentPosition - 1}
+                                        customStyles={customStyles}
+                                        stepCount="3"
                                     />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.nextButton,
-                                        {
-                                            marginLeft:
-                                                currentPosition == 0
-                                                    ? "auto"
-                                                    : 0,
-                                        },
-                                        {
-                                            width:
-                                                currentPosition == 3 ? 175 : 55,
-                                        },
-                                    ]}
-                                    onPress={() =>
-                                        pageController(1, formikProps)
-                                    }
+                                </View>
+                                <View
+                                    style={{
+                                        paddingHorizontal: 15,
+                                        height: 680,
+                                    }}
                                 >
-                                    {currentPosition === 3 ? (
-                                        <Text
-                                            style={{
-                                                color: 'white',
-                                                fontFamily: 'Helvetica-Bold',
-                                                textAlign: 'center',
-                                            }}
-                                            onPress={() =>
-                                                router.navigate("/prediction/predict")
-                                            }
-                                        >
-                                            Mulai Pengecekkan
-                                        </Text>
-                                    ) : (
-                                        <Ionicons
-                                            name="arrow-forward"
-                                            color="#ffffff"
-                                            size={24}
-                                            style={{ textAlign: 'center' }}
-                                        />
+                                    {React.createElement(
+                                        formikSteps[currentPosition - 1]
+                                            .component,
+                                        formikProps
                                     )}
-                                </TouchableOpacity>
+                                </View>
+                                <View
+                                    style={{
+                                        marginTop: "auto",
+                                        paddingHorizontal: 15,
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        justifyContent:
+                                            currentPosition == 4
+                                                ? "flex-end"
+                                                : "space-between",
+                                        alignItems: "flex-end",
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.prevButton,
+                                            {
+                                                display:
+                                                    currentPosition == 1 ||
+                                                    currentPosition == 4
+                                                        ? "none"
+                                                        : "flex",
+                                            },
+                                        ]}
+                                        onPress={() =>
+                                            pageController(-1, formikProps)
+                                        }
+                                    >
+                                        <Ionicons
+                                            name="arrow-back"
+                                            color="#DA6E35"
+                                            size={24}
+                                            className="text-center"
+                                        />
+                                    </TouchableOpacity>
+
+                                    {currentPosition !== 4 ? (
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.nextButton,
+                                                {
+                                                    marginLeft:
+                                                        currentPosition == 1
+                                                            ? "auto"
+                                                            : 0,
+                                                    width:
+                                                        currentPosition == 4
+                                                            ? 175
+                                                            : 55,
+                                                    opacity:
+                                                        isNextButtonDisabled()
+                                                            ? 0.5
+                                                            : 1,
+                                                },
+                                            ]}
+                                            onPress={() =>
+                                                pageController(1, formikProps)
+                                            }
+                                            disabled={isNextButtonDisabled()}
+                                        >
+                                            <Ionicons
+                                                name="arrow-forward"
+                                                color="#ffffff"
+                                                size={24}
+                                                className="text-center"
+                                            />
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.nextButton,
+                                                {
+                                                    marginLeft:
+                                                        currentPosition == 1
+                                                            ? "auto"
+                                                            : 0,
+                                                    width:
+                                                        currentPosition == 4
+                                                            ? 175
+                                                            : 55,
+                                                    opacity:
+                                                        isNextButtonDisabled()
+                                                            ? 0.5
+                                                            : 1,
+                                                },
+                                            ]}
+                                            onPress={() =>
+                                                router.push("/prediction/")
+                                            }
+                                            disabled={isNextButtonDisabled()}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: "white",
+                                                    fontFamily:
+                                                        "Helvetica-Bold",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                Mulai Pengecekkan
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                             </View>
-                        </View>
-                    )}
+                        );
+                    }}
                 </Formik>
             </ScrollView>
         </TouchableWithoutFeedback>
@@ -353,22 +458,21 @@ const styles = StyleSheet.create({
 const customStyles = {
     stepIndicatorSize: 40,
     currentStepIndicatorSize: 40,
-    stepStrokeWidth: 3.5,
-    separatorStrokeWidth: 3.5,
-    currentStepStrokeWidth: 3.5,
+    stepStrokeWidth: 0,
+    currentStepStrokeWidth: 0,
+    separatorStrokeWidth: 2,
     stepStrokeCurrentColor: "#DA6E35",
     stepStrokeFinishedColor: "#DA6E35",
     stepStrokeUnFinishedColor: "#aaaaaa",
-    separatorFinishedColor: "#DA6E35",
-    separatorUnFinishedColor: "#aaaaaa",
-    stepIndicatorFinishedColor: "#DA6E35",
-    stepIndicatorUnFinishedColor: "#ffffff",
-    stepIndicatorCurrentColor: "#ffffff",
-    labelColor: "#999999",
-    currentStepLabelColor: "#DA6E35",
+    separatorFinishedColor: "#8E2E1E",
+    separatorUnFinishedColor: "#8E2E1E",
+    stepIndicatorFinishedColor: "#FBE8D9",
+    stepIndicatorUnFinishedColor: "#8E2E1E",
+    stepIndicatorCurrentColor: "#F1AE80",
+    currentStepLabelColor: "ffffff",
     stepIndicatorLabelCurrentColor: "#DA6E35",
-    stepIndicatorLabelFinishedColor: "#ffffff",
-    stepIndicatorLabelUnFinishedColor: "#aaaaaa",
+    stepIndicatorLabelFinishedColor: "#FDF0D7",
+    stepIndicatorLabelUnFinishedColor: "#7C7C7C",
     labelSize: 14,
     stepIndicatorLabelFontSize: 14,
     currentStepIndicatorLabelFontSize: 14,
