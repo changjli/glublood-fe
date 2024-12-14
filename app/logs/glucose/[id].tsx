@@ -62,7 +62,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -93,7 +93,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -124,7 +124,7 @@ export default function GlucoseLogDetailPage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);

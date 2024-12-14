@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomText from '@/components/CustomText'
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field'
 import { Colors } from '@/constants/Colors'
-import { ResetPasswordRequest, sendCodeRequest, VerifyCodeRequest } from '@/hooks/api/auth/authTypes'
+import { ForgotPasswordRequest, ResetPasswordRequest, sendCodeRequest, VerifyCodeRequest } from '@/hooks/api/auth/authTypes'
 import useAuth from '@/hooks/api/auth/useAuth'
 import Wrapper from '@/components/Layout/Wrapper'
 import Loader from '@/components/Loader'
@@ -51,7 +51,7 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
     const [innerCredentials, setInnerCredentials] = useState(credentials)
     const [timeFlag, setTimeFlag] = useState(false)
 
-    const { sendCode, verifyForgotPassword, resetPassword } = useAuth()
+    const { forgotPassword, verifyForgotPassword, resetPassword } = useAuth()
     const { showAlert } = useCustomAlert()
 
     const [sendCodeLoading, setSendCodeLoading] = useState(false)
@@ -65,9 +65,9 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
     });
     const [verificationCode, setVerificationCode] = useState('')
 
-    const handleSendCode = async (data: sendCodeRequest) => {
+    const handleSendCode = async (data: ForgotPasswordRequest) => {
         try {
-            const res = await sendCode(setSendCodeLoading, data)
+            const res = await forgotPassword(setSendCodeLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
@@ -78,67 +78,42 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
     const handleVerifyChangePasswordCode = async (id: VerifyCodeRequest) => {
         try {
             const res = await verifyForgotPassword(setSendCodeLoading, id)
-            const data: VerifyCodeRequest = res.data
-            console.log("[VerifyCodeRequest]: ", id)
-            if (res.status === 200) {
+            if (res.status == 200) {
                 handleResetPassword({
                     email: credentials.email,
                     code: id.code,
                     password: credentials.password,
                 })
+            } else if (res.status == 400) {
+                console.log(res.message)
+                showAlert(res.message, 'error')
+                setVerificationCode('')
             }
-            return res.data
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                const status = err.response?.status;
-
-                if (status === 400) {
-                    showAlert('Invalid request. Please check your input.', 'error');
-                } else if (status === 500) {
-                    showAlert('A server error occurred. Please try again later.', 'error');
-                } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
-                }
-            } else {
-                console.log('Unexpected Error:', err);
-                showAlert('Please check your internet connection.', 'error');
-            }
-            return null
+            console.log('Axios Error:', err)
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
     const handleResetPassword = async (id: ResetPasswordRequest) => {
         try {
             const res = await resetPassword(setResetPasswordLoading, id)
-            const data: ResetPasswordRequest = res.data
-            if (res.status === 200) {
+            if (res.status == 200) {
                 setPage(3)
+            } else if (res.status == 400) {
+                console.log(res.message)
+                showAlert(res.message, 'error')
             }
-            console.log("[ResetPasswordRequest]: ", id)
-            return res.data
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                const status = err.response?.status;
-
-                if (status === 400) {
-                    showAlert('Invalid request. Please check your input.', 'error');
-                } else if (status === 500) {
-                    showAlert('A server error occurred. Please try again later.', 'error');
-                } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
-                }
-            } else {
-                console.log('Unexpected Error:', err);
-                showAlert('Please check your internet connection.', 'error');
-            }
-            return null
+            console.log('Axios Error:', err)
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
@@ -185,15 +160,13 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
                     </View>
                     <View className='flex flex-row justify-center'>
                         <Text>Tidak menerima kode?</Text>
-                        <Pressable onPress={() => handleSendCode(credentials)}>
+                        <Pressable onPress={() => handleSendCode({ email: credentials.email })}>
                             <Text className='text-primary font-helvetica-bold'> Kirim ulang</Text>
                         </Pressable>
                     </View>
                 </View>
             </Wrapper>
-            {(sendCodeLoading) && (
-                <Loader visible={sendCodeLoading} />
-            )}
+            <Loader visible={sendCodeLoading} />
         </View>
     )
 }

@@ -4,17 +4,16 @@ import axios from "axios";
 import { useCustomAlert } from "@/app/context/CustomAlertProvider";
 
 export type UserProfile = {
-    DOB: string,
-    age: number,
-    diabetes_type: number,
-    first_number: string,
-    gender: string,
-    height: string,
-    is_descendant_diabetes: boolean,
-    is_diabetes: false,
-    lastname: string,
-    medical_history: string,
-    weight: string,
+    'firstname': string,
+    'lastname': string,
+    'weight': number,
+    'height': number,
+    'DOB': string,
+    'gender': string,
+    'is_descendant_diabetes': boolean,
+    'is_diabetes': boolean,
+    'medical_history': string,
+    'diabetes_type': number,
 }
 
 export function useUserProfile() {
@@ -41,7 +40,7 @@ export function useUserProfile() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);

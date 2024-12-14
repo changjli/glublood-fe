@@ -46,7 +46,7 @@ export default function YearlyExerciseLogStatisticPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -87,7 +87,7 @@ export default function YearlyExerciseLogStatisticPage() {
                     x='month'
                     y='avg_burned_calories'
                     average={averageBurnedCalories}
-                    renderLabel={(value, index) => [resolveMonthAbbreviation(index as number)]}
+                    renderLabel={(value, index) => [value.slice(0, 3)]}
                 />
             }
 
@@ -99,7 +99,7 @@ export default function YearlyExerciseLogStatisticPage() {
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah aktivitas: {exerciseLog.log_count}x</CustomText>
-                            <CustomText size='sm'>{resolveMonthAbbreviation(index)}</CustomText>
+                            <CustomText size='sm'>{exerciseLog.month.slice(0, 3)}</CustomText>
                         </View>
                     </View>
                 ))}

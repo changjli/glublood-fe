@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import apiClient from '@/configs/axios'
-import { ForgotPasswordRequest, loginRequest, registerRequest, ResetPasswordRequest, sendCodeRequest, VerifyCodeRequest } from './authTypes'
+import { changePasswordRequest, ForgotPasswordRequest, loginRequest, registerRequest, ResetPasswordRequest, sendCodeRequest, VerifyCodeRequest } from './authTypes'
 import useWithToken from '@/configs/axios/withToken'
 
 export default function useAuth() {
@@ -54,15 +54,15 @@ export default function useAuth() {
         return res
     }
 
-    const getAuthenticatedUser = async (setLoading: (loading: boolean) => void, payload: sendCodeRequest) => {
+    const changePassword = async (setLoading: (loading: boolean) => void, payload: changePasswordRequest) => {
         setLoading(true)
-        const res = await withToken.post(`${group}get-auth`, payload)
+        const res = await withToken.post(`${group}change-password`, payload)
             .then(res => {
-                console.log('[useAuth][get-user]', res.data)
+                console.log('[useAuth][changePassword]', res.data)
                 setLoading(false)
                 return res.data
             }).catch(err => {
-                console.log('[useAuth][get-user]', err.response?.data)
+                console.log('[useAuth][changePassword]', err.response?.data)
                 setLoading(false)
                 return err.response?.data
             })
@@ -118,7 +118,7 @@ export default function useAuth() {
         login,
         register,
         sendCode,
-        getAuthenticatedUser,
+        changePassword,
         forgotPassword,
         verifyForgotPassword,
         resetPassword,

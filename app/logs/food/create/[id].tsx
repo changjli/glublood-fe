@@ -16,6 +16,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../FoodLogForm'
 import { useCustomAlert } from '@/app/context/CustomAlertProvider'
+import { slugify } from '@/utils/slugify'
 
 const storeFoodLogSchema = object({
 
@@ -42,6 +43,7 @@ export default function Detail() {
         note: '',
         type: 'auto',
         brand: '',
+        img: undefined,
     })
 
     const [getLoading, setGetLoading] = useState(false)
@@ -61,7 +63,7 @@ export default function Detail() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -75,16 +77,16 @@ export default function Detail() {
         try {
             const formData = new FormData()
             formData.append('payload', JSON.stringify(payload))
-            if (payload.img) {
-                const fileResponse = await fetch(payload.img);
-                const fileBlob = await fileResponse.blob();
+            // if (payload.img) {
+            //     const fileResponse = await fetch(payload.img);
+            //     const fileBlob = await fileResponse.blob();
 
-                formData.append('food_image', {
-                    uri: payload.img,
-                    name: 'filename.jpeg',
-                    type: fileBlob.type || 'image/jpeg',
-                } as any);
-            }
+            //     formData.append('food_image', {
+            //         uri: payload.img,
+            //         name: 'filename.jpeg',
+            //         type: fileBlob.type || 'image/jpeg',
+            //     } as any);
+            // }
 
             console.log("payload", formData)
             const res = await storeFoodLog(setStoreLoading, formData)
@@ -98,7 +100,7 @@ export default function Detail() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -126,6 +128,7 @@ export default function Detail() {
             sugar: food.sugar,
             sodium: food.sodium,
             kalium: food.kalium,
+            img: `/storage/master-foods/${slugify(`${food.food_name} ${food.brand}`)}.jpeg`
         })
     }
 

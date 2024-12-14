@@ -1,8 +1,9 @@
 import { Colors } from '@/constants/Colors';
 import { formatDateStripToSlash, formatDateToDay } from '@/utils/formatDatetoString';
-import React from 'react';
+import { formatDecimalToFixed } from '@/utils/formatNumber';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { VictoryChart, VictoryBar, VictoryAxis, VictoryLine, VictoryTooltip, VictoryVoronoiContainer, VictoryZoomContainer } from 'victory-native';
+import { VictoryChart, VictoryBar, VictoryAxis, VictoryLine, VictoryTooltip, VictoryVoronoiContainer, VictoryZoomContainer, VictoryTheme } from 'victory-native';
 
 interface CustomBarChartProps {
     data: any,
@@ -16,66 +17,67 @@ const CustomBarChart = ({ data, x, y, average, renderLabel }: CustomBarChartProp
 
     const { width } = Dimensions.get('window')
 
-    const chartWidth = data.length * 30 + 200
-
     return (
         <View style={styles.container}>
-            <ScrollView horizontal>
-                <VictoryChart
-                    domainPadding={{ x: 30 }}
-                    padding={{ top: 10, left: 10, bottom: 40, right: 40 }}
-                    width={chartWidth > width ? chartWidth : width}
-                >
-                    <VictoryAxis
-                        dependentAxis
-                        orientation='right'
-                        style={{
-                            axis: { stroke: Colors.light.gray200 },
-                            grid: { stroke: Colors.light.gray200, strokeWidth: 1.5 },
-                            tickLabels: {
-                                fontSize: 12,
-                            },
-                        }}
+            <VictoryChart
+                domainPadding={20}
+                padding={{ left: 10, top: 10, right: 40, bottom: 40 }}
+                width={width}
+                containerComponent={
+                    <VictoryZoomContainer
+                        zoomDimension='x'
+                        zoomDomain={data.length > 10 ? { x: [0, 10] } : undefined}
                     />
-                    <VictoryAxis
-                        style={{
-                            axis: { stroke: Colors.light.gray200 },
-                            grid: { stroke: Colors.light.gray200, strokeWidth: 1.5 },
-                            tickLabels: {
-                                fontSize: 12,
-                            },
-                            // axis: { stroke: "transparent" },
-                            // ticks: { stroke: "transparent" },
-                            // tickLabels: { fill: "transparent" }
-                        }}
-                        tickFormat={(v, index) => renderLabel(v, index)}
-                    />
-                    <VictoryBar
-                        data={data}
-                        x={x}
-                        y={y}
-                        style={{
-                            data: {
-                                fill: Colors.light.primary,
-                                width: 30,
-                            },
-                        }}
-                        cornerRadius={{ top: 15, bottom: 15 }}
-                        labelComponent={<VictoryTooltip renderInPortal={false} />}
-                        labels={({ datum }) => `Value: ${datum.value}`}
-                        animate={{ duration: 300 }}
-                    />
-                    <VictoryLine
-                        y={() => average} // Position line at the average value
-                        style={{
-                            data: {
-                                stroke: Colors.light.secondary,
-                                strokeDasharray: '4,4'
-                            }, // Dashed line for average
-                        }}
-                    />
-                </VictoryChart>
-            </ScrollView>
+                }
+            >
+                <VictoryAxis
+                    dependentAxis
+                    orientation='right'
+                    style={{
+                        axis: { stroke: Colors.light.gray200 },
+                        grid: { stroke: Colors.light.gray200, strokeWidth: 1.5 },
+                        tickLabels: {
+                            fontSize: 12,
+                        },
+                    }}
+                />
+                <VictoryAxis
+                    style={{
+                        axis: { stroke: Colors.light.gray200 },
+                        grid: { stroke: Colors.light.gray200, strokeWidth: 1.5 },
+                        tickLabels: {
+                            fontSize: 12,
+                        },
+                    }}
+                    tickFormat={(v, index) => renderLabel(v, index)}
+                />
+                <VictoryBar
+                    data={data}
+                    x={x}
+                    y={y}
+                    style={{
+                        data: {
+                            fill: Colors.light.primary,
+                            width: 30,
+                        },
+                    }}
+                    cornerRadius={{ top: 5, bottom: 5 }}
+                    labelComponent={<VictoryTooltip
+                        renderInPortal={false}
+                        constrainToVisibleArea
+                    />}
+                    labels={({ datum }) => formatDecimalToFixed(datum[y])}
+                />
+                <VictoryLine
+                    y={() => average}
+                    style={{
+                        data: {
+                            stroke: Colors.light.secondary,
+                            strokeDasharray: '4,4'
+                        },
+                    }}
+                />
+            </VictoryChart>
         </View>
     );
 };

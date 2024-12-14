@@ -41,7 +41,7 @@ export default function MedicineLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -63,7 +63,7 @@ export default function MedicineLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -85,7 +85,7 @@ export default function MedicineLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);

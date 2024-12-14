@@ -37,6 +37,7 @@ import { FontSize } from "@/constants/Typography";
 import useAsyncStorage from "@/hooks/useAsyncStorage";
 import { parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
 import { useCustomAlert } from "../context/CustomAlertProvider";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function HomePage() {
     const { signOut, session } = useSession();
@@ -46,6 +47,7 @@ export default function HomePage() {
     const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage();
     const { width } = useWindowDimensions();
     const { showAlert } = useCustomAlert()
+    const { profile } = useUserProfile()
 
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
@@ -78,7 +80,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -115,7 +117,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -151,7 +153,7 @@ export default function HomePage() {
                         "A server error occurred. Please try again later."
                     );
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log("Unexpected Error:", err);
@@ -296,7 +298,7 @@ export default function HomePage() {
                             </TouchableOpacity>
                         </View>
                         <CustomText style={{ color: "white", maxWidth: "70%" }}>
-                            Hai, Jonathan jaga kesehatan dan perbanyak aktivitas
+                            Hai, <CustomText weight="heavy">{profile?.firstname}</CustomText> jaga kesehatan dan perbanyak aktivitas
                             tubuh
                         </CustomText>
                     </View>
@@ -547,7 +549,9 @@ export default function HomePage() {
                                         {item.calories} Kal
                                     </CustomText>
                                     <Image
-                                        source={require("@/assets/images/user-profile/dummy.png")}
+                                        source={{
+                                            uri: `${process.env.EXPO_PUBLIC_API_URL}${item.image}`
+                                        }}
                                         style={styles.foodItemImage}
                                     />
                                 </TouchableOpacity>
@@ -582,16 +586,18 @@ export default function HomePage() {
                             </CustomText>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => router.push("/ble")}>
-                        <Image
-                            source={require("@/assets/images/static/content-accu-check.png")}
-                            style={{
-                                width: "100%",
-                                height: 125,
-                                borderRadius: 16,
-                            }}
-                        />
-                    </TouchableOpacity>
+                    {profile?.is_diabetes && (
+                        <TouchableOpacity onPress={() => router.push("/ble")}>
+                            <Image
+                                source={require("@/assets/images/static/content-accu-check.png")}
+                                style={{
+                                    width: "100%",
+                                    height: 125,
+                                    borderRadius: 16,
+                                }}
+                            />
+                        </TouchableOpacity>
+                    )}
                 </Wrapper>
                 <View style={{ height: 20 }} />
             </ScrollView>
@@ -626,6 +632,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     foodItemContainer: {
+        width: 150,
         backgroundColor: "white",
         display: "flex",
         flexDirection: "column",

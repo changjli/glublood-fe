@@ -37,3 +37,7 @@ export type loginResponse = {
     }
     token: string
 }
+
+export type changePasswordRequest = {
+    password: string
+}
