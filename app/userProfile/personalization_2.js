@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const Personalization2 = ({ setFieldValue, values, errors }) => {
+const Personalization2 = ({ setFieldValue, setFieldTouched, values, touched, errors }) => {
     const [selectedPatient, setSelectedPatient] = useState(values.selectPatient || '');
 
     return (
@@ -13,9 +13,10 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                 <TouchableOpacity
                     style={[
                         styles.selectionButton,
-                        { backgroundColor: selectedPatient === 0 ? '#EC8F5E' : 'transparent' },
+                        { backgroundColor: selectedPatient == 0 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
+                        setFieldTouched("selectPatient", true);
                         setSelectedPatient(0);
                         setFieldValue('selectPatient', 0);
                     }}
@@ -23,7 +24,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                     <Text
                         style={[
                             styles.selectionButtonText,
-                            { color: selectedPatient === 0 ? '#ffffff' : '#EC8F5E' }
+                            { color: selectedPatient == 0 ? '#ffffff' : '#EC8F5E' }
                         ]}
                     >
                         Pasien Non-Diabetes
@@ -39,6 +40,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                         { backgroundColor: selectedPatient === 1 ? '#EC8F5E' : 'transparent' },
                     ]}
                     onPress={() => {
+                        setFieldTouched("selectPatient", true);
                         setSelectedPatient(1);
                         setFieldValue('selectPatient', 1);
                     }}
@@ -56,7 +58,7 @@ const Personalization2 = ({ setFieldValue, values, errors }) => {
                         style={ styles.img }
                     />
                 </TouchableOpacity>
-                {errors.selectPatient &&
+                {touched.selectPatient && errors.selectPatient &&
                     <View
                         className="gap-1"
                         style={{

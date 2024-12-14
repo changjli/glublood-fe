@@ -25,11 +25,11 @@ const isGender = [
 
 // Selection button state (descendant)
 const isDescendant = [
-    { label: "Yes", value: true },
-    { label: "No", value: false },
+    { label: "Iya", value: 1 },
+    { label: "Tidak", value: 0 },
 ];
 
-const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
+const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values, touched, errors }) => {
     const [gender, setGender] = useState(values.gender || "");
     const [descendant, setDescendant] = useState(values.descendant || "");
 
@@ -49,6 +49,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
             dateFormat = dayjs(selectedDate).format("DD/MM/YYYY");
             console.log(dateFormat);
             setFieldValue("birthDate", selectedDate);
+            setFieldTouched("birthDate", true);
         }
     };
 
@@ -84,15 +85,8 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         placeholder="Type something here"
                         value={values.firstname}
                         onChangeText={handleChange("firstname")}
-                        error={errors.firstname}
-                    />
-                    <StyledCustomTextInput
-                        classStyle="ml-2 flex-1"
-                        label="Nama belakang"
-                        placeholder="Type something here"
-                        value={values.lastname}
-                        onChangeText={handleChange("lastname")}
-                        error={errors.lastname}
+                        onBlur={() => setFieldTouched("firstname", true)}
+                        error={touched.firstname && errors.firstname}
                     />
                 </View>
                 <View
@@ -109,7 +103,8 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         placeholder="Dalam Kg"
                         value={values.weight}
                         onChangeText={handleChange("weight")}
-                        error={errors.weight}
+                        onBlur={() => setFieldTouched("weight", true)}
+                        error={touched.weight && errors.weight}
                     />
                     <StyledCustomTextInput
                         classStyle="ml-2 flex-1"
@@ -117,7 +112,8 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                         placeholder="Dalam Cm"
                         value={values.height}
                         onChangeText={handleChange("height")}
-                        error={errors.height}
+                        onBlur={() => setFieldTouched("height", true)}
+                        error={touched.height && errors.height}
                     />
                 </View>
                 <View
@@ -156,11 +152,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 paddingVertical: 10,
                                 borderWidth: 1,
                                 borderRadius: 8,
-                                borderColor: errors.birthDate
+                                borderColor: touched.birthDate && errors.birthDate
                                     ? "red"
                                     : "#969696",
                             }}
-                            onPress={handleOnPressDatePicker}
+                            onPress={() => {
+                                handleOnPressDatePicker();
+                                setFieldTouched("birthDate", true);
+                            }}
                         >
                             <Text
                                 style={{
@@ -171,7 +170,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 {dayjs(values.birthDate).format("DD/MM/YYYY")}
                             </Text>
                         </Pressable>
-                        {errors.birthDate && (
+                        {touched.birthDate && errors.birthDate && (
                             <View
                                 className="gap-1"
                                 style={{
@@ -221,6 +220,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                     },
                                 ]}
                                 onPress={() => {
+                                    setFieldTouched("gender", true);
                                     setGender(item.value);
                                     setFieldValue("gender", item.value);
                                 }}
@@ -241,7 +241,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    {errors.gender && (
+                    {touched.gender && errors.gender && (
                         <View
                             className="gap-1"
                             style={{
@@ -279,16 +279,14 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 key={item.value}
                                 style={[
                                     styles.selectionButton,
-                                    { marginRight: index === 0 ? 8 : "" },
-                                    { marginLeft: index === 1 ? 8 : "" },
                                     {
-                                        backgroundColor:
-                                            descendant === item.value
-                                                ? "#EC8F5E"
-                                                : "transparent",
+                                        marginRight: index === 0 ? 8 : "",
+                                        marginLeft: index === 1 ? 8 : "" ,
+                                        backgroundColor: descendant == item.value? "#EC8F5E" : "transparent",
                                     },
                                 ]}
                                 onPress={() => {
+                                    setFieldTouched("descendant", true);
                                     setDescendant(item.value);
                                     setFieldValue("descendant", item.value);
                                 }}
@@ -296,7 +294,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                                 <Text
                                     style={{
                                         color:
-                                            descendant === item.value
+                                            descendant == item.value
                                                 ? "#ffffff"
                                                 : "#EC8F5E",
                                         fontSize: 14,
@@ -309,7 +307,7 @@ const Personalization1 = ({ handleChange, setFieldValue, values, errors }) => {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    {errors.descendant && (
+                    {touched.descendant && errors.descendant && (
                         <View
                             className="gap-1"
                             style={{

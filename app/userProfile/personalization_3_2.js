@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 const Personalization3_2 = () => {
     return (
@@ -11,7 +10,7 @@ const Personalization3_2 = () => {
                 <View
                     style={{
                         display: 'flex',
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}
