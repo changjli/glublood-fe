@@ -120,7 +120,7 @@ export default function FirstTimeSetup() {
     const pageMover = (step) => {
         setCurrentPosition((prevPosition) => {
             const newPosition = prevPosition + step;
-            console.log(newPosition)
+            console.log(newPosition);
             return newPosition < 1 ? 1 : newPosition > 4 ? 4 : newPosition;
         });
     };
@@ -135,7 +135,8 @@ export default function FirstTimeSetup() {
             age: formikValues.age,
             DOB: formikValues.birthDate,
             gender: formikValues.gender,
-            is_descendant_diabetes: formikValues.descendant===1? true : false,
+            is_descendant_diabetes:
+                formikValues.descendant === 1 ? true : false,
             is_diabetes: formikValues.selectPatient,
             medical_history: formikValues.diseaseHistory,
             diabetes_type: formikValues.selectDiabetesType,
@@ -157,7 +158,7 @@ export default function FirstTimeSetup() {
                     errors = await validatePersonalization(formikProps, 3);
                     break;
             }
-            
+
             // Check if there are any errors
             if (Object.keys(errors).length === 0) {
                 console.log(formikProps.values);
@@ -177,14 +178,17 @@ export default function FirstTimeSetup() {
                     return;
                 }
 
-                if (currentPosition === 3 && formikProps.values.selectDiabetesType !== -1) {
+                if (
+                    currentPosition === 3 &&
+                    formikProps.values.selectDiabetesType !== -1
+                ) {
                     formikProps.handleSubmit(
                         handleStoreUserProfile(
                             userProfileHandler(formikProps.values)
                         )
                     );
 
-                    router.push("/(tabs)/")
+                    router.push("/(tabs)/");
                     return;
                 }
 
@@ -230,7 +234,7 @@ export default function FirstTimeSetup() {
                             switch (currentPosition) {
                                 case 1:
                                     return (
-                                        formikProps.errors.firstname || 
+                                        formikProps.errors.firstname ||
                                         formikProps.errors.lastname ||
                                         formikProps.errors.weight ||
                                         formikProps.errors.height ||
@@ -241,7 +245,8 @@ export default function FirstTimeSetup() {
                                 case 2:
                                     return formikProps.errors.selectPatient;
                                 case 3:
-                                    return formikProps.errors.selectDiabetesType;
+                                    return formikProps.errors
+                                        .selectDiabetesType;
                                 default:
                                     return false;
                             }
@@ -251,63 +256,75 @@ export default function FirstTimeSetup() {
                             <View
                                 style={{
                                     height: "100%",
-                                    display: 'flex',
+                                    display: "flex",
                                     flex: 1,
                                 }}
                             >
                                 <View
-                                    style={{ 
-                                        position: 'relative',
+                                    style={{
+                                        position: "relative",
                                         zIndex: 1,
                                         paddingBottom: 15,
                                         height: 85,
-                                        backgroundColor: '#DA6E35',
-                                        justifyContent: 'flex-end',
+                                        backgroundColor: "#DA6E35",
+                                        justifyContent: "flex-end",
                                     }}
                                 >
                                     <TouchableOpacity
-                                        style={{ 
-                                            position: 'absolute',
+                                        style={{
+                                            position: "absolute",
                                             zIndex: 1,
                                             top: 38,
                                             left: 57,
                                         }}
                                         disabled={true}
                                     >
-                                        {
-                                            currentPosition>1 && <Ionicons name="checkmark" color='#197340' size={24}/>
-                                        }
-                                        
+                                        {currentPosition > 1 && (
+                                            <Ionicons
+                                                name="checkmark"
+                                                color="#197340"
+                                                size={24}
+                                            />
+                                        )}
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={{ 
-                                            position: 'absolute',
+                                        style={{
+                                            position: "absolute",
                                             zIndex: 1,
                                             top: 38,
                                             left: 194,
                                         }}
                                         disabled={true}
                                     >
-                                        {
-                                            currentPosition>2 && <Ionicons name="checkmark" color='#197340' size={24}/>
-                                        }
-                                        
+                                        {currentPosition > 2 && (
+                                            <Ionicons
+                                                name="checkmark"
+                                                color="#197340"
+                                                size={24}
+                                            />
+                                        )}
                                     </TouchableOpacity>
                                     <StepIndicator
-                                        currentPosition={currentPosition-1}
+                                        currentPosition={currentPosition - 1}
                                         customStyles={customStyles}
                                         stepCount="3"
                                     />
                                 </View>
-                                <View style={{ paddingHorizontal: 15, height: 680 }}>
+                                <View
+                                    style={{
+                                        paddingHorizontal: 15,
+                                        height: 680,
+                                    }}
+                                >
                                     {React.createElement(
-                                        formikSteps[currentPosition-1].component,
+                                        formikSteps[currentPosition - 1]
+                                            .component,
                                         formikProps
                                     )}
                                 </View>
                                 <View
                                     style={{
-                                        marginTop: 'auto',
+                                        marginTop: "auto",
                                         paddingHorizontal: 15,
                                         display: "flex",
                                         flexDirection: "row",
@@ -341,7 +358,7 @@ export default function FirstTimeSetup() {
                                         />
                                     </TouchableOpacity>
 
-                                    {currentPosition !== 4 ?
+                                    {currentPosition !== 4 ? (
                                         <TouchableOpacity
                                             style={[
                                                 styles.nextButton,
@@ -351,11 +368,18 @@ export default function FirstTimeSetup() {
                                                             ? "auto"
                                                             : 0,
                                                     width:
-                                                        currentPosition == 4 ? 175 : 55,
-                                                    opacity: isNextButtonDisabled() ? 0.5 : 1,
+                                                        currentPosition == 4
+                                                            ? 175
+                                                            : 55,
+                                                    opacity:
+                                                        isNextButtonDisabled()
+                                                            ? 0.5
+                                                            : 1,
                                                 },
                                             ]}
-                                            onPress={() => pageController(1, formikProps)}
+                                            onPress={() =>
+                                                pageController(1, formikProps)
+                                            }
                                             disabled={isNextButtonDisabled()}
                                         >
                                             <Ionicons
@@ -365,7 +389,7 @@ export default function FirstTimeSetup() {
                                                 className="text-center"
                                             />
                                         </TouchableOpacity>
-                                        :
+                                    ) : (
                                         <TouchableOpacity
                                             style={[
                                                 styles.nextButton,
@@ -375,24 +399,32 @@ export default function FirstTimeSetup() {
                                                             ? "auto"
                                                             : 0,
                                                     width:
-                                                        currentPosition == 4 ? 175 : 55,
-                                                    opacity: isNextButtonDisabled() ? 0.5 : 1,
+                                                        currentPosition == 4
+                                                            ? 175
+                                                            : 55,
+                                                    opacity:
+                                                        isNextButtonDisabled()
+                                                            ? 0.5
+                                                            : 1,
                                                 },
                                             ]}
-                                            onPress={() => router.push('/prediction/')}
+                                            onPress={() =>
+                                                router.push("/prediction/")
+                                            }
                                             disabled={isNextButtonDisabled()}
                                         >
                                             <Text
-                                                style={{ 
-                                                    color: 'white',
-                                                    fontFamily: 'Helvetica-Bold',
-                                                    textAlign: 'center',
+                                                style={{
+                                                    color: "white",
+                                                    fontFamily:
+                                                        "Helvetica-Bold",
+                                                    textAlign: "center",
                                                 }}
                                             >
                                                 Mulai Pengecekkan
                                             </Text>
                                         </TouchableOpacity>
-                                    }
+                                    )}
                                 </View>
                             </View>
                         );

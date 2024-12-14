@@ -37,8 +37,39 @@ export default function usePrediction() {
         return res
     }
 
+    const getPredictionByUser = async (setLoading: (loading: boolean) => void) => {
+        setLoading(true)
+        const res = await withToken.get(`${group}`)
+            .then(res => {
+                console.log('[usePrediction][getPredictionByUser]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[usePrediction][getPredictionByUser]', err.response?.data)
+                setLoading(false)
+                return err.response?.data
+            })
+        return res
+    }
+
+    const getPredictionById = async (setLoading: (loading: boolean) => void) => {
+        setLoading(true)
+        const res = await withToken.get(`${group}`)
+            .then(res => {
+                console.log('[usePrediction][getPredictionByUser]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[usePrediction][getPredictionByUser]', err.response?.data)
+                setLoading(false)
+                return err.response?.data
+            })
+        return res
+    }
+
     return {
         doPrediction,
         storePrediction,
+        getPredictionByUser,
     }
 }

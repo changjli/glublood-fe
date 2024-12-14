@@ -13,12 +13,14 @@ import useAsyncStorage from '@/hooks/useAsyncStorage'
 import { router } from 'expo-router'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../FoodLogForm'
+import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 
 export default function Create() {
 
     const { storeFoodLog } = useFoodLog()
     const { getData } = useAsyncStorage()
+    const { showAlert } = useCustomAlert()
 
     const [formValue, setFormValue] = useState<PostFoodLogRequest>({
         calories: 0,
@@ -61,15 +63,15 @@ export default function Create() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }

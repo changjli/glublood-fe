@@ -17,6 +17,7 @@ import { Colors } from '@/constants/Colors';
 import { GlucoseLogNewEntryNotification } from '@/app/ble';
 import { useGlucoseNewEntriesNotification } from '@/hooks/useGlucoseNewEntriesNotification';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 export default function GlucoseLogPage() {
     const { getGlucoseLogByDate } = useGlucose()
@@ -27,6 +28,7 @@ export default function GlucoseLogPage() {
     const isFocused = useIsFocused()
     const { getNotifications, notifications, getNotificationByDate, deleteNotificationByDate } = useGlucoseNewEntriesNotification()
     const { profile } = useUserProfile()
+    const { showAlert } = useCustomAlert()
 
     const handleGetGlucoseLog = async (date: string) => {
         try {
@@ -39,15 +41,15 @@ export default function GlucoseLogPage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }

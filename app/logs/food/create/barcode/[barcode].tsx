@@ -27,6 +27,7 @@ export default function CreateBarcodePage() {
     const { barcode } = useLocalSearchParams()
     const { getData } = useAsyncStorage()
     const { getFoodByBarcode, storeFoodLog } = useFoodLog()
+    const { showAlert } = useCustomAlert()
 
     const [formValue, setFormValue] = useState<PostFoodLogRequest>({
         calories: 0,
@@ -57,15 +58,15 @@ export default function CreateBarcodePage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
             return null
         }
@@ -94,15 +95,15 @@ export default function CreateBarcodePage() {
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }
@@ -139,7 +140,15 @@ export default function CreateBarcodePage() {
         <>
             <Loader visible={getLoading} />
             {!formValue.calories ? (
-                <Text>Not found</Text>
+                <>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Image source={require('@/assets/images/characters/404.png')} style={{ marginBottom: 4 }} />
+                        <CustomText style={{ textAlign: 'center', paddingHorizontal: 20 }}>Maaf, data makanan yang kamu pindai tidak ada di penyimpanan kami</CustomText>
+                    </View>
+                    <View style={{ padding: 16 }}>
+                        <CustomButton title='Tambahkan secara manual' onPress={() => router.push('/logs/food/create')} />
+                    </View>
+                </>
             ) : (
                 <FoodLogForm
                     formValue={formValue}

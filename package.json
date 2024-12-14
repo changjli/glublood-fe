@@ -84,7 +84,8 @@
     "tailwind-variants": "^0.2.1",
     "tailwindcss": "^3.4.4",
     "victory-native": "^36.9.2",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "expo-build-properties": "~0.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

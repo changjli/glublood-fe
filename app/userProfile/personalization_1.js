@@ -133,7 +133,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         error={errors.age}
                     /> */}
                     <View
-                        style={{ 
+                        style={{
                             flexGrow: 1
                         }}
                     >
@@ -185,7 +185,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                                     color="red"
                                 />
                                 <Text
-                                    style={{ 
+                                    style={{
                                         color: '#EF4444',
                                         fontFamily: 'Helvetica',
                                     }}
@@ -252,7 +252,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         >
                             <Ionicons name="warning" size={16} color="red" />
                             <Text
-                                style={{ 
+                                style={{
                                     color: '#EF4444',
                                     fontFamily: 'Helvetica',
                                 }}
@@ -318,7 +318,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         >
                             <Ionicons name="warning" size={16} color="red" />
                             <Text
-                                style={{ 
+                                style={{
                                     color: '#EF4444',
                                     fontFamily: 'Helvetica',
                                 }}
@@ -355,18 +355,18 @@ const styles = StyleSheet.create({
     title: {
         marginBottom: -5,
         fontSize: 32,
-        fontFamily: ["Helvetica-Bold"],
+        fontFamily: "Helvetica-Bold",
     },
     subTitle: {
         marginBottom: 14,
         color: "#969696",
         fontSize: 14,
-        fontFamily: ["Helvetica"],
+        fontFamily: "Helvetica",
     },
     headerTextInput: {
         marginVertical: 0,
         paddingVertical: 0,
-        fontFamily: ["Helvetica-Bold"],
+        fontFamily: "Helvetica-Bold",
         fontSize: 12,
     },
     selectionButton: {
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     selectionButtonText: {
         color: "#EC8F5E",
         fontSize: 18,
-        fontFamily: ["Helvetica-Bold"],
+        fontFamily: "Helvetica-Bold",
         textAlign: "center",
     },
     centeredView: {

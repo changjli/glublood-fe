@@ -9,6 +9,7 @@ import CustomText from '@/components/CustomText';
 import useMasterExercise from '@/hooks/api/master/exercises/useMasterExercise';
 import axios from 'axios';
 import CustomModal from '@/components/CustomModal';
+import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 interface ExercisePickerProps {
     value: string
@@ -18,6 +19,7 @@ interface ExercisePickerProps {
 
 export default function ExercisePicker({ value, onChange, error }: ExercisePickerProps) {
     const { getMasterExercises } = useMasterExercise()
+    const { showAlert } = useCustomAlert()
 
     const [modalVisible, setModalVisible] = useState(false);
     const [searchKeyword, setSearchKeyword] = useState('')
@@ -55,15 +57,15 @@ export default function ExercisePicker({ value, onChange, error }: ExercisePicke
                 const status = err.response?.status;
 
                 if (status === 400) {
-                    Alert.alert('Bad Request', 'Invalid request. Please check your input.');
+                    showAlert('Invalid request. Please check your input.', 'error');
                 } else if (status === 500) {
-                    Alert.alert('Server Error', 'A server error occurred. Please try again later.');
+                    showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    // Alert.alert('Error', `An error occurred: ${status}. Please try again later.`);
+                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
-                Alert.alert('Network Error', 'Please check your internet connection.');
+                showAlert('Please check your internet connection.', 'error');
             }
         }
     }
