@@ -101,6 +101,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         classStyle="mr-2 flex-1"
                         label="Berat Badan"
                         placeholder="Dalam Kg"
+                        keyboardType={'numeric'}
                         value={values.weight}
                         onChangeText={handleChange("weight")}
                         onBlur={() => setFieldTouched("weight", true)}
@@ -110,6 +111,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         classStyle="ml-2 flex-1"
                         label="Tinggi Badan"
                         placeholder="Dalam Cm"
+                        keyboardType={'numeric'}
                         value={values.height}
                         onChangeText={handleChange("height")}
                         onBlur={() => setFieldTouched("height", true)}
@@ -196,7 +198,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         )}
                     </View>
                 </View>
-                <View className="mb-4">
+                <View className="mb-2">
                     <Text style={styles.headerTextInput}>Jenis Kelamin</Text>
                     <View
                         style={{
@@ -262,7 +264,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         </View>
                     )}
                 </View>
-                <View className="mb-4">
+                <View className="mb-2">
                     <Text style={styles.headerTextInput}>
                         Apakah Anda memiliki keturunan dengan riwayat penyakit
                         diabetes?
