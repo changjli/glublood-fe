@@ -12,6 +12,7 @@ import { StyleSheet } from 'nativewind';
 import ThemeProvider from './context/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { CustomAlertProvider } from './context/CustomAlertProvider';
+import { requestPermissionsAsync } from 'expo-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,6 +32,16 @@ export default function RootLayout() {
     if (!loaded && !error) {
         return null;
     }
+
+    async function requestPermissions() {
+        const { status } = await requestPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permission for notifications is required.');
+        }
+    }
+
+    // Call this function when initializing your app
+    requestPermissions();
 
     return (
         <SessionProvider>

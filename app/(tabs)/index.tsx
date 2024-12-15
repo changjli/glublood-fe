@@ -439,7 +439,7 @@ export default function HomePage() {
                                     <View style={styles.empytReminderContainer}>
                                         <Image
                                             source={require("@/assets/images/characters/character-report.png")}
-                                            style={{ width: 85, height: 95 }}
+                                            style={{ height: 80, resizeMode: 'contain' }}
                                         />
                                         <CustomText
                                             size="sm"
@@ -564,39 +564,90 @@ export default function HomePage() {
 
                     <View style={{ marginBottom: 16 }}>
                         <CustomText size="lg" weight="heavy">
-                            Rekam Data Kesehatan
+                            Laporan Data
                         </CustomText>
-                        <TouchableOpacity
-                            style={styles.reportContainer}
-                            onPress={() => router.push("/report")}
-                        >
-                            <Image
-                                source={require("@/assets/images/characters/character-report.png")}
-                                style={{ width: 50, height: 50 }}
-                            />
-                            <CustomText
-                                size="sm"
+                        <View style={styles.reminderContainer}>
+                            <View style={styles.empytReminderContainer}>
+                                <Image
+                                    source={require("@/assets/images/characters/icon-laporan.png")}
+                                    style={{ height: 80, resizeMode: 'contain' }}
+                                />
+                                <CustomText
+                                    size="sm"
+                                    style={{
+                                        color: Colors.light.gray400,
+                                        textAlign: "center",
+                                        fontSize: 16,
+                                    }}
+                                >
+                                    Laporan kesehatanmu mengenai diabetes dan
+                                    aktivitas yang dilakukan
+                                </CustomText>
+                            </View>
+                            <TouchableOpacity
                                 style={{
-                                    color: Colors.light.gray400,
-                                    textAlign: "center",
+                                    marginTop: 10,
+                                    padding: 12,
+                                    width: 200,
+                                    borderWidth: 1,
+                                    borderColor: "#DA6E35",
+                                    borderRadius: 8,
+                                    ...FlexStyles.flexRow,
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                 }}
+                                onPress={() => router.push("/report")}
                             >
-                                Laporan kesehatanmu mengenai diabetes dan
-                                aktivitas yang dilakukan
-                            </CustomText>
-                        </TouchableOpacity>
+                                <View
+                                    style={{
+                                        marginRight: 5,
+                                        width: 14,
+                                        height: 14,
+                                        backgroundColor: "#DA6E35",
+                                        borderRadius: 3,
+                                        ...FlexStyles.flexCol,
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <Image
+                                        source={require("@/assets/images/icons/plus.png")}
+                                        style={{
+                                            width: 6,
+                                            height: 6,
+                                            tintColor: "white",
+                                        }}
+                                    />
+                                </View>
+                                <CustomText
+                                    size="sm"
+                                    style={{
+                                        color: "#DA6E35",
+                                        textAlign: "center",
+                                        fontSize: 12,
+                                        fontFamily: "Helvetica-Bold",
+                                    }}
+                                >
+                                    Lihat laporan
+                                </CustomText>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     {profile?.is_diabetes && (
-                        <TouchableOpacity onPress={() => router.push("/ble")}>
-                            <Image
-                                source={require("@/assets/images/static/content-accu-check.png")}
-                                style={{
-                                    width: "100%",
-                                    height: 125,
-                                    borderRadius: 16,
-                                }}
-                            />
-                        </TouchableOpacity>
+                        <View>
+                            <CustomText size="lg" weight="heavy">
+                                Konfigurasi Alat
+                            </CustomText>
+                            <TouchableOpacity onPress={() => router.push("/ble")}>
+                                <Image
+                                    source={require("@/assets/images/static/content-accu-check.png")}
+                                    style={{
+                                        width: "100%",
+                                        height: 125,
+                                        borderRadius: 16,
+                                    }}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </Wrapper>
                 <View style={{ height: 20 }} />

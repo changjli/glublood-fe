@@ -117,7 +117,7 @@ export default function CustomCalendar({ value, onChange, notifications, getNoti
 
     useEffect(() => {
         onChange(new Date(selectedYear, selectedMonth, selectedDay))
-    }, [selectedDay])
+    }, [selectedDay, selectedMonth, selectedYear])
 
     return (
         <View style={{ padding: 16 }}>

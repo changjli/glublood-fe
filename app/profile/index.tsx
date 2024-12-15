@@ -22,10 +22,10 @@ export default function EditProfilePage() {
                 if (res.status === 200) {
                     console.log(res.data);
                     setProfileData(res.data);
-                    Alert.alert('Success', res.message);
+                    // Alert.alert('Success', res.message);
                 } else if (res.status === 400) {
                     console.log(res.message);
-                    Alert.alert('Error', res.message);
+                    // Alert.alert('Error', res.message);
                 }
             } catch (err) {
                 console.log('Axios Error:', err);
@@ -67,7 +67,7 @@ export default function EditProfilePage() {
                         width: '100%',
                         height: '100%',
                         backgroundColor: 'white',
-                        display: 'flex',
+                        display: 'flex', 
                         justifyContent: 'space-between'
                     }}
                 >
@@ -416,7 +416,6 @@ export default function EditProfilePage() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
-                            onPress={() => router.push('/prediction')}
                         >
                             <View
                                 style={{
@@ -511,9 +510,9 @@ export default function EditProfilePage() {
                                 <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
                             </View>
                         </TouchableOpacity>
-
+                        
                     </View>
-
+                    
                     <View style={{ paddingBottom: 20 }}>
                         {/* Sign Out Button */}
                         <TouchableOpacity
