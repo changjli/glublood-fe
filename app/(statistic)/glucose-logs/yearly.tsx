@@ -46,7 +46,7 @@ export default function YearlyGlucoseLogStatisticPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -87,7 +87,7 @@ export default function YearlyGlucoseLogStatisticPage() {
                     x='month'
                     y='avg_glucose_rate'
                     average={averageGlucoseRate}
-                    renderLabel={(value, index) => [resolveMonthAbbreviation(index as number)]}
+                    renderLabel={(value, index) => [value.slice(0, 3)]}
                 />
             }
 
@@ -99,7 +99,7 @@ export default function YearlyGlucoseLogStatisticPage() {
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} mg/dL`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             <CustomText size='sm'>Jumlah pengambilan: {glucoseLog.log_count}x</CustomText>
-                            <CustomText size='sm'>{resolveMonthAbbreviation(index)}</CustomText>
+                            <CustomText size='sm'>{glucoseLog.month.slice(0, 3)}</CustomText>
                         </View>
                     </View>
                 ))}

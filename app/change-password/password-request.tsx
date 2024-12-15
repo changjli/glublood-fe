@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert, Dime
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup"
-import { ForgotPasswordRequest, sendCodeRequest } from '@/hooks/api/auth/authTypes';
+import { changePasswordRequest, ForgotPasswordRequest, sendCodeRequest } from '@/hooks/api/auth/authTypes';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios'
 import useAuth from '@/hooks/api/auth/useAuth'
@@ -11,8 +11,13 @@ import VerifyCode from '@/app/forgot-password/verify-code'
 import { router } from 'expo-router';
 import CustomText from '@/components/CustomText';
 import { useCustomAlert } from '../context/CustomAlertProvider';
+import CustomHeader from '@/components/CustomHeader';
+import Wrapper from '@/components/Layout/Wrapper';
+import CustomTextInput from '@/components/CustomInput/CustomTextInput';
+import { Colors } from '@/constants/Colors';
+import CustomButton from '@/components/CustomButton';
 
-type Password = {
+type ChangePassword = {
   oldPassword: string,
   newPassword: string,
 }
@@ -34,14 +39,14 @@ const passwordSchema = Yup.object({
 const { width, height } = Dimensions.get("window");
 
 export default function PasswordRequest({ setPage, setCredentials }: SendCodeProps) {
-  const { forgotPassword, getAuthenticatedUser } = useAuth()
+  const { forgotPassword, changePassword } = useAuth()
   const [getUserLoading, setGetUserLoading] = useState<boolean>(false);
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
   const { showAlert } = useCustomAlert()
 
-  const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<Password>({
+  const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ChangePassword>({
     defaultValues: {
       oldPassword: '',
       newPassword: '',
@@ -50,178 +55,112 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
     mode: 'onChange',
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    // Add your logic to handle the form submission here
-  };
-
   const handleForgotPasswword = async (id: ForgotPasswordRequest) => {
     try {
       const res = await forgotPassword(setForgotPasswordLoading, id)
-      const data: ForgotPasswordRequest = res.data
-      console.log("[ForgotPasswordRequest]: ", id)
-      return res.data
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-
-        if (status === 400) {
-          showAlert('Invalid request. Please check your input.', 'error');
-        } else if (status === 500) {
-          showAlert('A server error occurred. Please try again later.', 'error');
-        } else {
-          showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
-        }
-      } else {
-        console.log('Unexpected Error:', err);
-        showAlert('Please check your internet connection.', 'error');
+      if (res.status == 200) {
+        setPage(2)
+      } else if (res.status == 400) {
+        console.log(res.message);
+        showAlert(res.message, "error");
       }
 
-      return null
+    } catch (err) {
+      console.log("Axios Error:", err);
+      showAlert("Error: Please try again later", "error");
     }
   }
 
-  const handleGetAuth = async (id: sendCodeRequest, newPass: string) => {
+  const handleChangePassword = async (payload: changePasswordRequest, newPassword: string) => {
     try {
-      const res = await getAuthenticatedUser(setGetUserLoading, id);
-      const data: ForgotPasswordRequest = res.data
-      if (res.status === 200) {
-        setCredentials({ email: data.email, password: newPass, code: '' });
+      const res = await changePassword(setGetUserLoading, payload);
+      if (res.status == 200) {
+        const data = res.data
+        setCredentials({ email: data.email, password: newPassword, code: '' })
         handleForgotPasswword({ email: data.email })
-        setPage(2)
+      } else if (res.status == 400) {
+        console.log(res.message);
+        showAlert(res.message, "error");
       }
-      console.log("[ForgotPasswordRequest]: ", id)
-      return res.data
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-
-        if (status === 400) {
-          showAlert('Invalid request. Please check your input.', 'error');
-        } else if (status === 500) {
-          showAlert('A server error occurred. Please try again later.', 'error');
-        } else {
-          showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
-        }
-      } else {
-        console.log('Unexpected Error:', err);
-        showAlert('Please check your internet connection.', 'error');
-      }
-
-      return null
+      console.log("Axios Error:", err);
+      showAlert("Error: Please try again later", "error");
     }
   };
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          marginBottom: 20,
-          paddingVertical: 15,
-          paddingHorizontal: 20,
-          backgroundColor: '#DA6E35',
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.back()}
-        >
-          <Ionicons name='arrow-back-outline' size={50} color='white' />
-        </TouchableOpacity>
-        <Text style={styles.title}>Ubah Kata Sandi</Text>
-      </View>
+      <CustomHeader title='Ubah kata sandi' />
 
-      <View style={{ paddingHorizontal: 20, height: 670 }}>
-        <Image
-          source={require('@/assets/images/forgot-password/forgot.png')}
-          style={styles.img}
-        />
+      <Wrapper style={{ backgroundColor: 'white', justifyContent: 'space-between' }}>
+        <View>
+          <Image
+            source={require('@/assets/images/forgot-password/forgot.png')}
+            style={styles.img}
+          />
 
-        <Controller
-          control={control}
-          name="oldPassword"
-          render={({ field: { onChange, value } }) => (
-            <View>
-              <Text style={styles.labelInput}>Kata sandi saat ini</Text>
-              <View>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.oldPassword && styles.inputError,
-                  ]}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Masukkan kata sandi lama"
-                  secureTextEntry={!isOldPasswordVisible}
-                />
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 15,
-                    right: 12,
-                  }}
-                  onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
-                >
-                  {
-                    isOldPasswordVisible ?
-                      <Ionicons name='eye' size={20} color='#969696' />
-                      :
-                      <Ionicons name='eye-off' size={20} color='#969696' />
-                  }
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
-        {errors.oldPassword && (
-          <Text style={styles.errorText}>{errors.oldPassword.message}</Text>
-        )}
+          <Controller
+            control={control}
+            name="oldPassword"
+            render={({ field: { onChange, value } }) => (
+              <CustomTextInput
+                label='Kata sandi saat ini'
+                placeholder='Masukkan kata sandi lama'
+                value={value}
+                onChangeText={onChange}
+                postfix={
+                  <TouchableOpacity
+                    onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
+                  >
+                    {
+                      isOldPasswordVisible ?
+                        <Ionicons name='eye-off' size={20} color='#969696' />
+                        :
+                        <Ionicons name='eye' size={20} color='#969696' />
+                    }
+                  </TouchableOpacity>
+                }
+                error={
+                  errors.oldPassword ? errors.oldPassword.message : ""
+                }
+                secureTextEntry={!isOldPasswordVisible}
+              />
+            )}
+          />
 
-        <View style={{ height: 100 }}>
           <Controller
             control={control}
             name="newPassword"
             render={({ field: { onChange, value } }) => (
-              <View>
-                <Text style={styles.labelInput}>Kata sandi terbaru</Text>
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      errors.newPassword && styles.inputError,
-                    ]}
-                    onChangeText={onChange}
-                    value={value}
-                    placeholder="Masukkan kata sandi baru"
-                    secureTextEntry={!isNewPasswordVisible}
-                  />
+              <CustomTextInput
+                label='Kata sandi saat ini'
+                placeholder='Masukkan kata sandi lama'
+                value={value}
+                onChangeText={onChange}
+                postfix={
                   <TouchableOpacity
-                    style={{
-                      position: 'absolute',
-                      top: 15,
-                      right: 12,
-                    }}
                     onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
                   >
                     {
                       isNewPasswordVisible ?
-                        <Ionicons name='eye' size={20} color='#969696' />
-                        :
                         <Ionicons name='eye-off' size={20} color='#969696' />
+                        :
+                        <Ionicons name='eye' size={20} color='#969696' />
                     }
                   </TouchableOpacity>
-                </View>
-              </View>
+                }
+                error={
+                  errors.newPassword ? errors.newPassword.message : ""
+                }
+                secureTextEntry={!isNewPasswordVisible}
+              />
             )}
           />
-          {errors.newPassword && (
-            <Text style={[styles.errorText, { marginBottom: 0 }]}>{errors.newPassword.message}</Text>
-          )}
 
           <TouchableOpacity
             style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
             }}
             onPress={() => router.push("/forgot-password/")}
           >
@@ -229,7 +168,7 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
               size="sm"
               weight="heavy"
               style={{
-                color: '#DA6E35'
+                color: Colors.light.primary,
               }}
             >
               Lupa kata sandi?
@@ -237,19 +176,14 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleSubmit((data) => {
-            const passRequest: sendCodeRequest = {
-              email: 'a',
-              password: data.oldPassword,
-            };
-            handleGetAuth(passRequest, data.newPassword);
-          })}
-        >
-          <Text style={styles.buttonText}>Konfirmasi</Text>
-        </TouchableOpacity>
-      </View>
+        <CustomButton
+          size='md'
+          title='Konfirmasi'
+          onPress={handleSubmit((data) => handleChangePassword({ password: data.oldPassword }, data.newPassword))}
+          style={{ marginBottom: 20 }}
+          loading={getUserLoading || forgotPasswordLoading}
+        />
+      </Wrapper>
     </View>
   );
 };
@@ -267,40 +201,7 @@ const styles = StyleSheet.create({
   img: {
     marginHorizontal: 'auto',
     marginBottom: 5,
-    width: 330,
+    width: '100%',
     height: 150,
-    objectFit: 'cover',
-  },
-  labelInput: {
-    fontSize: 16,
-    fontFamily: 'Helvetica-Bold'
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 12,
-    marginBottom: 8,
-  },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    marginTop: -5,
-    marginBottom: 8,
-    color: 'red',
-  },
-  button: {
-    marginTop: 'auto',
-    height: 60,
-    backgroundColor: '#DA6E35',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: 'Helvetica-Bold'
   },
 });

@@ -16,6 +16,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from './FoodLogForm'
 import { useCustomAlert } from '@/app/context/CustomAlertProvider'
+import { slugify } from '@/utils/slugify'
 
 const storeFoodLogSchema = object({
 
@@ -40,6 +41,8 @@ export default function FoodLogDetailPage() {
         time: '',
         note: '',
         type: '',
+        brand: '',
+        img: undefined,
     }
     const [formValue, setFormValue] = useState<PostFoodLogRequest>(emptyFormValue)
 
@@ -51,9 +54,28 @@ export default function FoodLogDetailPage() {
         try {
             const res = await getFoodLogDetail(setGetLoading, id)
             const data: GetFoodLogResponse = res.data
+            console.log(data)
             setFormValue({
                 ...formValue,
-                ...data,
+                id: data.id,
+                date: data.date,
+                time: data.time,
+                food_name: data.food_name,
+                calories: data.calories,
+                protein: data.protein,
+                carbohydrate: data.carbohydrate,
+                fat: data.fat,
+                serving_qty: data.serving_qty,
+                serving_size: data.serving_size,
+                note: data.note ?? '',
+                type: data.type,
+                img: data.type == 'auto' ? `/storage/master-foods/${slugify(`${data.food_name} ${data.brand}`)}.jpeg` : data.img,
+                brand: data.brand,
+                cholestrol: data.cholestrol,
+                fiber: data.fiber,
+                sugar: data.sugar,
+                sodium: data.sodium,
+                kalium: data.kalium,
             })
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -64,7 +86,7 @@ export default function FoodLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -105,7 +127,7 @@ export default function FoodLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);
@@ -127,7 +149,7 @@ export default function FoodLogDetailPage() {
                 } else if (status === 500) {
                     showAlert('A server error occurred. Please try again later.', 'error');
                 } else {
-                    showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
                 }
             } else {
                 console.log('Unexpected Error:', err);

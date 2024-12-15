@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, router } from 'expo-router';
 import Wrapper from '@/components/Layout/Wrapper';
 import { Colors } from '@/constants/Colors';
@@ -13,6 +13,7 @@ import CustomText from '@/components/CustomText';
 import { FontSize } from '@/constants/Typography';
 import CustomButton from '@/components/CustomButton';
 import { FlexStyles } from '@/constants/Flex';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 const tabs = [
     { title: 'Gula Darah', page: GlucoseLogPage, image: require('@/assets/images/characters/tracking-nutrisi.png') },
@@ -23,7 +24,18 @@ const tabs = [
 
 export default function LogPage() {
 
+    const { profile } = useUserProfile()
+
+    const [tabList, setTabList] = useState(tabs)
     const [selectedTab, setSelectedTab] = useState(tabs[0])
+
+    useEffect(() => {
+        if (!profile?.is_diabetes) {
+            const filteredTabs = tabs.filter(tab => tab.title != 'Gula Darah')
+            setTabList(filteredTabs)
+            setSelectedTab(filteredTabs[0])
+        }
+    }, [profile])
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -38,7 +50,7 @@ export default function LogPage() {
                             {/* <Image source={selectedTab.image} style={{ height: 50 }} resizeMode='contain' /> */}
                         </View>
                         <View style={styles.tabContainer}>
-                            {tabs.map((tab, idx) => (
+                            {tabList.map((tab, idx) => (
                                 <CustomButton
                                     title={tab.title}
                                     style={styles.tabItemContainer}

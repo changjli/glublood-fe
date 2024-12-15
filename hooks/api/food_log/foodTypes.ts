@@ -8,7 +8,16 @@ type GetFoodLogResponse = {
     carbohydrate: number
     fat: number
     serving_qty: number
-    serving_size: number
+    serving_size: string
+    note: string
+    type: string
+    img: string
+    brand: string
+    cholestrol: number
+    fiber: number
+    sugar: number
+    sodium: number
+    kalium: number
 }
 
 type PostFoodLogRequest = {
