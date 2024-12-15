@@ -1,4 +1,4 @@
-import { View, Text, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, StyleSheet, Image, Pressable } from 'react-native'
+import { View, Text, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, StyleSheet, Image, Pressable, ScrollView } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState, useEffect } from 'react'
 import dayjs from 'dayjs';
@@ -36,6 +36,8 @@ export default function editProfile() {
         gender: '',
         descendant: false,
         diseaseHistory: '',
+        isDiabetes: false,
+        diabetesType: 0,
     });
 
     useEffect(() => {
@@ -54,9 +56,14 @@ export default function editProfile() {
                         gender: res.data.gender ? res.data.gender : '',
                         descendant: res.data.is_descendant_diabetes ? res.data.is_descendant_diabetes : false,
                         diseaseHistory: res.data.medical_history || '',
+                        isDiabetes: res.data.is_diabetes || '',
+                        diabetesType: res.data.diabetes_type || '',
                     });
                     setDescendant(res.data.is_descendant_diabetes)
                     setGender(res.data.gender)
+                    setIsDiabetes(res.data.is_diabetes)
+                    setDiabetesType(res.data.diabetes_type)
+
                     // Alert.alert('Success', res.message);
                 } else if (res.status === 400) {
                     console.log(res.message);
@@ -104,10 +111,14 @@ export default function editProfile() {
         gender: Yup.string().required("Jenis Kelamin wajib diisi!"),
         descendant: Yup.string().required("Pertanyaan keturunan wajib diisi!"),
         diseaseHistory: Yup.string(),
+        selectPatient: Yup.boolean(),
+        selectDiabetesType: Yup.number(),
     });
 
     const [gender, setGender] = useState("");
     const [descendant, setDescendant] = useState("");
+    const [isDiabetes, setIsDiabetes] = useState("");
+    const [diabetesType, setDiabetesType] = useState("");
     
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [date, setDate] = useState(new Date());
@@ -120,7 +131,7 @@ export default function editProfile() {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View>
+            <ScrollView>
                 <View
                     style={{ 
                         paddingTop: 25,
@@ -165,6 +176,8 @@ export default function editProfile() {
                             gender: values.gender,
                             is_descendant_diabetes: values.descendant,
                             medical_history: values.diseaseHistory,
+                            is_diabetes: values.isDiabetes? values.isDiabetes : isDiabetes,
+                            diabetes_type: values.diabetesType? values.diabetesType : diabetesType,
                         };
 
                         console.log("updated data: ", mappedValues)
@@ -177,14 +190,13 @@ export default function editProfile() {
                     {({ handleChange, handleBlur, handleSubmit, values, errors, setFieldValue, setFieldTouched, touched }) => (
                         <View
                             style={{ 
-                                height: '80%',
                                 paddingHorizontal: 16,
                                 paddingVertical: 16,
                             }}
                         >
-                            <View>
+                            <View style={{ paddingBottom: 40 }}>
                                 <View
-                                    className="mb-2"
+                                    className="mb-3"
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'row',
@@ -192,7 +204,7 @@ export default function editProfile() {
                                     }}
                                 >
                                     <StyledCustomTextInput
-                                        classStyle="mr-2 flex-1"
+                                        classStyle="flex-1"
                                         label="Nama depan"
                                         placeholder="Type something here"
                                         value={values.firstname}
@@ -202,7 +214,7 @@ export default function editProfile() {
                                     />
                                 </View>
                                 <View
-                                    className="mb-2"
+                                    className="mb-3 gap-[10px]"
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'row',
@@ -210,7 +222,7 @@ export default function editProfile() {
                                     }}
                                 >
                                     <StyledCustomTextInput
-                                        classStyle="mr-2 flex-1"
+                                        classStyle="flex-1"
                                         label="Berat Badan"
                                         placeholder="Dalam Kg"
                                         keyboardType={'numeric'}
@@ -220,7 +232,7 @@ export default function editProfile() {
                                         error={touched.weight && errors.weight}
                                     />
                                     <StyledCustomTextInput
-                                        classStyle="ml-2 flex-1"
+                                        classStyle="flex-1"
                                         label="Tinggi Badan"
                                         placeholder="Dalam Cm"
                                         keyboardType={'numeric'}
@@ -231,7 +243,7 @@ export default function editProfile() {
                                     />
                                 </View>
                                 <View
-                                    className="mb-2"
+                                    className="mb-3"
                                     style={{
                                         display: 'flex',
                                         flexDirection: 'row',
@@ -302,7 +314,7 @@ export default function editProfile() {
                                         )}
                                     </View>
                                 </View>
-                                <View className="mb-2">
+                                <View className="mb-3">
                                     <Text style={styles.headerTextInput}>Jenis Kelamin</Text>
                                     <View
                                         style={{
@@ -316,8 +328,8 @@ export default function editProfile() {
                                                 key={item.value}
                                                 style={[
                                                     styles.selectionButton,
-                                                    { marginRight: index === 0 ? 8 : "" },
-                                                    { marginLeft: index === 1 ? 8 : "" },
+                                                    { marginRight: index === 0 ? 5 : "" },
+                                                    { marginLeft: index === 1 ? 5 : "" },
                                                     {
                                                         backgroundColor:
                                                             gender === item.value
@@ -337,7 +349,7 @@ export default function editProfile() {
                                                             gender === item.value
                                                                 ? "#ffffff"
                                                                 : "#EC8F5E",
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         fontFamily: 'Helvetica-Bold',
                                                         textAlign: 'center',
                                                     }}
@@ -368,7 +380,7 @@ export default function editProfile() {
                                         </View>
                                     )}
                                 </View>
-                                <View className="mb-2">
+                                <View className="mb-3">
                                     <Text style={styles.headerTextInput}>
                                         Apakah Anda memiliki keturunan dengan riwayat penyakit
                                         diabetes?
@@ -386,8 +398,8 @@ export default function editProfile() {
                                                 style={[
                                                     styles.selectionButton,
                                                     {
-                                                        marginRight: index === 0 ? 8 : "",
-                                                        marginLeft: index === 1 ? 8 : "" ,
+                                                        marginRight: index === 0 ? 5 : "",
+                                                        marginLeft: index === 1 ? 5 : "" ,
                                                         backgroundColor: descendant == item.value? "#EC8F5E" : "transparent",
                                                     },
                                                 ]}
@@ -403,7 +415,7 @@ export default function editProfile() {
                                                             descendant == item.value
                                                                 ? "#ffffff"
                                                                 : "#EC8F5E",
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         fontFamily: 'Helvetica-Bold',
                                                         textAlign: 'center',
                                                     }}
@@ -434,10 +446,110 @@ export default function editProfile() {
                                         </View>
                                     )}
                                 </View>
+                                <View>
+                                    <Text style={styles.headerTextInput}>Apakah Anda tergolong pasien diabetes?</Text>
+                                    <View
+                                        className="mb-3"
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.selectionButtonTriplet,
+                                                {
+                                                    backgroundColor: !isDiabetes? "#EC8F5E" : "transparent",
+                                                },
+                                            ]}
+                                            onPress={() => {
+                                                setFieldTouched("isDiabetes", true);
+                                                setIsDiabetes(false);
+                                                setFieldValue("isDiabetes", false);
+                                                setDiabetesType(0);
+                                                setFieldValue("diabetesType", 0);
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color:
+                                                        !isDiabetes
+                                                            ? "#ffffff"
+                                                            : "#EC8F5E",
+                                                    fontSize: 12,
+                                                    fontFamily: 'Helvetica-Bold',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                Non-Diabetes
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.selectionButtonTriplet,
+                                                {
+                                                    backgroundColor: diabetesType==1? "#EC8F5E" : "transparent",
+                                                },
+                                            ]}
+                                            onPress={() => {
+                                                setFieldTouched("diabetesType", true);
+                                                setDiabetesType(1);
+                                                setFieldValue("diabetesType", 1);
+                                                setIsDiabetes(true);
+                                                setFieldValue("isDiabetes", true);
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color:
+                                                        diabetesType==1
+                                                            ? "#ffffff"
+                                                            : "#EC8F5E",
+                                                    fontSize: 12,
+                                                    fontFamily: 'Helvetica-Bold',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                Diabetes Tipe 1
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.selectionButtonTriplet,
+                                                {
+                                                    backgroundColor: diabetesType==2? "#EC8F5E" : "transparent",
+                                                },
+                                            ]}
+                                            onPress={() => {
+                                                setFieldTouched("diabetesType", true);
+                                                setDiabetesType(2);
+                                                setFieldValue("diabetesType", 2);
+                                                setIsDiabetes(true);
+                                                setFieldValue("isDiabetes", true);
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color:
+                                                        diabetesType==2
+                                                            ? "#ffffff"
+                                                            : "#EC8F5E",
+                                                    fontSize: 12,
+                                                    fontFamily: 'Helvetica-Bold',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                Diabetes Tipe 2
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                                 <StyledCustomTextInput
                                     label="Riwayat Penyakit"
                                     placeholder="Cth: Kolesterol"
                                     value={values.diseaseHistory}
+                                    onBlur={() => setFieldTouched("diseaseHistory", true)}
                                     onChangeText={handleChange("diseaseHistory")}
                                     error={errors.diseaseHistory}
                                 />
@@ -449,9 +561,9 @@ export default function editProfile() {
                                 <TouchableOpacity
                                     style={{
                                         marginTop: 20,
-                                        paddingVertical: 15,
+                                        paddingVertical: 12,
                                         backgroundColor: disabledButton? '#D8D8D8' : '#DA6E35',
-                                        borderRadius: 10,
+                                        borderRadius: 8,
                                         display: 'flex',
                                         alignItems: 'center',
                                     }}
@@ -461,7 +573,7 @@ export default function editProfile() {
                                     <Text
                                         style={{ 
                                             color: disabledButton? '#969696' : 'white',
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             fontFamily: 'Helvetica-Bold',
                                         }}
                                     >
@@ -470,6 +582,7 @@ export default function editProfile() {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={{
+                                        marginTop: 5,
                                         borderRadius: 10,
                                         display: 'flex',
                                         alignItems: 'center',
@@ -479,7 +592,7 @@ export default function editProfile() {
                                         style={{ 
                                             paddingVertical: 10,
                                             color: '#FE3F11',
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             fontFamily: 'Helvetica-Bold',
                                         }}
                                         onPress={() => router.back()}
@@ -510,7 +623,7 @@ export default function editProfile() {
                         </View>
                     )}
                 </Formik>
-            </View>
+            </ScrollView>
         </TouchableWithoutFeedback>
     )
 }
@@ -541,6 +654,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flex: 1,
         flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    selectionButtonTriplet: {
+        width: '31%',
+        height: 30,
+        borderWidth: 1,
+        borderColor: '#EC8F5E',
+        borderRadius: 5,
         justifyContent: 'center',
         alignItems: 'center',
     },
