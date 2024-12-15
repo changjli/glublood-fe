@@ -1,4 +1,4 @@
-import { View, Text, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native'
+import { View, Text, Alert, TouchableWithoutFeedback, Keyboard, TouchableOpacity, StyleSheet, Image, Modal, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import useProfile from '@/hooks/api/profile/useProfile';
@@ -62,18 +62,15 @@ export default function EditProfilePage() {
     return (
         profileData ?
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View
+                <ScrollView
                     style={{
-                        width: '100%',
-                        height: '100%',
                         backgroundColor: 'white',
-                        display: 'flex', 
-                        justifyContent: 'space-between'
                     }}
                 >
                     <View
                         style={{
                             width: '100%',
+                            paddingBottom: 100,
                             display: 'flex',
                         }}
                     >
@@ -278,18 +275,26 @@ export default function EditProfilePage() {
                             <View className='mt-2'>
                                 <Text
                                     style={{
-                                        marginRight: '60%',
-                                        paddingHorizontal: 13,
+                                        paddingHorizontal: 12,
                                         paddingVertical: 8,
+                                        width: '55%',
                                         backgroundColor: '#FFF8E1',
-                                        borderRadius: 12,
+                                        borderRadius: 6,
                                         color: '#DA6E35',
                                         fontSize: 16,
                                         fontFamily: 'Helvetica-Bold',
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {profileData['is_diabetes'] ? 'Terindikasi' : 'Non-Diabetes'}
+                                    {
+                                        profileData['is_diabetes'] ?
+                                            profileData['diabetes_type'] == 1 ?
+                                                'Diabetes Tipe 1'
+                                                :
+                                                'Diabetes Tipe 2'
+                                            :
+                                            'Non-Diabetes'
+                                    }
                                 </Text>
                             </View>
                             <View
@@ -556,7 +561,7 @@ export default function EditProfilePage() {
                             Versi 1.0
                         </Text>
                     </View>
-                </View>
+                </ScrollView>
             </TouchableWithoutFeedback>
             :
             null
