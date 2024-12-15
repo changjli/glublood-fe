@@ -240,13 +240,11 @@ export default function FirstTimeSetup() {
                                         formikProps.errors.height ||
                                         formikProps.errors.birthDate ||
                                         formikProps.errors.gender ||
-                                        formikProps.errors.descendant
-                                    );
+                                        formikProps.errors.descendant) ? true : false;
                                 case 2:
-                                    return formikProps.errors.selectPatient;
+                                    return formikProps.errors.selectPatient ? true : false;
                                 case 3:
-                                    return formikProps.errors
-                                        .selectDiabetesType;
+                                    return formikProps.errors.selectDiabetesType ? true : false;
                                 default:
                                     return false;
                             }
