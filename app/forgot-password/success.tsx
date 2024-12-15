@@ -1,9 +1,10 @@
-import { View, Text, Keyboard, Image, StyleSheet } from "react-native";
+import { View, Text, Keyboard, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import { router } from "expo-router";
 
 export default function SuccessPage() {
     return (
-        <View style={{ height: "100%" }}>
+        <TouchableOpacity style={{ height: "100%" }} onPress={() => router.replace('/(auth)/login')}>
             <Image
                 source={require("@/assets/images/forgot-password/success-top-bg.png")}
                 style={[
@@ -15,13 +16,13 @@ export default function SuccessPage() {
                     }
                 ]}
             />
-            <View style={ styles.contentContainer }>
+            <View style={styles.contentContainer}>
                 <Image
                     source={require("@/assets/images/forgot-password/success.png")}
-                    style={ styles.img }
+                    style={styles.img}
                 />
-                <Text style={ styles.title }>Kata sandi berhasil diubah!</Text>
-                <Text style={ styles.subTitle }> Silahkan tap untuk kembali ke halaman login</Text>
+                <Text style={styles.title}>Kata sandi berhasil diubah!</Text>
+                <Text style={styles.subTitle}> Silahkan tap untuk kembali ke halaman login</Text>
             </View>
             <Image
                 source={require("@/assets/images/forgot-password/success-bottom-bg.png")}
@@ -30,7 +31,7 @@ export default function SuccessPage() {
                     { bottom: 0 }
                 ]}
             />
-        </View>
+        </TouchableOpacity>
     );
 }
 

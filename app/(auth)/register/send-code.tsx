@@ -51,6 +51,7 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
 
     const [sendCodeLoading, setSendCodeLoading] = useState<boolean>(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
 
     const handleSendCode = async (data: sendCodeRequest) => {
         try {
@@ -78,15 +79,15 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
 
     return (
         <View style={{ flex: 1 }}>
-            {/* <View className='absolute'>
+            <View style={{ position: 'absolute' }}>
                 <Image source={require('../../../assets/images/backgrounds/wave-1.png')} style={{ width: width, height: 375 }} />
-            </View> */}
+            </View>
             <WithKeyboard>
-                <Wrapper style={{ backgroundColor: 'white', height: height }}>
+                <Wrapper style={{ height: height }}>
                     <CustomText size='3xl' weight='heavy' style={{ color: Colors.light.primary }}>Daftar</CustomText>
                     <CustomText size='md' style={{ color: 'white', marginBottom: 20 }}>Mulai perjalananmu dengan kami!</CustomText>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-                        <Image source={require('../../../assets/images/characters/icon-regis.png')} style={{ height: 200 }} resizeMode='contain' />
+                        <Image source={require('@/assets/images/characters/icon-regis.png')} style={{ height: 200 }} resizeMode='contain' />
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -119,11 +120,11 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                                         error={errors.password ? errors.password.message : ''}
                                         postfix={showPassword ? (
                                             <TouchableOpacity onPress={() => setShowPassword(false)}>
-                                                <Ionicons name='eye' color={Colors.light.primary} size={FontSize.lg} />
+                                                <Ionicons name='eye-off' color={Colors.light.primary} size={FontSize.lg} />
                                             </TouchableOpacity>
                                         ) : (
                                             <TouchableOpacity onPress={() => setShowPassword(true)}>
-                                                <Ionicons name='eye-off' color={Colors.light.primary} size={FontSize.lg} />
+                                                <Ionicons name='eye' color={Colors.light.primary} size={FontSize.lg} />
                                             </TouchableOpacity>
                                         )}
                                         secureTextEntry={!showPassword}
@@ -142,7 +143,16 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                                         value={value}
                                         onChangeText={onChange}
                                         error={errors.password_confirmation ? errors.password_confirmation.message : ''}
-                                        secureTextEntry={!showPassword}
+                                        postfix={showPasswordConfirmation ? (
+                                            <TouchableOpacity onPress={() => setShowPasswordConfirmation(false)}>
+                                                <Ionicons name='eye-off' color={Colors.light.primary} size={FontSize.lg} />
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity onPress={() => setShowPasswordConfirmation(true)}>
+                                                <Ionicons name='eye' color={Colors.light.primary} size={FontSize.lg} />
+                                            </TouchableOpacity>
+                                        )}
+                                        secureTextEntry={!showPasswordConfirmation}
                                     />
                                 )}
                             />
@@ -156,7 +166,7 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                                     Sudah memiliki akun?
                                 </CustomText>
                                 <Pressable onPress={() => router.replace('/(auth)/login')}>
-                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>
+                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary, marginBottom: 16 }}>
                                         Masuk disini
                                     </CustomText>
                                 </Pressable>

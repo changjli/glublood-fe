@@ -32,7 +32,6 @@ const glucoseLogSchema = Yup.object().shape({
     glucose_rate: Yup.number().required("Tekanan gula darah wajib diisi!"),
     time: Yup.string().required("Waktu pengambilan wajib diisi!"),
     time_selection: Yup.string(),
-    notes: Yup.string(),
 });
 
 const doseTypes = ["Sesudah Makan", "Sebelum Makan", "Puasa", "Sebelum Tidur"];
@@ -73,7 +72,7 @@ export default function GlucoseLogForm({
                     control={control}
                     name="glucose_rate"
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <View style={{ marginBottom: 15 }}>
+                        <View style={{ marginBottom: 10 }}>
                             <CustomTextInput
                                 label="Gula Darahmu"
                                 placeholder="Contoh: 98"
@@ -101,7 +100,7 @@ export default function GlucoseLogForm({
                     control={control}
                     name="time"
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <View style={{ marginBottom: 15 }}>
+                        <View style={{ marginBottom: 10 }}>
                             <CustomTimePicker
                                 value={value}
                                 onChange={onChange}
@@ -115,7 +114,7 @@ export default function GlucoseLogForm({
                     control={control}
                     name="time_selection"
                     render={({ field: { onChange, onBlur, value, ref } }) => (
-                        <View style={{ marginBottom: 15 }}>
+                        <View style={{ marginBottom: 10 }}>
                             <Text style={styles.labelText}>
                                 Kondisi Pengambilan
                             </Text>
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
     catatanInput: {
-        height: 100,
+        height: 80,
         textAlignVertical: "top",
     },
     saveButton: {

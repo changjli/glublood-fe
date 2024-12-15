@@ -44,6 +44,7 @@ export default function CustomButton({
                 disabled && styles.buttonDisabled,
                 style,
             ]}
+            disabled={disabled}
             {...rest}
         >
             {type == 'delete' && (

@@ -34,6 +34,9 @@ export default function LogPage() {
             const filteredTabs = tabs.filter(tab => tab.title != 'Gula Darah')
             setTabList(filteredTabs)
             setSelectedTab(filteredTabs[0])
+        } else {
+            setTabList(tabs)
+            setSelectedTab(tabs[0])
         }
     }, [profile])
 

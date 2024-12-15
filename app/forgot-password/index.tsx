@@ -22,10 +22,10 @@ export default function ForgorPassword() {
     useEffect(() => {
         if (page === 4) {
             const timer = setTimeout(() => {
-                router.back();
+                router.replace('/(auth)/login');
             }, 3000);
 
-            return () => clearTimeout(timer); 
+            return () => clearTimeout(timer);
         }
     }, [page, router]);
 

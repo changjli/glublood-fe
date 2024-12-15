@@ -59,22 +59,21 @@ export default function PredictionPage() {
     return (
         <>
             <CustomHeader title='Riwayat Prediksi' />
-            <Wrapper>
+            <Wrapper style={{ backgroundColor: 'white' }}>
                 <FlatList
                     data={predictions}
                     renderItem={({ item, index }) => (
-                        <TouchableOpacity
+                        <View
                             style={[FlexStyles.flexRow, {
                                 justifyContent: 'space-between',
                                 marginVertical: 4,
                                 borderBottomColor: Colors.light.gray300,
                                 borderBottomWidth: index == predictions.length - 1 ? 0 : 1,
                             }]}
-                            onPress={() => router.push(`/prediction/${item.id}`)}
                         >
                             <CustomText>{resolveDiabetesResult(item.result)}</CustomText>
                             <CustomText>{formatDateStringIntl(item.created_at)}</CustomText>
-                        </TouchableOpacity>
+                        </View>
                     )}
                     keyExtractor={(item) => String(item.id)}
                 />

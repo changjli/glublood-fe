@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Helvetica',
     },
     selectionButton: {
-        marginBottom: 20,
-        paddingVertical: 20,
+        marginBottom: 16,
+        paddingVertical: 16,
         borderWidth: 2,
         borderColor: '#EC8F5E',
         borderRadius: 12,
