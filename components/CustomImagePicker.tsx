@@ -8,11 +8,11 @@ import { FontAwesome } from '@expo/vector-icons';
 interface CustomImagePickerProps {
     image: string,
     onChange: (value: string) => void
-    readOnly: boolean
+    readOnly?: boolean
     children: React.ReactNode
 }
 
-export default function CustomImagePicker({ image, onChange, readOnly, children }: CustomImagePickerProps) {
+export default function CustomImagePicker({ image, onChange, readOnly = false, children }: CustomImagePickerProps) {
     const [modalVisible, setModalVisible] = useState(false)
 
     const uploadImage = async (mode: string) => {

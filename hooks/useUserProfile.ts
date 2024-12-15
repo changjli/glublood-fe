@@ -14,6 +14,7 @@ export type UserProfile = {
     'is_diabetes': boolean,
     'medical_history': string,
     'diabetes_type': number,
+    'profile_image'?: string,
 }
 
 export function useUserProfile() {
@@ -53,5 +54,6 @@ export function useUserProfile() {
     return {
         profile,
         loading,
+        setProfile,
     }
 }

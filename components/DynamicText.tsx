@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontSize } from '@/constants/Typography';
 
 export type DynamicTextComponentProps = ImageBackgroundProps & {
     text: string
@@ -46,7 +47,7 @@ export default function DynamicTextComponent({
 const styles = StyleSheet.create({
     imgBackground: {
         width: '100%',
-        height: 260,
+        height: 240,
     },
     container: {
         marginTop: 30,
@@ -56,11 +57,11 @@ const styles = StyleSheet.create({
     },
     iconStyle: {
         color: 'white',
-        fontSize: 40,
+        fontSize: FontSize['2xl'],
     },
     textStyle: {
         color: 'white',
-        fontSize: 32,
+        fontSize: FontSize.xl,
         fontFamily: 'Helvetica-Bold',
     },
 })

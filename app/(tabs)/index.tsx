@@ -38,6 +38,7 @@ import useAsyncStorage from "@/hooks/useAsyncStorage";
 import { parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
 import { useCustomAlert } from "../context/CustomAlertProvider";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import Avatar from "@/components/Avatar";
 
 export default function HomePage() {
     const { signOut, session } = useSession();
@@ -291,10 +292,14 @@ export default function HomePage() {
                             <TouchableOpacity
                                 onPress={() => router.push("/profile/")}
                             >
-                                <Image
-                                    source={require("@/assets/images/user-profile/dummy.png")}
-                                    style={styles.profile}
-                                />
+                                {(profile?.profile_image) ? (
+                                    <Image
+                                        source={{ uri: process.env.EXPO_PUBLIC_API_URL + profile.profile_image }}
+                                        style={styles.profile}
+                                    />
+                                ) : (
+                                    <Avatar name={profile?.firstname && profile?.lastname ? `${profile?.firstname} ${profile?.lastname}` : ''} size={40} />
+                                )}
                             </TouchableOpacity>
                         </View>
                         <CustomText style={{ color: "white", maxWidth: "70%" }}>
