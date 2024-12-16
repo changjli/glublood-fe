@@ -15,7 +15,7 @@ import { FlexStyles } from '@/constants/Flex'
 
 export default function FoodMenuDetailPage() {
     const { id } = useLocalSearchParams()
-    const { getFoodMenuDetail } = useFoodMenu()
+    const { getFoodMenuDetail, saveMenu } = useFoodMenu()
     const { showAlert } = useCustomAlert()
 
     const [foodMenu, setFoodMenu] = useState<FoodMenu>()
@@ -30,6 +30,28 @@ export default function FoodMenuDetailPage() {
 
             const res = await getFoodMenuDetail(setGetFoodMenuDetailLoading, Number(id))
             setFoodMenu(res.data)
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+
+                if (status === 400) {
+                    showAlert('Invalid request. Please check your input.', 'error');
+                } else if (status === 500) {
+                    showAlert('A server error occurred. Please try again later.', 'error');
+                } else {
+                    // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
+                }
+            } else {
+                console.log('Unexpected Error:', err);
+                showAlert('Please check your internet connection.', 'error');
+            }
+            return []
+        }
+    }
+
+    const handleSaveMenu = async () => {
+        try {
+            const res = await saveMenu(setGetFoodMenuDetailLoading, { menu_id: Number(id) })
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const status = err.response?.status;
@@ -65,8 +87,14 @@ export default function FoodMenuDetailPage() {
                     <TouchableOpacity onPress={() => router.back()}>
                         <Ionicons name='arrow-back' size={FontSize['2xl']} color={'white'} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => router.back()}>
-                        <FontAwesome name='thumbs-up' size={FontSize['xl']} color={'white'} />
+                    <TouchableOpacity onPress={() => {
+                        handleSaveMenu()
+                        setFoodMenu({
+                            ...foodMenu,
+                            is_saved: !foodMenu?.is_saved,
+                        })
+                    }}>
+                        <FontAwesome name='thumbs-up' size={FontSize['xl']} color={foodMenu?.is_saved ? Colors.light.primary : 'white'} />
                     </TouchableOpacity>
                 </View>
                 <Wrapper style={{ justifyContent: 'flex-end', paddingBottom: 50 }}>

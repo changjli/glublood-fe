@@ -10,4 +10,9 @@ type FoodMenu = {
     protein: number,
     carbohydrate: number,
     fat: number,
+    is_saved: boolean,
+}
+
+type SaveMenuRequest = {
+    menu_id: number
 }

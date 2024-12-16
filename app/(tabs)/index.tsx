@@ -298,7 +298,7 @@ export default function HomePage() {
                                         style={styles.profile}
                                     />
                                 ) : (
-                                    <Avatar name={profile?.firstname && profile?.lastname ? `${profile?.firstname} ${profile?.lastname}` : ''} size={40} />
+                                    <Avatar name={profile?.firstname ? `${profile?.firstname} ${profile?.lastname ?? ''}` : ''} size={40} />
                                 )}
                             </TouchableOpacity>
                         </View>

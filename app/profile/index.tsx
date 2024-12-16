@@ -120,7 +120,7 @@ export default function EditProfilePage() {
                                         }}
                                     />
                                 ) : (
-                                    <Avatar name={profile?.firstname && profile?.lastname ? `${profile?.firstname} ${profile?.lastname}` : ''} size={110} />
+                                    <Avatar name={profile?.firstname ? `${profile?.firstname} ${profile?.lastname ?? ''}` : ''} size={110} />
                                 )}
                             </CustomImagePicker>
                         </View>
@@ -368,6 +368,7 @@ export default function EditProfilePage() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push('/profile/saved-menus')}
                         >
                             <View
                                 style={{
