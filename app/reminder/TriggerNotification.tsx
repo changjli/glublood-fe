@@ -7,10 +7,3 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
-Notifications.addNotificationReceivedListener(notification => {
-  Notifications.presentNotificationAsync({
-    title: notification.request.content.title,
-    body: notification.request.content.body,
-  });
-});
