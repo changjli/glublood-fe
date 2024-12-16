@@ -334,6 +334,7 @@ export default function EditProfilePage() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push('/prediction')}
                         >
                             <View
                                 style={{

@@ -245,7 +245,10 @@ export default function HomePage() {
 
     // Render reminder item
     const renderItem = ({ item }: { item: ReminderFormValues }) => (
-        <View style={styles.reminderCard}>
+        <TouchableOpacity
+            style={styles.reminderCard}
+            onPress={() => router.navigate(`/reminder/${item.id}`)}
+        >
             <View style={styles.reminderLeft}>
                 <View style={styles.categoryContainer}>
                     {item.reminderType.map((type, index) => (
@@ -265,7 +268,7 @@ export default function HomePage() {
                     </Text>
                 )}
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
 

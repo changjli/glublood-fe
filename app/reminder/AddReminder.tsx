@@ -8,6 +8,7 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import CustomButtonNew from '@/components/CustomButtonNew';
+import CustomHeader from '@/components/CustomHeader';
 
 export default function AddReminder() {
   const { storeObjectData, getAllKeys, deleteDataByKey } = useAsyncStorage()
@@ -201,21 +202,18 @@ export default function AddReminder() {
 
   return (
     <View style={styles.container}>
+      <CustomHeader title='Tambahkan Pengingat' />
       <ReminderForm
         formValue={formValue}
         setFormValue={setFormValue}
       >
-        {({ values, handleSubmit }) => (
+        {({ handleSubmit, disabled }) => (
           <View style={{ marginHorizontal: 15 }}>
-            <CustomButtonNew
-              store={true}
-              imgSrc={require('@/assets/images/icons/plus.png')}
-              label='Simpan Catatan'
-              onPress={() => {
-                handleSubmit();
-                handleSaveReminder(values);
-              }}
-            // disabled={disabled}
+            <CustomButton
+              title='Simpan Catatan'
+              disabled={disabled}
+              onPress={handleSubmit((values) => handleSaveReminder(values))}
+              style={{ marginBottom: 16 }}
             />
           </View>
         )}
