@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Modal, FlatList, ListRenderItem, Image, TextInput, Dimensions, ScrollViewBase } from 'react-native';
 import { Formik, Field, FormikConsumer, FormikErrors } from 'formik';
 import * as Yup from 'yup';
@@ -9,11 +9,15 @@ import WheelPickerExpo from 'react-native-wheel-picker-expo';
 import { Colors } from '@/constants/Colors';
 import CustomHeader from '@/components/CustomHeader';
 import Wrapper from '@/components/Layout/Wrapper';
+import CustomWheelPicker from '@/components/CustomWheelPicker';
+import CustomModal from '@/components/CustomModal';
+import { FontSize } from '@/constants/Typography';
+import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface ReminderFormRenderProps {
-    values: ReminderFormValues
-    handleSubmit: () => void
-    errors: FormikErrors<ReminderFormValues>
+    handleSubmit: UseFormHandleSubmit<ReminderFormValues, undefined>
+    disabled: boolean
 }
 
 interface ReminderFormProps {
@@ -49,13 +53,21 @@ const dayMapping: { [key: number]: string } = {
 };
 
 const validationSchema = Yup.object().shape({
-    reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
-    time: Yup.string().required('Time selection is required!'),
-    repeatDays: Yup.array().of(Yup.number()),
-    notes: Yup.string(),
+    // reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
+    // time: Yup.string().required('Time selection is required!'),
+    // repeatDays: Yup.array().of(Yup.number()),
+    // notes: Yup.string(),
 });
 
 export default function ReminderForm({ formValue, setFormValue, children, ...rest }: ReminderFormProps) {
+    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ReminderFormValues>({
+        defaultValues: formValue,
+        resolver: yupResolver(validationSchema),
+        mode: 'onChange',
+    })
+
+    const [repeatDays, notes, reminderTypeValue] = watch(['repeatDays', 'notes', 'reminderType'])
+
     const [reminderType, setReminderType] = useState([
         {
             title: 'Olahraga',
@@ -80,8 +92,13 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
     // Wheel Time Picker
     const { width, height } = Dimensions.get('window');
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedHour, setSelectedHour] = useState('01');
-    const [selectedMinute, setSelectedMinute] = useState('00');
+    const [selectedHour, setSelectedHour] = useState(formValue.time.split(":")[0] ?? '00');
+    const [selectedMinute, setSelectedMinute] = useState(formValue.time.split(":")[1] ?? '00');
+
+    useEffect(() => {
+        setSelectedHour(formValue.time.split(":")[0] ?? '00')
+        setSelectedMinute(formValue.time.split(":")[1] ?? '00')
+    }, [formValue])
 
     const hours = Array.from({ length: 24 }, (_, i) => (i).toString().padStart(2, '0'));
     const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
@@ -100,270 +117,198 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
             const rotatedList = sortedDays.slice(1).concat(sortedDays[0]);
             values.repeatDays = rotatedList
         }
-    } 
-
-    const toggleDaySelection = (dayId: number, values: any, setFieldValue: (field: string, value: any) => void) => {
-        const updatedDays = values.repeatDays.includes(dayId)
-            ? values.repeatDays.filter((selectedDayId: number) => selectedDayId !== dayId)
-            : [...values.repeatDays, dayId];
-
-        setFieldValue('repeatDays', updatedDays);
-    };
+    }
 
     const renderItem: ListRenderItem<DayItem> = ({ item }) => (
-        <FormikConsumer>
-            {({ values, setFieldValue }) => (
-                <TouchableOpacity
-                    style={styles.itemContainer}
-                    onPress={() => toggleDaySelection(item.value, values, setFieldValue)}
-                >
-                    <Text style={styles.itemText}>{item.day}</Text>
-                    {values.repeatDays.includes(item.value) && (
-                        <Text style={styles.checkMark}>✓</Text>
-                    )}
-                </TouchableOpacity>
+
+        <TouchableOpacity
+            style={styles.itemContainer}
+            onPress={() => {
+                const temp = repeatDays.includes(item.value) ?
+                    repeatDays.filter(repeatDay => repeatDay != item.value)
+                    : [...repeatDays, item.value]
+                setValue('repeatDays', temp)
+            }}
+        >
+            <Text style={styles.itemText}>{item.day}</Text>
+            {repeatDays.includes(item.value) && (
+                <Text style={styles.checkMark}>✓</Text>
             )}
-        </FormikConsumer>
+        </TouchableOpacity>
     );
 
+    useEffect(() => {
+        reset(formValue)
+    }, [formValue])
+
     return (
-        
-        <Formik
-            initialValues={formValue}
-            validationSchema={validationSchema}
-            onSubmit={(values) => console.log('Submitted Values:', values)}
-            enableReinitialize
-        >
-            {({ handleChange, handleSubmit, handleBlur, values, setFieldValue, errors }) => (
-                <ScrollView style={styles.container}>
-                    {/* Header */}
-                    <CustomHeader title='Tambahkan Pengingat' />
+        <View style={styles.container}>
+            {/* Header */}
 
-                    <View style={{ paddingHorizontal: 20 }}>
-                        {/* Time Selection */}
-                        <View style={styles.timePickerContainer}>
-                            <WheelPickerExpo
-                                height={height * 0.3}
-                                width={width * 0.3}
-                                backgroundColor='#eaf3f4'
-                                initialSelectedIndex={hours.indexOf(selectedHour)}
-                                items={hours.map(hour => ({ label: hour, value: hour }))}
-                                onChange={({ index }) => {
-                                    setSelectedHour(hours[index])
-                                    handleTimeFieldValue(setFieldValue)
+            <View style={{ paddingHorizontal: 20 }}>
+                {/* Time Selection */}
+                <View style={styles.timePickerContainer}>
+                    <CustomWheelPicker
+                        data={hours}
+                        width={width * 0.4}
+                        itemHeight={40}
+                        initialSelectedIndex={hours.indexOf(selectedHour)}
+                        onValueChange={({ index, item }) => {
+                            setSelectedHour(hours[index])
+                            setValue('time', `${hours[index]}:${selectedMinute}`)
+                        }}
+                    />
+                    <CustomWheelPicker
+                        data={minutes}
+                        width={width * 0.4}
+                        itemHeight={40}
+                        initialSelectedIndex={minutes.indexOf(selectedMinute)}
+                        onValueChange={({ index, item }) => {
+                            setSelectedMinute(minutes[index])
+                            setValue('time', `${selectedHour}:${minutes[index]}`)
+                        }}
+                    />
+                </View>
+
+                {/* Weekly Reminder Selection */}
+                <View style={styles.weeklyReminderContainer}>
+                    <View
+                        style={styles.openModal}
+                    >
+                        <Text style={styles.openModalText}>Berulang</Text>
+                        <TouchableOpacity
+                            style={styles.openModalButton}
+                            onPress={() => setModalWeeklyReminderVisible(true)}
+                        >
+                            <Text style={styles.openModalText2}>
+                                {
+                                    repeatDays.length > 0 ?
+                                        repeatDays.length > 2 ? ['Setiap ', repeatDays.slice(0, 2).map((num) => dayMapping[num]).join(', '), ' ...']
+                                            :
+                                            ['Setiap ', repeatDays.map((num) => dayMapping[num]).join(', ')]
+                                        :
+                                        'Sekali'
                                 }
-                                }
-                                renderItem={({ label }) => (
-                                    <Text style={[
-                                        styles.timePickerText,
-                                        label == selectedHour && styles.timePickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                )}
-                                flatListProps={{
-                                    nestedScrollEnabled: true,
-                                }}
-                            />
-                            <WheelPickerExpo
-                                height={height * 0.3}
-                                width={width * 0.3}
-                                backgroundColor='#eaf3f4'
-                                initialSelectedIndex={minutes.indexOf(selectedMinute)}
-                                items={minutes.map(minute => ({ label: minute, value: minute }))}
-                                onChange={({ index }) =>
-                                    {
-                                        setSelectedMinute(minutes[index])
-                                        handleTimeFieldValue(setFieldValue)
-                                    }
-                                }
-                                renderItem={({ label }) => (
-                                    <Text style={[
-                                        styles.timePickerText,
-                                        label == selectedMinute && styles.timePickerTextSelected
-                                    ]}>
-                                        {label}
-                                    </Text>
-                                )}
-                                flatListProps={{
-                                    nestedScrollEnabled: true,
-                                }}
-                            />
-                        </View>
-                        {errors.time && <Text style={styles.errorText}>{errors.time}</Text>}
+                            </Text>
+                            <FontAwesome name="chevron-right" size={FontSize.md} color="black" />
+                        </TouchableOpacity>
+                    </View>
 
-                        {/* Weekly Reminder Selection */}
-                        <View style={styles.weeklyReminderContainer}>
-                            <View
-                                style={styles.openModal}
-                            >
-                                <Text style={styles.openModalText}>Berulang</Text>
-                                <TouchableOpacity
-                                    style={styles.openModalButton}
-                                    onPress={() => setModalWeeklyReminderVisible(true)}
-                                >
-                                    <Text style={styles.openModalText2}>
-                                        {
-                                            values.repeatDays.length > 0 ? 
-                                                values.repeatDays.length > 2 ? ['Setiap ', values.repeatDays.slice(0, 2).map((num) => dayMapping[num]).join(', '), ' ...']
-                                                    :
-                                                ['Setiap ', values.repeatDays.map((num) => dayMapping[num]).join(', ')]
-                                                :
-                                                'Sekali'
-                                        }
-                                    </Text>
-                                    <FontAwesome name="chevron-right" size={20} color="black" />
-                                </TouchableOpacity>
-                            </View>
+                    <CustomModal
+                        isVisible={modalWeeklyReminderVisible}
+                        toggleModal={() => setModalWeeklyReminderVisible(false)}
+                    >
+                        <FlatList
+                            data={DAYS}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id.toString()}
+                            style={{ paddingHorizontal: 12 }}
+                        />
 
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={modalWeeklyReminderVisible}
-                                onRequestClose={() => setModalWeeklyReminderVisible(false)}
-                            >
-                                <View style={styles.modalOverlay}>
-                                    <View style={styles.modalContent}>
-                                        <View style={styles.modalTitle}>
-                                            <TouchableOpacity
-                                                onPress={() => setModalWeeklyReminderVisible(false)}
-                                            >
-                                                <Text style={{ color: '#969696', fontFamily: 'Helvetica', fontSize: 12 }}>Kembali</Text>
-                                            </TouchableOpacity>
-                                            <Text style={styles.modalHeader}>Berulang</Text>
-                                        </View>
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => {
+                                setModalWeeklyReminderVisible(false)
+                                // handleSortRepeatDays(values)
+                            }}
+                        >
+                            <Text style={styles.closeButtonText}>Simpan</Text>
+                        </TouchableOpacity>
+                    </CustomModal>
+                </View>
 
-                                        <FlatList
-                                            data={DAYS}
-                                            renderItem={renderItem}
-                                            keyExtractor={(item) => item.id.toString()}
-                                            style={{ paddingHorizontal: 12 }}
-                                        />
+                {/* Notes */}
+                <View style={styles.weeklyReminderContainer}>
+                    <TouchableOpacity
+                        style={styles.openModal}
+                        onPress={() => setModalNotesVisible(true)}
+                    >
+                        <Text style={styles.openModalText}>Catatan</Text>
+                        <Text
+                            style={[
+                                styles.openModalText2,
+                                { color: '#969696' }
+                            ]}
+                        >
+                            {notes.length == 0 ? 'Tidak ada catatan' : notes.length > 7 ? notes.slice(0, 7) + '...' : notes.slice(0, 7)}
+                        </Text>
+                    </TouchableOpacity>
 
-                                        <TouchableOpacity
-                                            style={styles.closeButton}
-                                            onPress={() => {
-                                                setModalWeeklyReminderVisible(false)
-                                                handleSortRepeatDays(values)
-                                            }}
-                                        >
-                                            <Text style={styles.closeButtonText}>Simpan</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </Modal>
-                        </View>
-                        {errors.repeatDays && <Text style={styles.errorText}>{errors.repeatDays}</Text>}
+                    <CustomModal
+                        isVisible={modalNotesVisible}
+                        toggleModal={() => setModalNotesVisible(false)}
+                    >
+                        <CustomTextInput
+                            style={styles.textInput}
+                            label='Catatan'
+                            placeholder='Masukkan catatan di bagian ini'
+                            value={notes}
+                            onChangeText={(value) => setValue('notes', value)}
+                        />
 
-                        {/* Notes */}
-                        <View style={styles.weeklyReminderContainer}>
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => setModalNotesVisible(false)}
+                        >
+                            <Text style={styles.closeButtonText}>Simpan</Text>
+                        </TouchableOpacity>
+                    </CustomModal>
+                </View>
+
+                {/* Reminder Type Selection */}
+                <View style={styles.reminderTypeContainer}>
+                    <Text style={styles.label}>Jenis Pengingat</Text>
+                    <View style={styles.reminderTypeButtonContainer}>
+                        {reminderType.map((option) => (
                             <TouchableOpacity
-                                style={styles.openModal}
-                                onPress={() => setModalNotesVisible(true)}
+                                key={option.label}
+                                style={[
+                                    styles.reminderTypeButton,
+                                    reminderTypeValue.includes(option.value) && styles.selectedTypeButton,
+                                ]}
+                                onPress={() => {
+                                    if (reminderTypeValue.includes(option.value)) {
+                                        setValue(
+                                            'reminderType',
+                                            reminderTypeValue.filter((item: number) => item !== option.value)
+                                        );
+                                    } else {
+                                        setValue('reminderType', [...reminderTypeValue, option.value]);
+                                    }
+                                }}
                             >
-                                <Text style={styles.openModalText}>Catatan</Text>
                                 <Text
                                     style={[
-                                        styles.openModalText2,
-                                        { color: '#969696' }
+                                        styles.reminderTypeText,
+                                        reminderTypeValue.includes(option.value) && { color: '#fff' }
                                     ]}
                                 >
-                                    {values.notes.length == 0 ? 'Tidak ada catatan' : values.notes.length > 7 ? values.notes.slice(0, 7) + '...' : values.notes.slice(0, 7)}
+                                    {option.title}
                                 </Text>
+                                <Image
+                                    source={option.imgPath}
+                                    style={{ marginTop: 10, width: 55, height: 55 }}
+                                />
                             </TouchableOpacity>
-
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={modalNotesVisible}
-                                onRequestClose={() => setModalNotesVisible(false)}
-                            >
-                                <View style={styles.modalOverlay}>
-                                    <View style={styles.modalContent}>
-                                        <View style={styles.modalTitle}>
-                                            <TouchableOpacity
-                                                onPress={() => setModalNotesVisible(false)}
-                                            >
-                                                <Text style={{ color: '#969696', fontFamily: 'Helvetica', fontSize: 12 }}>Kembali</Text>
-                                            </TouchableOpacity>
-                                            <Text style={styles.modalHeader}>Berulang</Text>
-                                        </View>
-
-                                        <CustomTextInput
-                                            style={styles.textInput}
-                                            label='Catatan'
-                                            placeholder='Masukkan catatan di bagian ini'
-                                            value={values.notes}
-                                            onChangeText={handleChange('notes')}
-                                        />
-
-                                        <TouchableOpacity
-                                            style={styles.closeButton}
-                                            onPress={() => setModalNotesVisible(false)}
-                                        >
-                                            <Text style={styles.closeButtonText}>Simpan</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </Modal>
-                        </View>
-                        {errors.notes && <Text style={styles.errorText}>{errors.notes}</Text>}
-
-                        {/* Reminder Type Selection */}
-                        <View style={styles.reminderTypeContainer}>
-                            <Text style={styles.label}>Jenis Pengingat</Text>
-                            <View style={styles.reminderTypeButtonContainer}>
-                                {reminderType.map((option) => (
-                                    <TouchableOpacity
-                                        key={option.label}
-                                        style={[
-                                            styles.reminderTypeButton,
-                                            values.reminderType.includes(option.value) && styles.selectedTypeButton,
-                                        ]}
-                                        onPress={() => {
-                                            if (values.reminderType.includes(option.value)) {
-                                                setFieldValue(
-                                                    'reminderType',
-                                                    values.reminderType.filter((item: number) => item !== option.value)
-                                                );
-                                            } else {
-                                                setFieldValue('reminderType', [...values.reminderType, option.value]);
-                                            }
-                                        }}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.reminderTypeText,
-                                                values.reminderType.includes(option.value) && { color: '#fff' }
-                                            ]}
-                                        >
-                                            {option.title}
-                                        </Text>
-                                        <Image
-                                            source={option.imgPath}
-                                            style={{ marginTop: 10, width: 55, height: 55 }}
-                                        />
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        </View>
+                        ))}
                     </View>
-                    {children({ values, handleSubmit, errors })}
-                </ScrollView>
-            )}
-        </Formik>
+                </View>
+            </View>
+            {children({ handleSubmit, disabled: false })}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EAF3F4',
+        backgroundColor: 'white',
+        justifyContent: 'space-between',
     },
     label: {
         marginTop: 12,
         marginBottom: 3,
-        fontSize: 20,
+        fontSize: FontSize.md,
         fontFamily: 'Helvetica-Bold',
         color: '#333',
     },
@@ -377,7 +322,7 @@ const styles = StyleSheet.create({
     },
     reminderTypeButton: {
         paddingTop: 20,
-        width: 110,
+        width: '32%',
         height: 130,
         borderWidth: 1,
         borderColor: '#DA6E35',
@@ -436,7 +381,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     openModalText: {
-        fontSize: 20,
+        fontSize: FontSize.md,
         fontFamily: 'Helvetica-Bold',
     },
     openModalButton: {
@@ -447,7 +392,7 @@ const styles = StyleSheet.create({
     },
     openModalText2: {
         marginRight: 7,
-        fontSize: 16,
+        fontSize: FontSize.md,
         fontFamily: 'Helvetica',
     },
     modalOverlay: {
@@ -516,7 +461,8 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        gap: 4,
     },
     timePickerText: {
         color: Colors.light.secondary,

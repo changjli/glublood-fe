@@ -87,11 +87,11 @@ export default function LoginPage() {
 
     return (
         <View style={{ flex: 1 }}>
-            {/* <View className='absolute'>
+            <View style={{ position: 'absolute' }}>
                 <Image source={require('../../assets/images/backgrounds/wave-1.png')} style={{ width: width, height: 375 }} />
-            </View> */}
+            </View>
             <WithKeyboard>
-                <Wrapper style={{ backgroundColor: "white", height: height }}>
+                <Wrapper style={{ height: height }}>
                     <CustomText
                         size="3xl"
                         weight="heavy"
@@ -181,7 +181,7 @@ export default function LoginPage() {
                                                         }
                                                     >
                                                         <Ionicons
-                                                            name="eye"
+                                                            name="eye-off"
                                                             color={
                                                                 Colors.light
                                                                     .primary
@@ -198,7 +198,7 @@ export default function LoginPage() {
                                                         }
                                                     >
                                                         <Ionicons
-                                                            name="eye-off"
+                                                            name="eye"
                                                             color={
                                                                 Colors.light
                                                                     .primary
@@ -265,7 +265,7 @@ export default function LoginPage() {
                                     <CustomText
                                         size="sm"
                                         weight="heavy"
-                                        style={{ color: Colors.light.primary }}
+                                        style={{ color: Colors.light.primary, marginBottom: 16 }}
                                     >
                                         Daftar disini
                                     </CustomText>

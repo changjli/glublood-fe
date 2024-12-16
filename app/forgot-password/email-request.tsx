@@ -10,6 +10,9 @@ import useAuth from '@/hooks/api/auth/useAuth'
 import VerifyCode from '@/app/forgot-password/verify-code'
 import { router } from 'expo-router';
 import { useCustomAlert } from '../context/CustomAlertProvider';
+import { FontSize } from '@/constants/Typography';
+import CustomButton from '@/components/CustomButton';
+import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 
 type SendCodeProps = {
   setPage: (value: number) => void
@@ -76,47 +79,40 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
       <TouchableOpacity
         onPress={() => router.replace('/(auth)/login')}
       >
-        <Ionicons name='arrow-back-outline' size={50} color='Black' />
+        <Ionicons name='arrow-back-outline' size={FontSize['2xl']} color='Black' />
       </TouchableOpacity>
       <View>
         <Text style={styles.title}>Lupa kata sandi</Text>
         <Text style={styles.subtitle}>Masukkan email anda untuk menerima kata sandi</Text>
       </View>
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View>
+          <Image
+            source={require('@/assets/images/forgot-password/forgot.png')}
+            style={styles.img}
+          />
 
-      <Image
-        source={require('@/assets/images/forgot-password/forgot.png')}
-        style={styles.img}
-      />
-
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, value } }) => (
-          <View>
-            <Text style={styles.labelInput}>Email</Text>
-            <TextInput
-              style={[
-                styles.input,
-                errors.email && styles.inputError,
-              ]}
-              onChangeText={onChange}
-              value={value}
-              placeholder="Email"
-              keyboardType="email-address"
-            />
-          </View>
-        )}
-      />
-      {errors.email && (
-        <Text style={styles.errorText}>{errors.email.message}</Text>
-      )}
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSubmit(handleForgotPasswword)}
-      >
-        <Text style={styles.buttonText}>Kirim tautan</Text>
-      </TouchableOpacity>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <CustomTextInput
+                label='Email'
+                placeholder='email'
+                value={value}
+                onChangeText={onChange}
+                keyboardType="email-address"
+                error={errors.email ? errors.email.message : ''}
+              />
+            )}
+          />
+        </View>
+        <CustomButton
+          title='Kirim tautan'
+          onPress={handleSubmit(handleForgotPasswword)}
+          loading={forgotPasswordLoading}
+        />
+      </View>
     </View>
   );
 };
@@ -143,7 +139,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: -6,
-    fontSize: 32,
+    fontSize: FontSize['2xl'],
     fontFamily: 'Helvetica-Bold'
   },
   subtitle: {
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
   img: {
     marginHorizontal: 'auto',
     marginBottom: 5,
-    width: 330,
+    width: '100%',
     height: 150,
     objectFit: 'cover',
   },

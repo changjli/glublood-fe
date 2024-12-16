@@ -73,12 +73,12 @@ export default function AddMedicineLog() {
                     setFormValue={setFormValue}
                 >
                     {({ handleSubmit, disabled }) => (
-                        <CustomButtonNew
-                            store={true}
-                            imgSrc={require('@/assets/images/icons/plus.png')}
-                            label='Simpan Catatan'
+                        <CustomButton
+                            title='Simpan Catatan'
+                            size='md'
                             onPress={handleSubmit(data => handleStoreMedicineLog(data))}
                             disabled={disabled}
+                            loading={storeLoading}
                         />
                     )}
                 </MedicineLogForm>

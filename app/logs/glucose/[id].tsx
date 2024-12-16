@@ -192,6 +192,7 @@ export default function GlucoseLogDetailPage() {
                             <CustomButton
                                 title='Hapus log'
                                 size='md'
+                                type="delete"
                                 disabled={updateLoading}
                                 loading={deleteLoading}
                                 onPress={() => handleDeleteGlucoseLog(Number(id))}

@@ -81,7 +81,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                 >
                     <StyledCustomTextInput
                         classStyle="mr-2 flex-1"
-                        label="Nama depan"
+                        label="Nama lengkap"
                         placeholder="Type something here"
                         value={values.firstname}
                         onChangeText={handleChange("firstname")}
@@ -106,6 +106,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         onChangeText={handleChange("weight")}
                         onBlur={() => setFieldTouched("weight", true)}
                         error={touched.weight && errors.weight}
+                        keyboardType='numeric'
                     />
                     <StyledCustomTextInput
                         classStyle="ml-2 flex-1"
@@ -116,6 +117,7 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                         onChangeText={handleChange("height")}
                         onBlur={() => setFieldTouched("height", true)}
                         error={touched.height && errors.height}
+                        keyboardType='numeric'
                     />
                 </View>
                 <View
@@ -283,8 +285,8 @@ const Personalization1 = ({ handleChange, setFieldValue, setFieldTouched, values
                                     styles.selectionButton,
                                     {
                                         marginRight: index === 0 ? 8 : "",
-                                        marginLeft: index === 1 ? 8 : "" ,
-                                        backgroundColor: descendant == item.value? "#EC8F5E" : "transparent",
+                                        marginLeft: index === 1 ? 8 : "",
+                                        backgroundColor: descendant == item.value ? "#EC8F5E" : "transparent",
                                     },
                                 ]}
                                 onPress={() => {

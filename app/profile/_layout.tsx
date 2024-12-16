@@ -7,6 +7,7 @@ export default function _layout() {
         <Stack>
             <Stack.Screen name='index' options={{ headerShown: false }}></Stack.Screen>
             <Stack.Screen name='edit-profile' options={{ headerShown: false }}></Stack.Screen>
+            <Stack.Screen name='saved-menus' options={{ headerShown: false }}></Stack.Screen>
         </Stack>
     )
 }

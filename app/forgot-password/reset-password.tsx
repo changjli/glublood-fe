@@ -8,6 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import useAuth from '@/hooks/api/auth/useAuth'
 import axios from 'axios';
 import { useCustomAlert } from '../context/CustomAlertProvider';
+import CustomTextInput from '@/components/CustomInput/CustomTextInput';
+import CustomButton from '@/components/CustomButton';
+import { FontSize } from '@/constants/Typography';
 
 type NewPassword = {
     password: string,
@@ -79,105 +82,85 @@ export default function ResetPassword({ setPage, credentials }: ResetPasswordPro
                 <Text style={styles.title}>Lupa kata sandi</Text>
                 <Text style={styles.subtitle}>Perbaharui kata sandimu untuk melanjutkan</Text>
             </View>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                <View>
+                    <Image
+                        source={require('@/assets/images/forgot-password/reset.png')}
+                        style={styles.img}
+                    />
 
-            <Image
-                source={require('@/assets/images/forgot-password/reset.png')}
-                style={styles.img}
-            />
-
-            <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, value } }) => (
-                    <View>
-                        <Text style={styles.labelInput}>Kata sandi baru</Text>
-                        <View style={{ marginBottom: 8 }}>
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    errors.password && styles.inputError,
-                                ]}
-                                onChangeText={onChange}
+                    <Controller
+                        control={control}
+                        name="password"
+                        render={({ field: { onChange, value } }) => (
+                            <CustomTextInput
+                                label='Kata sandi baru'
+                                placeholder='Masukkan kata sandi baru'
                                 value={value}
-                                placeholder="Masukkan kata sandi"
+                                onChangeText={onChange}
+                                postfix={
+                                    <TouchableOpacity
+                                        onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                                    >
+                                        {
+                                            isPasswordVisible ?
+                                                <Ionicons name='eye-off' size={20} color='#969696' />
+                                                :
+                                                <Ionicons name='eye' size={20} color='#969696' />
+                                        }
+                                    </TouchableOpacity>
+                                }
+                                error={
+                                    errors.password ? errors.password.message : ""
+                                }
                                 secureTextEntry={!isPasswordVisible}
                             />
-                            <TouchableOpacity
-                                style={{
-                                    position: 'absolute',
-                                    top: 15,
-                                    right: 12,
-                                }}
-                                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                            >
-                                {
-                                    isPasswordVisible ?
-                                        <Ionicons name='eye' size={20} color='#969696' />
-                                        :
-                                        <Ionicons name='eye-off' size={20} color='#969696' />
-                                }
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-            />
-            {errors.password && (
-                <Text style={styles.errorText}>{errors.password.message}</Text>
-            )}
+                        )}
+                    />
 
-            <Controller
-                control={control}
-                name="confirmPassword"
-                render={({ field: { onChange, value } }) => (
-                    <View>
-                        <Text style={styles.labelInput}>Konfirmasi kata sandi baru</Text>
-                        <View style={{ marginBottom: 8 }}>
-                            <TextInput
-                                style={[
-                                    styles.input,
-                                    errors.confirmPassword && styles.inputError,
-                                ]}
-                                onChangeText={onChange}
+                    <Controller
+                        control={control}
+                        name="confirmPassword"
+                        render={({ field: { onChange, value } }) => (
+                            <CustomTextInput
+                                label='Konfirmasi kata sandi baru'
+                                placeholder='Masukkan konfirmasi kata sandi'
                                 value={value}
-                                placeholder="Masukkan konfirmasi kata sandi"
+                                onChangeText={onChange}
+                                postfix={
+                                    <TouchableOpacity
+                                        onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                                    >
+                                        {
+                                            isConfirmPasswordVisible ?
+                                                <Ionicons name='eye-off' size={20} color='#969696' />
+                                                :
+                                                <Ionicons name='eye' size={20} color='#969696' />
+                                        }
+                                    </TouchableOpacity>
+                                }
+                                error={
+                                    errors.confirmPassword ? errors.confirmPassword.message : ""
+                                }
                                 secureTextEntry={!isConfirmPasswordVisible}
                             />
-                            <TouchableOpacity
-                                style={{
-                                    position: 'absolute',
-                                    top: 15,
-                                    right: 12,
-                                }}
-                                onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-                            >
-                                {
-                                    isConfirmPasswordVisible ?
-                                        <Ionicons name='eye' size={20} color='#969696' />
-                                        :
-                                        <Ionicons name='eye-off' size={20} color='#969696' />
-                                }
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-            />
-            {errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
-            )}
+                        )}
+                    />
+                </View>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={handleSubmit((data) => {
-                    const resetRequest: ResetPasswordRequest = {
-                        email: credentials.email,
-                        code: credentials.code,
-                        password: data.password,
-                    };
-                    handleResetPassword(resetRequest);
-                })}
-            >
-                <Text style={styles.buttonText}>Konfirmasi</Text>
-            </TouchableOpacity>
+                <CustomButton
+                    title='Kirim tautan'
+                    onPress={handleSubmit((data) => {
+                        const resetRequest: ResetPasswordRequest = {
+                            email: credentials.email,
+                            code: credentials.code,
+                            password: data.password,
+                        };
+                        handleResetPassword(resetRequest);
+                    })}
+                    loading={resetPasswordLoading}
+                />
+            </View>
         </View>
     );
 };
@@ -204,7 +187,7 @@ const styles = StyleSheet.create({
     },
     title: {
         marginBottom: -6,
-        fontSize: 32,
+        fontSize: FontSize['2xl'],
         fontFamily: 'Helvetica-Bold'
     },
     subtitle: {

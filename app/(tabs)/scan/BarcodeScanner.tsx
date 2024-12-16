@@ -1,4 +1,5 @@
 import { useCustomAlert } from '@/app/context/CustomAlertProvider';
+import CustomText from '@/components/CustomText';
 import { Colors } from '@/constants/Colors';
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import { router } from 'expo-router';
@@ -54,7 +55,7 @@ export default function BarcodeScanner() {
             if (isCentroidInCenter) {
                 setScanned(true);
                 // alert(`Barcode with type ${type} and data ${data} has been scanned!`);
-                showAlert(`Barcode with type ${type} and data ${data} has been scanned!`, 'success')
+                // showAlert(`Barcode with type ${type} and data ${data} has been scanned!`, 'success')
                 // Do something with the scanned data
                 router.navigate(`/logs/food/create/barcode/${data}`)
             }
@@ -71,13 +72,28 @@ export default function BarcodeScanner() {
                 <View style={styles.guideBox}>
                 </View>
             </View>
-            {scanned && (
+            {scanned ? (
                 <TouchableOpacity
                     style={styles.scanAgainButton}
                     onPress={() => setScanned(false)}
                 >
                     <Text style={styles.scanAgainText}>Tap to Scan Again</Text>
                 </TouchableOpacity>
+            ) : (
+                <View style={{
+                    position: 'absolute',
+                    width: '100%',
+                    bottom: 0,
+                    backgroundColor: 'white',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 16,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                }}>
+                    <CustomText weight='heavy'>Tips</CustomText>
+                    <CustomText size='sm' style={{ textAlign: 'center' }}>Arahkan kode batang makanan sesuai dengan tempat yang telah disediakan</CustomText>
+                </View>
             )}
         </View>
     );

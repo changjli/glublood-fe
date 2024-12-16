@@ -71,10 +71,8 @@ export default function AddGlucoseLog() {
                     setFormValue={setFormValue}
                 >
                     {({ handleSubmit, disabled }) => (
-                        <CustomButtonNew
-                            store={true}
-                            imgSrc={require('@/assets/images/icons/plus.png')}
-                            label='Simpan Catatan'
+                        <CustomButton
+                            title='Simpan Catatan'
                             onPress={handleSubmit((data) => handleStoreGlucoseLog(data))}
                             disabled={disabled}
                         />

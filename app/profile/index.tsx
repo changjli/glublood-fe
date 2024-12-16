@@ -6,61 +6,65 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import DynamicTextComponent from '@/components/DynamicText';
 import { useSession } from "../context/AuthenticationProvider";
+import CustomImagePicker from '@/components/CustomImagePicker';
+import { FontFamily } from '@/constants/Typography';
+import Avatar from '@/components/Avatar';
+import { UserProfile, useUserProfile } from '@/hooks/useUserProfile';
+import { formatDateToAge } from '@/utils/formatDatetoString';
 
 export default function EditProfilePage() {
     const { signOut, session } = useSession();
-    const { fetchUserProfile } = useProfile()
-    const [fetchLoading, setFetchLoading] = useState(false)
-    const [profileData, setProfileData] = useState(null)
-    const [visibleModal, setVisibleModal] = useState(false)
-    const [image, setImage] = useState<string | null>(null);
+    const { saveProfileImage, deleteProfileImage } = useProfile()
+    const { profile, setProfile } = useUserProfile()
+
+    const [saveProfileImageLoading, setSaveProfileImageLoading] = useState(false)
+    const [profileImage, setProfileImage] = useState<string | null>(null);
+
+    const handleSaveProfileImage = async (image: string) => {
+        try {
+            const formData = new FormData()
+            const fileResponse = await fetch(image);
+            const fileBlob = await fileResponse.blob();
+
+            formData.append('profile_image', {
+                uri: image,
+                name: 'filename.jpeg',
+                type: fileBlob.type || 'image/jpeg',
+            } as any);
+            const res = await saveProfileImage(setSaveProfileImageLoading, formData);
+            if (res.status === 200) {
+            } else if (res.status === 400) {
+                console.log(res.message);
+                Alert.alert('Error', res.message);
+            }
+        } catch (err) {
+            console.log('Axios Error:', err);
+            Alert.alert('Error', 'Please try again later');
+        }
+    }
+
+    const handleDeleteProfileImage = async () => {
+        try {
+            const res = await deleteProfileImage(setSaveProfileImageLoading);
+            if (res.status === 200) {
+            } else if (res.status === 400) {
+                console.log(res.message);
+                Alert.alert('Error', res.message);
+            }
+        } catch (err) {
+            console.log('Axios Error:', err);
+            Alert.alert('Error', 'Please try again later');
+        }
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await fetchUserProfile(setFetchLoading);
-                if (res.status === 200) {
-                    console.log(res.data);
-                    setProfileData(res.data);
-                    // Alert.alert('Success', res.message);
-                } else if (res.status === 400) {
-                    console.log(res.message);
-                    // Alert.alert('Error', res.message);
-                }
-            } catch (err) {
-                console.log('Axios Error:', err);
-                Alert.alert('Error', 'Please try again later');
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const uploadImage = async () => {
-        try {
-            await ImagePicker.requestCameraPermissionsAsync();
-            let result = await ImagePicker.launchCameraAsync();
-
-            if (!result.canceled) {
-                await saveImage(result.assets[0].uri)
-            }
-        } catch (error) {
-
+        if (profile?.profile_image) {
+            setProfileImage(profile?.profile_image)
         }
-    }
-
-    const saveImage = async (image: string) => {
-        try {
-            setImage(image);
-            console.log("Image URI: ", image)
-            setVisibleModal(false);
-        } catch (error) {
-
-        }
-    }
+    }, [profile])
 
     return (
-        profileData ?
+        profile ?
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView
                     style={{
@@ -78,100 +82,7 @@ export default function EditProfilePage() {
                             text='Profil'
                             img={require('@/assets/images/backgrounds/bg-profile.png')}
                             back={true}
-                            style={{ height: 220 }}
                         />
-                        <Modal
-                            transparent={true}
-                            visible={visibleModal}
-                            animationType="fade"
-                            style={{
-                                backgroundColor: 'black'
-                            }}
-                        >
-                            <View
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        margin: 'auto',
-                                        paddingHorizontal: 10,
-                                        width: 250,
-                                        borderRadius: 20,
-                                        backgroundColor: 'white',
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            marginTop: 10,
-                                            marginBottom: 15,
-                                            width: '100%',
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'flex-end',
-                                            alignContent: 'center',
-                                        }}
-                                    >
-                                        <Text
-                                            style={{
-                                                marginRight: 35,
-                                                paddingTop: 10,
-                                                fontSize: 20,
-                                                fontFamily: 'Helvetica-Bold',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            Foto Profil
-                                        </Text>
-                                        <TouchableOpacity onPress={() => setVisibleModal(false)}>
-                                            <Ionicons name={'close-outline'} size={30} className='text-center' />
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View
-                                        style={{
-                                            marginBottom: 20,
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-around',
-                                            alignItems: 'center'
-                                        }}
-                                    >
-                                        <TouchableOpacity
-                                            style={{
-                                                marginLeft: 20,
-                                                paddingHorizontal: 15,
-                                                paddingBottom: 10,
-                                                backgroundColor: '#FFF8E1',
-                                                borderRadius: 10,
-                                                display: 'flex',
-                                                alignItems: 'center'
-                                            }}
-                                            onPress={() => uploadImage()}
-                                        >
-                                            <Ionicons name={'camera'} size={30} className='mt-2' color={'#DA6E35'} />
-                                            <Text>Camera</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={{
-                                                marginRight: 20,
-                                                paddingHorizontal: 15,
-                                                paddingBottom: 10,
-                                                backgroundColor: '#FFF8E1',
-                                                borderRadius: 10,
-                                                display: 'flex',
-                                                alignItems: 'center'
-                                            }}
-                                        >
-                                            <Ionicons name={'image'} size={30} className='mt-2' color={'#DA6E35'} />
-                                            <Text>Image</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </View>
-                        </Modal>
 
                         {/* Profile Image */}
                         <View
@@ -183,33 +94,35 @@ export default function EditProfilePage() {
                                 width: 130,
                             }}
                         >
-                            <Image
-                                source={image ? { uri: image } : require('@/assets/images/user-profile/dummy.png')}
-                                style={{
-                                    width: 110,
-                                    height: 110,
-                                    borderColor: '#EEEEEE',
-                                    borderWidth: 4,
-                                    borderRadius: 70,
+                            <CustomImagePicker
+                                image={profileImage ?? ''}
+                                onChange={(image) => {
+                                    if (image == '') {
+                                        setProfileImage(null)
+                                        handleDeleteProfileImage()
+                                    } else {
+                                        setProfileImage(image)
+                                        setProfile({
+                                            ...profile,
+                                            profile_image: undefined
+                                        })
+                                        handleSaveProfileImage(image)
+                                    }
                                 }}
-                            />
-                            <TouchableOpacity
-                                style={{
-                                    position: 'absolute',
-                                    bottom: 0,
-                                    right: 0,
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 20,
-                                    backgroundColor: 'white',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                                onPress={() => setVisibleModal(true)}
                             >
-                                <Ionicons name="camera-outline" color='#DD6A19' size={26} className='text-center' />
-                            </TouchableOpacity>
+                                {(profileImage) ? (
+                                    <Image
+                                        source={{ uri: profile.profile_image ? process.env.EXPO_PUBLIC_API_URL + profileImage : profileImage }}
+                                        style={{
+                                            width: 110,
+                                            height: 110,
+                                            borderRadius: 110 / 2,
+                                        }}
+                                    />
+                                ) : (
+                                    <Avatar name={profile?.firstname ? `${profile?.firstname} ${profile?.lastname ?? ''}` : ''} size={110} />
+                                )}
+                            </CustomImagePicker>
                         </View>
 
                         {/* general info container */}
@@ -240,9 +153,9 @@ export default function EditProfilePage() {
                                             fontFamily: 'Helvetica-Bold',
                                         }}
                                     >
-                                        {profileData['firstname']} {profileData['lastname']}
+                                        {profile['firstname']} {profile['lastname']}
                                     </Text>
-                                    <Ionicons name={profileData['gender'] === "male" ? 'male-outline' : 'female-outline'} size={20} className='mt-2' />
+                                    <Ionicons name={profile['gender'] === "male" ? 'male-outline' : 'female-outline'} size={20} className='mt-2' />
                                 </View>
                                 <TouchableOpacity
                                     style={{
@@ -287,8 +200,8 @@ export default function EditProfilePage() {
                                     }}
                                 >
                                     {
-                                        profileData['is_diabetes'] ?
-                                            profileData['diabetes_type'] == 1 ?
+                                        profile['is_diabetes'] ?
+                                            profile['diabetes_type'] == 1 ?
                                                 'Diabetes Tipe 1'
                                                 :
                                                 'Diabetes Tipe 2'
@@ -321,7 +234,7 @@ export default function EditProfilePage() {
                                                 fontFamily: 'Helvetica-Bold',
                                             }}
                                         >
-                                            {profileData['age']}
+                                            {formatDateToAge(profile.DOB)}
                                         </Text>
                                         <Text
                                             style={{
@@ -356,7 +269,7 @@ export default function EditProfilePage() {
                                                 fontFamily: 'Helvetica-Bold',
                                             }}
                                         >
-                                            {Math.floor(profileData['height'])}
+                                            {Math.floor(profile['height'])}
                                         </Text>
                                         <Text
                                             style={{
@@ -391,7 +304,7 @@ export default function EditProfilePage() {
                                                 fontFamily: 'Helvetica-Bold',
                                             }}
                                         >
-                                            {Math.floor(profileData['weight'])}
+                                            {Math.floor(profile['weight'])}
                                         </Text>
                                         <Text
                                             style={{
@@ -421,6 +334,7 @@ export default function EditProfilePage() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push('/prediction')}
                         >
                             <View
                                 style={{
@@ -455,6 +369,7 @@ export default function EditProfilePage() {
                                 paddingHorizontal: 25,
                                 backgroundColor: '#FAFAFA',
                             }}
+                            onPress={() => router.push('/profile/saved-menus')}
                         >
                             <View
                                 style={{
@@ -515,9 +430,9 @@ export default function EditProfilePage() {
                                 <Ionicons name="chevron-forward-outline" color='#DA6E35' size={30} className='ml-auto text-center' />
                             </View>
                         </TouchableOpacity>
-                        
+
                     </View>
-                    
+
                     <View style={{ paddingBottom: 20 }}>
                         {/* Sign Out Button */}
                         <TouchableOpacity

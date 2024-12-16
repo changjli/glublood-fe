@@ -36,8 +36,38 @@ export default function useFoodMenu() {
         return res
     }
 
+    const saveMenu = async (setLoading: (loading: boolean) => void, data: SaveMenuRequest) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/save`, data)
+            .then(res => {
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodMenu][saveMenu]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const getSavedMenu = async (setLoading: (loading: boolean) => void) => {
+        setLoading(true)
+        const res = await withToken.get(`${group}/save`)
+            .then(res => {
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useFoodMenu][getSavedMenu]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
     return {
         getAllFoodMenu,
         getFoodMenuDetail,
+        saveMenu,
+        getSavedMenu,
     }
 }

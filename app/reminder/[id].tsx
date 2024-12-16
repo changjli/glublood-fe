@@ -6,6 +6,8 @@ import ReminderForm from './ReminderForm';
 import CustomButton from '@/components/CustomButton';
 import * as Notifications from 'expo-notifications';
 import CustomButtonNew from '@/components/CustomButtonNew';
+import CustomHeader from '@/components/CustomHeader';
+import Wrapper from '@/components/Layout/Wrapper';
 
 export default function ReminderDetail() {
     const { id } = useLocalSearchParams();
@@ -217,7 +219,7 @@ export default function ReminderDetail() {
         }
     };
 
-    const handleDeleteMedicineLog = async (key: string) => {
+    const handleDeleteReminder = async (key: string) => {
         try {
             await deleteDataByKey(key)
         } catch (err) {
@@ -229,6 +231,7 @@ export default function ReminderDetail() {
 
     return (
         <View style={styles.container}>
+            <CustomHeader title='Edit Pengingat' />
             <ReminderForm
                 formValue={{
                     id: reminder ? reminder.id : '',
@@ -241,25 +244,21 @@ export default function ReminderDetail() {
                 }}
                 setFormValue={setReminder}
             >
-                {({ values, handleSubmit, errors }) => (
-                    <View style={styles.customButtonContainer}>
-                        <CustomButtonNew
-                            store={true}
-                            imgSrc={require('@/assets/images/icons/pencil.png')}
-                            label='Simpan Perubahan'
-                            disabled={Object.keys(errors).length > 0}
-                            onPress={() => {
-                                handleSaveReminder(values)
-                            }}
+                {({ handleSubmit, disabled }) => (
+                    <View style={{ padding: 16 }}>
+                        <CustomButton
+                            title='Simpan Perubahan'
+                            disabled={disabled}
+                            onPress={handleSubmit((values) => handleSaveReminder(values))}
+                            style={{ marginBottom: 4 }}
                         />
-                        <CustomButtonNew
-                            store={false}
-                            imgSrc={require('@/assets/images/icons/trash-bin.png')}
-                            label='Hapus log'
-                            onPress={() => {
-                                handleDeleteMedicineLog(values.id);
-                                router.navigate('/reminder/');
-                            }}
+                        <CustomButton
+                            title='Hapus log'
+                            type='delete'
+                            onPress={handleSubmit((values) => {
+                                handleDeleteReminder(values.id)
+                                router.push('/reminder')
+                            })}
                         />
                     </View>
                 )}
@@ -273,11 +272,4 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f2f8f9',
     },
-    customButtonContainer: {
-        paddingHorizontal: 15,
-        height: 140,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-    }
 });

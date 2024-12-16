@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import CustomText from '@/components/CustomText'
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field'
 import { Colors } from '@/constants/Colors'
-import { sendCodeRequest, VerifyCodeRequest } from '@/hooks/api/auth/authTypes'
+import { ForgotPasswordRequest, sendCodeRequest, VerifyCodeRequest } from '@/hooks/api/auth/authTypes'
 import useAuth from '@/hooks/api/auth/useAuth'
 import Wrapper from '@/components/Layout/Wrapper'
 import Loader from '@/components/Loader'
@@ -56,7 +56,7 @@ export default function VerifyCode({ setPage, setCredentials, credentials }: Ver
     const [innerCredentials, setInnerCredentials] = useState(credentials)
     const [timeFlag, setTimeFlag] = useState(false)
 
-    const { sendCode, verifyForgotPassword } = useAuth()
+    const { forgotPassword, verifyForgotPassword } = useAuth()
     const { showAlert } = useCustomAlert()
 
     const [sendCodeLoading, setSendCodeLoading] = useState(false)
@@ -69,9 +69,9 @@ export default function VerifyCode({ setPage, setCredentials, credentials }: Ver
     });
     const [verificationCode, setVerificationCode] = useState('')
 
-    const handleSendCode = async (data: sendCodeRequest) => {
+    const handleSendCode = async (data: ForgotPasswordRequest) => {
         try {
-            const res = await sendCode(setSendCodeLoading, data)
+            const res = await forgotPassword(setSendCodeLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
                 Alert.alert('success', res.message)
@@ -158,7 +158,7 @@ export default function VerifyCode({ setPage, setCredentials, credentials }: Ver
                     </View>
                     <View className='flex flex-row justify-center'>
                         <Text>Tidak menerima kode?</Text>
-                        <Pressable onPress={() => handleSendCode(credentials)}>
+                        <Pressable onPress={() => handleSendCode({ email: credentials.email })}>
                             <Text className='text-primary font-helvetica-bold'> Kirim ulang</Text>
                         </Pressable>
                     </View>

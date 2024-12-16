@@ -52,10 +52,41 @@ export default function useProfile() {
         return res
     }
 
+    const saveProfileImage = async (setLoading, data) => {
+        setLoading(true)
+        const res = await withToken.post(`${group}/image?_method=PUT`, data, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .then(res => {
+                console.log('[useProfile][saveProfileImage]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useProfile][saveProfileImage]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
+
+    const deleteProfileImage = async (setLoading) => {
+        setLoading(true)
+        const res = await withToken.delete(`${group}/image`)
+            .then(res => {
+                console.log('[useProfile][deleteProfileImage]', res.data)
+                setLoading(false)
+                return res.data
+            }).catch(err => {
+                console.log('[useProfile][deleteProfileImage]', err.response?.data)
+                setLoading(false)
+                return Promise.reject(err)
+            })
+        return res
+    }
 
     return {
         storeUserProfile,
         fetchUserProfile,
         updateUserProfile,
+        saveProfileImage,
+        deleteProfileImage,
     }
 }
