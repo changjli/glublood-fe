@@ -116,8 +116,6 @@ export default function ReminderDetail() {
     const [storeLoading, setStoreLoading] = useState(false)
 
     const handleSaveReminder = async (values: ReminderFormValues) => {
-        values = { ...values, time: '22:27' }
-        console.log("hello world", values)
         setStoreLoading(true);
         try {
             await deleteDataByKey(values.id)
@@ -209,7 +207,7 @@ export default function ReminderDetail() {
 
             await storeObjectData(uniqueKey, values);
             console.log('Reminder saved successfully!');
-            router.navigate('/reminder/');
+            router.back();
             // console.log(await AsyncStorage.getAllKeys())
             // await AsyncStorage.clear();
         } catch (err) {
@@ -243,15 +241,15 @@ export default function ReminderDetail() {
                 }}
                 setFormValue={setReminder}
             >
-                {({ values, handleSubmit }) => (
+                {({ values, handleSubmit, errors }) => (
                     <View style={styles.customButtonContainer}>
                         <CustomButtonNew
                             store={true}
                             imgSrc={require('@/assets/images/icons/pencil.png')}
                             label='Simpan Perubahan'
+                            disabled={Object.keys(errors).length > 0}
                             onPress={() => {
-                                handleSubmit();
-                                handleSaveReminder(values);
+                                handleSaveReminder(values)
                             }}
                         />
                         <CustomButtonNew

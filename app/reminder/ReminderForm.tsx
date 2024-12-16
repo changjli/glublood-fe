@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Modal, FlatList, ListRenderItem, Image, TextInput, Dimensions, ScrollViewBase } from 'react-native';
-import { Formik, Field, FormikConsumer } from 'formik';
+import { Formik, Field, FormikConsumer, FormikErrors } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomTimePicker from '@/components/CustomTimePicker';
@@ -13,6 +13,7 @@ import Wrapper from '@/components/Layout/Wrapper';
 interface ReminderFormRenderProps {
     values: ReminderFormValues
     handleSubmit: () => void
+    errors: FormikErrors<ReminderFormValues>
 }
 
 interface ReminderFormProps {
@@ -345,10 +346,9 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                                     </TouchableOpacity>
                                 ))}
                             </View>
-                            {errors.reminderType && <Text style={styles.errorText}>{errors.reminderType}</Text>}
                         </View>
                     </View>
-                    {children({ values, handleSubmit })}
+                    {children({ values, handleSubmit, errors })}
                 </ScrollView>
             )}
         </Formik>

@@ -205,17 +205,16 @@ export default function AddReminder() {
         formValue={formValue}
         setFormValue={setFormValue}
       >
-        {({ values, handleSubmit }) => (
+        {({ values, handleSubmit, errors }) => (
           <View style={{ marginHorizontal: 15 }}>
             <CustomButtonNew
               store={true}
               imgSrc={require('@/assets/images/icons/plus.png')}
               label='Simpan Catatan'
+              disabled={Object.keys(errors).length > 0}
               onPress={() => {
-                handleSubmit();
                 handleSaveReminder(values);
               }}
-            // disabled={disabled}
             />
           </View>
         )}

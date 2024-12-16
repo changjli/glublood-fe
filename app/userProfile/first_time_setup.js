@@ -58,7 +58,7 @@ export default function FirstTimeSetup() {
         age: Yup.number().positive().integer(),
         birthDate: Yup.date().required("Tanggal lahir wajib diisi!").nullable(),
         gender: Yup.string().required("Jenis Kelamin wajib diisi!"),
-        descendant: Yup.string().required("Pertanyaan keturunan wajib diisi!"),
+        descendant: Yup.number().required("Pertanyaan keturunan wajib diisi!"),
         diseaseHistory: Yup.string(),
         selectPatient: Yup.number().required("Wajib diisi!"),
         selectDiabetesType: Yup.number().required("Wajib diisi!"),
