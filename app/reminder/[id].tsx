@@ -105,7 +105,6 @@ export default function ReminderDetail() {
             content: {
                 title: "Ding! Dong! Waktunya tiba ⏰",
                 body: body,
-                data: { id: reminder.id },
             },
             trigger: {
                 date: new Date(year, month, day, hours, minutes, 0),
@@ -120,7 +119,16 @@ export default function ReminderDetail() {
     const handleSaveReminder = async (values: ReminderFormValues) => {
         setStoreLoading(true);
         try {
+            const data = await getObjectData(values.id)
+
+            for (const id of data.notificationId) {
+                await Notifications.cancelScheduledNotificationAsync(id);
+            }
+
+            values.notificationId = [],
+
             await deleteDataByKey(values.id)
+
             var uniqueKey = generateUniqueKey(values);
 
             console.log("Unique Key", uniqueKey)

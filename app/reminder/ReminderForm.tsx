@@ -53,7 +53,7 @@ const dayMapping: { [key: number]: string } = {
 };
 
 const validationSchema = Yup.object().shape({
-    // reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
+    reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
     // time: Yup.string().required('Time selection is required!'),
     // repeatDays: Yup.array().of(Yup.number()),
     // notes: Yup.string(),
