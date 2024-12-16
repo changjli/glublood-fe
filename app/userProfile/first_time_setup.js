@@ -139,7 +139,7 @@ export default function FirstTimeSetup() {
                 formikValues.descendant === 1 ? true : false,
             is_diabetes: formikValues.selectPatient,
             medical_history: formikValues.diseaseHistory,
-            diabetes_type: formikValues.selectDiabetesType,
+            diabetes_type: formikValues.selectDiabetesType? formikValues.selectDiabetesType : -1,
         };
     };
 
@@ -221,7 +221,7 @@ export default function FirstTimeSetup() {
                         descendant: "-",
                         diseaseHistory: "",
                         selectPatient: "-",
-                        selectDiabetesType: -1,
+                        selectDiabetesType: "",
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values) =>
