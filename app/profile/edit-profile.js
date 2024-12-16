@@ -208,7 +208,10 @@ export default function editProfile() {
                                         label="Nama depan"
                                         placeholder="Type something here"
                                         value={values.firstname}
-                                        onChangeText={handleChange("firstname")}
+                                        onChangeText={(data) => {
+                                            handleChange("firstname")(data);
+                                            values.firstname && setFieldTouched("firstname", true);
+                                        }}
                                         onBlur={() => setFieldTouched("firstname", true)}
                                         error={touched.firstname && errors.firstname}
                                     />
@@ -227,7 +230,10 @@ export default function editProfile() {
                                         placeholder="Dalam Kg"
                                         keyboardType={'numeric'}
                                         value={values.weight}
-                                        onChangeText={handleChange("weight")}
+                                        onChangeText={(data) => {
+                                            handleChange("weight")(data);
+                                            values.weight && setFieldTouched("weight", true);
+                                        }}
                                         onBlur={() => setFieldTouched("weight", true)}
                                         error={touched.weight && errors.weight}
                                     />
@@ -237,7 +243,10 @@ export default function editProfile() {
                                         placeholder="Dalam Cm"
                                         keyboardType={'numeric'}
                                         value={values.height}
-                                        onChangeText={handleChange("height")}
+                                        onChangeText={(data) => {
+                                            handleChange("height")(data);
+                                            values.height && setFieldTouched("height", true);
+                                        }}
                                         onBlur={() => setFieldTouched("height", true)}
                                         error={touched.height && errors.height}
                                     />
