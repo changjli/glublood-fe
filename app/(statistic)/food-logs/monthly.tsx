@@ -85,7 +85,8 @@ export default function MonthlyFoodLogStatisticPage() {
                     y='avg_calories'
                     average={averageCalories}
                     renderLabel={(value, index) => {
-                        const dateRange = value.split('~')
+                        const dateRange = value ? value.split('~') : []
+
                         return [formatDateStripToSlash(dateRange[0])]
                     }}
                 />

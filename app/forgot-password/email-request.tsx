@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert, KeyboardAvoidingView, useWindowDimensions } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -13,6 +13,7 @@ import { useCustomAlert } from '../context/CustomAlertProvider';
 import { FontSize } from '@/constants/Typography';
 import CustomButton from '@/components/CustomButton';
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
+import WithKeyboard from '@/components/Layout/WithKeyboard';
 
 type SendCodeProps = {
   setPage: (value: number) => void
@@ -31,6 +32,7 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
   const { forgotPassword } = useAuth()
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
   const { showAlert } = useCustomAlert()
+  const { height } = useWindowDimensions()
 
 
   const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ForgotPasswordRequest>({
@@ -75,45 +77,47 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
   }
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => router.replace('/(auth)/login')}
-      >
-        <Ionicons name='arrow-back-outline' size={FontSize['2xl']} color='Black' />
-      </TouchableOpacity>
-      <View>
-        <Text style={styles.title}>Lupa kata sandi</Text>
-        <Text style={styles.subtitle}>Masukkan email anda untuk menerima kata sandi</Text>
-      </View>
-      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+    <WithKeyboard>
+      <View style={[styles.container, { height: height }]}>
+        <TouchableOpacity
+          onPress={() => router.replace('/(auth)/login')}
+        >
+          <Ionicons name='arrow-back-outline' size={FontSize['2xl']} color='Black' />
+        </TouchableOpacity>
         <View>
-          <Image
-            source={require('@/assets/images/forgot-password/forgot.png')}
-            style={styles.img}
-          />
+          <Text style={styles.title}>Lupa kata sandi</Text>
+          <Text style={styles.subtitle}>Masukkan email anda untuk menerima kata sandi</Text>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+          <View>
+            <Image
+              source={require('@/assets/images/forgot-password/forgot.png')}
+              style={styles.img}
+            />
 
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, value } }) => (
-              <CustomTextInput
-                label='Email'
-                placeholder='email'
-                value={value}
-                onChangeText={onChange}
-                keyboardType="email-address"
-                error={errors.email ? errors.email.message : ''}
-              />
-            )}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <CustomTextInput
+                  label='Email'
+                  placeholder='email'
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="email-address"
+                  error={errors.email ? errors.email.message : ''}
+                />
+              )}
+            />
+          </View>
+          <CustomButton
+            title='Kirim tautan'
+            onPress={handleSubmit(handleForgotPasswword)}
+            loading={forgotPasswordLoading}
           />
         </View>
-        <CustomButton
-          title='Kirim tautan'
-          onPress={handleSubmit(handleForgotPasswword)}
-          loading={forgotPasswordLoading}
-        />
       </View>
-    </View>
+    </WithKeyboard>
   );
 };
 

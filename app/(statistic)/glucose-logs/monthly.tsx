@@ -85,7 +85,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
                     y='avg_glucose_rate'
                     average={averageGlucoseRate}
                     renderLabel={(value, index) => {
-                        const dateRange = value.split('~')
+                        const dateRange = value ? value.split('~') : []
 
                         return [formatDateStripToSlash(dateRange[0])]
                     }}

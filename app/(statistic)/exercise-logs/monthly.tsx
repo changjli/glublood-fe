@@ -85,7 +85,7 @@ export default function MonthlyExerciseLogStatisticPage() {
                     y='avg_burned_calories'
                     average={averageBurnedCalories}
                     renderLabel={(value, index) => {
-                        const dateRange = value.split('~')
+                        const dateRange = value ? value.split('~') : []
 
                         return [formatDateStripToSlash(dateRange[0])]
                     }}

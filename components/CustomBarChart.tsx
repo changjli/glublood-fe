@@ -62,11 +62,11 @@ const CustomBarChart = ({ data, x, y, average, renderLabel }: CustomBarChartProp
                         },
                     }}
                     cornerRadius={{ top: 5, bottom: 5 }}
-                    labelComponent={<VictoryTooltip
-                        renderInPortal={false}
-                        constrainToVisibleArea
-                    />}
-                    labels={({ datum }) => formatDecimalToFixed(datum[y])}
+                // labelComponent={<VictoryTooltip
+                //     renderInPortal={false}
+                //     constrainToVisibleArea
+                // />}
+                // labels={({ datum }) => formatDecimalToFixed(datum[y])}
                 />
                 <VictoryLine
                     y={() => average}
