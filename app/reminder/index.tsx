@@ -7,146 +7,41 @@ import * as Notifications from 'expo-notifications';
 import { FontSize } from '@/constants/Typography';
 import { useIsFocused } from '@react-navigation/native';
 import { Colors } from '@/constants/Colors';
+import useReminder, { ReminderStorage } from '@/hooks/useReminder';
+import CustomButton from '@/components/CustomButton';
 
 export default function ReminderPage() {
-  const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
+  const { getAllReminder, clearAllReminder, toggleReminder } = useReminder()
+
   const isFocused = useIsFocused()
 
-  const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
+  const [reminders, setReminders] = useState<ReminderStorage[]>([]);
+  const [getLoading, setGetLoading] = useState(false)
+  const [toggleLoading, setToggleLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchReminders = async () => {
-      const reminderData = await getAllReminderData();
-      if (reminderData) {
-        const remindersArray = Object.values(reminderData) as ReminderFormValues[];
-        setReminders(remindersArray);
-      }
-    };
-
-    if (isFocused) {
-      fetchReminders();
-    }
-  }, [isFocused]);
-
-  const getAllReminderData = async () => {
-    const keys = await getAllKeys();
-    const reminderKeys: string[] = []
-
-    keys.forEach((key) => {
-      if (key.startsWith('reminder')) {
-        reminderKeys.push(key)
-      }
-    });
-
-    const reminderData = await getAllObjectData(reminderKeys);
-
-    return reminderData;
+  const handleGetAllReminder = async () => {
+    const res = await getAllReminder(setGetLoading)
+    setReminders(res)
   }
 
-  const reminderNotificationsRepeat = async (reminder: ReminderFormValues, day: number, type: number) => {
-    const [hours, minutes] = reminder.time.split(':').map(Number);
-    var body = ''
+  useEffect(() => {
+    handleGetAllReminder()
+  }, [isFocused]);
 
-    switch (type) {
-      case 1:
-        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
-        break;
-      case 2:
-        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
-        break;
-      case 3:
-        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
-        break;
+  const handleToggleReminder = async (reminder: ReminderStorage) => {
+    setToggleLoading(false);
+    try {
+      const updatedReminders = reminders.map((r) =>
+        r.id === reminder.id ? { ...r, isEnabled: !reminder.isEnabled } : r
+      );
+      setReminders(updatedReminders);
+      await toggleReminder(reminder)
+    } catch (err) {
+      console.log('Error toggle reminder:', err);
+    } finally {
+      setToggleLoading(false);
     }
-
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Ding! Dong! Waktunya tiba ⏰",
-        body: body,
-        data: { id: reminder.id },
-      },
-      trigger: {
-        weekday: day,
-        hour: hours,
-        minute: minutes,
-        repeats: true,
-      },
-    });
-
-    return notificationId
-  };
-
-  const reminderNotificationsSingle = async (reminder: ReminderFormValues, type: number) => {
-    const [hours, minutes] = reminder.time.split(':').map(Number);
-    const year = new Date().getFullYear()
-    const month = new Date().getMonth()
-    const day = new Date().getDate()
-
-    var body = ''
-
-    switch (type) {
-      case 1:
-        body = 'Yuk udah saatnya untuk pengecekan gula darah nih! 🤗';
-        break;
-      case 2:
-        body = 'Jangan lupa untuk makan dan minum yaa! 🤗';
-        break;
-      case 3:
-        body = 'Yuk udah saatnya untuk olahraga biar kesehatan tubuhmu terjaga!🤗';
-        break;
-    }
-
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Ding! Dong! Waktunya tiba ⏰",
-        body: body,
-        data: { id: reminder.id },
-      },
-      trigger: {
-        date: new Date(year, month, day, hours, minutes, 0),
-      },
-    });
-
-    return notificationId
-  };
-
-  const cancelNotifications = async (notificationIds: string[]) => {
-    for (const id of notificationIds) {
-      await Notifications.cancelScheduledNotificationAsync(id);
-    }
-  };
-
-  const handleSwitchToggle = async (id: string, value: boolean) => {
-    // Update the reminders state
-    const updatedReminders = reminders.map((reminder) =>
-      reminder.id === id ? { ...reminder, isEnabled: value } : reminder
-    );
-    setReminders(updatedReminders);
-
-    const updatedReminder = updatedReminders.find((reminder) => reminder.id === id);
-
-    if (updatedReminder) {
-      if (value) {
-        if (updatedReminder.repeatDays.length > 0) {
-          for (const type of updatedReminder.reminderType) {
-            for (const day of updatedReminder.repeatDays) {
-              updatedReminder.notificationId.push(await reminderNotificationsRepeat(updatedReminder, day, type))
-            }
-          }
-        } else {
-          for (const type of updatedReminder.reminderType) {
-            updatedReminder.notificationId.push(await reminderNotificationsSingle(updatedReminder, type))
-          }
-        }
-
-        await storeObjectData(updatedReminder.id, updatedReminder)
-      } else {
-        await cancelNotifications(updatedReminder.notificationId);
-        updatedReminder.notificationId = [];
-        await storeObjectData(updatedReminder.id, updatedReminder)
-      }
-    }
-  };
+  }
 
   const mapReminderType = (value: number) => {
     switch (value) {
@@ -170,13 +65,12 @@ export default function ReminderPage() {
   };
 
   // Render each reminder item
-  const renderItem = ({ item }: { item: ReminderFormValues }) => (
+  const renderItem = ({ item }: { item: ReminderStorage }) => (
     <TouchableOpacity
       style={
         styles.reminderContainer
       }
       onPress={() => router.navigate(`/reminder/${item.id}`)}
-    // onPress={() => router.navigate('/(notes)/reminder/TestNotification')}
     >
       <View style={[
         styles.reminderLeft,
@@ -184,7 +78,7 @@ export default function ReminderPage() {
       ]}
       >
         <View style={styles.categoryContainer}>
-          {item.reminderType.map((type, index) => (
+          {item.reminderTypes.map((type, index) => (
             <Text key={index} style={styles.category}>
               {mapReminderType(type)}
             </Text>
@@ -210,7 +104,7 @@ export default function ReminderPage() {
 
       <Switch
         value={item.isEnabled}
-        onValueChange={(value) => handleSwitchToggle(item.id, value)}
+        onValueChange={(value) => handleToggleReminder(item)}
         trackColor={{ false: '#767577', true: '#da6e35' }}
         thumbColor={false ? '#ff9800' : '#f4f3f4'}
       />
@@ -247,6 +141,12 @@ export default function ReminderPage() {
         data={reminders}
         renderItem={renderItem}
         keyExtractor={(item) => item.time}
+      />
+      <CustomButton title='Hapus semua' onPress={async () => {
+        await clearAllReminder()
+        handleGetAllReminder()
+      }}
+        style={{ marginHorizontal: 16, marginBottom: 8 }}
       />
     </View>
   );

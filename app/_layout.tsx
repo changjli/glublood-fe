@@ -13,10 +13,13 @@ import ThemeProvider from './context/ThemeProvider';
 import { Colors } from '@/constants/Colors';
 import { CustomAlertProvider } from './context/CustomAlertProvider';
 import { requestPermissionsAsync } from 'expo-notifications';
+import useNotification from '@/hooks/useNotification';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+    const { requestNotificationPermission, setUpNotification } = useNotification()
+
     const [loaded, error] = useFonts({
         'Helvetica': require('../assets/fonts/Helvetica.ttf'),
         'Helvetica-Bold': require('../assets/fonts/Helvetica-Bold.ttf'),
@@ -33,15 +36,8 @@ export default function RootLayout() {
         return null;
     }
 
-    async function requestPermissions() {
-        const { status } = await requestPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permission for notifications is required.');
-        }
-    }
-
-    // Call this function when initializing your app
-    requestPermissions();
+    requestNotificationPermission()
+    setUpNotification()
 
     return (
         <SessionProvider>

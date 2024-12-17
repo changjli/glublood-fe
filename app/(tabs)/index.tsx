@@ -39,6 +39,7 @@ import { parseGlucoseReading } from "@/app/ble/GlucoseReadingRx";
 import { useCustomAlert } from "../context/CustomAlertProvider";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import Avatar from "@/components/Avatar";
+import useReminder, { ReminderStorage } from "@/hooks/useReminder";
 
 export default function HomePage() {
     const { signOut, session } = useSession();
@@ -49,6 +50,7 @@ export default function HomePage() {
     const { width } = useWindowDimensions();
     const { showAlert } = useCustomAlert()
     const { profile } = useUserProfile()
+    const { getAllReminder } = useReminder()
 
     const today = new Date()
     const [foodMenus, setFoodMenus] = useState<FoodMenu[]>([])
@@ -59,8 +61,7 @@ export default function HomePage() {
     const [getDailyCaloriesBurnedLoading, setDailyCaloriesBurnedLoading] = useState(false)
     const dailyCaloriesCircularProgressRef = useRef(null)
     const dailyBurnedCaloriesCircularProgressRef = useRef(null)
-    const [reminders, setReminders] = useState<ReminderFormValues[]>([]);
-    const [reminderKeys, setReminderKeys] = useState<string[]>([]);
+    const [reminders, setReminders] = useState<ReminderStorage[]>([]);
 
     const handleGetAllFoodMenu = async () => {
         try {
@@ -166,35 +167,16 @@ export default function HomePage() {
         }
     };
 
-    const getAllReminderData = async () => {
-        const keys = await getAllKeys();
-
-        keys.forEach((key) => {
-            if (key.startsWith("reminder")) {
-                reminderKeys.push(key);
-            }
-        });
-
-        const reminderData = await getAllObjectData(reminderKeys);
-
-        return reminderData;
-    };
-
-    const handlGetAllReminder = async () => {
-        const reminderData = await getAllReminderData();
-        if (reminderData) {
-            const remindersArray = Object.values(
-                reminderData
-            ) as ReminderFormValues[];
-            setReminders(remindersArray);
-        }
-    };
+    const handleGetAllReminder = async () => {
+        const res = await getAllReminder(() => { })
+        setReminders(res)
+    }
 
     useEffect(() => {
         handleGetAllFoodMenu();
         handleGetDailyCalories(formatDatetoStringYmd(today));
         handleGetDailyBurnedCalories(formatDatetoStringYmd(today));
-        handlGetAllReminder();
+        handleGetAllReminder();
     }, []);
 
     useEffect(() => {
@@ -244,14 +226,14 @@ export default function HomePage() {
     };
 
     // Render reminder item
-    const renderItem = ({ item }: { item: ReminderFormValues }) => (
+    const renderItem = ({ item }: { item: ReminderStorage }) => (
         <TouchableOpacity
             style={styles.reminderCard}
             onPress={() => router.navigate(`/reminder/${item.id}`)}
         >
             <View style={styles.reminderLeft}>
                 <View style={styles.categoryContainer}>
-                    {item.reminderType.map((type, index) => (
+                    {item.reminderTypes.map((type, index) => (
                         <Text key={index} style={styles.category}>
                             {mapReminderType(type)}
                         </Text>
@@ -397,7 +379,7 @@ export default function HomePage() {
 
                     {/* remainder */}
                     <View style={{ marginBottom: 16 }}>
-                        {reminderKeys.length > 0 ? (
+                        {reminders.length > 0 ? (
                             <View>
                                 <View
                                     style={{

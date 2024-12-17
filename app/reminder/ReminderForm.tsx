@@ -15,22 +15,17 @@ import { FontSize } from '@/constants/Typography';
 import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CustomButton from '@/components/CustomButton';
+import { Reminder, ReminderStorage } from '@/hooks/useReminder';
 
 interface ReminderFormRenderProps {
-    handleSubmit: UseFormHandleSubmit<ReminderFormValues, undefined>
+    handleSubmit: UseFormHandleSubmit<ReminderStorage, undefined>
     disabled: boolean
 }
 
 interface ReminderFormProps {
-    formValue: ReminderFormValues
-    setFormValue: (formValue: ReminderFormValues) => void
+    formValue: ReminderStorage
+    setFormValue: (formValue: ReminderStorage) => void
     children: (props: ReminderFormRenderProps) => React.ReactNode
-}
-
-interface Option {
-    title: string;
-    label: string;
-    value: string;
 }
 
 const DAYS: DayItem[] = [
@@ -54,22 +49,21 @@ const dayMapping: { [key: number]: string } = {
 };
 
 const validationSchema = Yup.object().shape({
-    reminderType: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
-    // time: Yup.string().required('Time selection is required!'),
-    // repeatDays: Yup.array().of(Yup.number()),
-    // notes: Yup.string(),
+    reminderTypes: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
+    time: Yup.string().required('Time selection is required!'),
+    repeatDays: Yup.array().of(Yup.number()),
 });
 
 export default function ReminderForm({ formValue, setFormValue, children, ...rest }: ReminderFormProps) {
-    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ReminderFormValues>({
+    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ReminderStorage>({
         defaultValues: formValue,
         resolver: yupResolver(validationSchema),
         mode: 'onChange',
     })
 
-    const [repeatDays, notes, reminderTypeValue] = watch(['repeatDays', 'notes', 'reminderType'])
+    const [repeatDays, notes, reminderTypes] = watch(['repeatDays', 'notes', 'reminderTypes'])
 
-    const [reminderType, setReminderType] = useState([
+    const [reminderTypeData, setReminderTypeData] = useState([
         {
             title: 'Olahraga',
             label: 'exercise_log',
@@ -256,28 +250,28 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                 <View style={styles.reminderTypeContainer}>
                     <Text style={styles.label}>Jenis Pengingat</Text>
                     <View style={styles.reminderTypeButtonContainer}>
-                        {reminderType.map((option) => (
+                        {reminderTypeData.map((option) => (
                             <TouchableOpacity
                                 key={option.label}
                                 style={[
                                     styles.reminderTypeButton,
-                                    reminderTypeValue.includes(option.value) && styles.selectedTypeButton,
+                                    reminderTypes.includes(option.value) && styles.selectedTypeButton,
                                 ]}
                                 onPress={() => {
-                                    if (reminderTypeValue.includes(option.value)) {
+                                    if (reminderTypes.includes(option.value)) {
                                         setValue(
-                                            'reminderType',
-                                            reminderTypeValue.filter((item: number) => item !== option.value)
+                                            'reminderTypes',
+                                            reminderTypes.filter((item: number) => item !== option.value)
                                         );
                                     } else {
-                                        setValue('reminderType', [...reminderTypeValue, option.value]);
+                                        setValue('reminderTypes', [...reminderTypes, option.value]);
                                     }
                                 }}
                             >
                                 <Text
                                     style={[
                                         styles.reminderTypeText,
-                                        reminderTypeValue.includes(option.value) && { color: '#fff' }
+                                        reminderTypes.includes(option.value) && { color: '#fff' }
                                     ]}
                                 >
                                     {option.title}
