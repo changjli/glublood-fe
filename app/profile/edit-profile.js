@@ -8,6 +8,7 @@ import { StyledCustomTextInput } from '@/components/CustomInput/CustomTextInput/
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { router } from 'expo-router';
+import CustomHeader from '@/components/CustomHeader';
 
 // Selection button state (gender)
 const isGender = [
@@ -94,7 +95,8 @@ export default function editProfile() {
         }
     }
 
-    const validationSchema = Yup.object().shape({firstname: Yup.string().required("Nama lengkap wajib diisi!"),
+    const validationSchema = Yup.object().shape({
+        firstname: Yup.string().required("Nama lengkap wajib diisi!"),
         firstname: Yup.string().required("Nama lengkap wajib diisi!"),
         weight: Yup.number()
             .typeError("Wajib angka!")
@@ -119,7 +121,7 @@ export default function editProfile() {
     const [descendant, setDescendant] = useState("");
     const [isDiabetes, setIsDiabetes] = useState("");
     const [diabetesType, setDiabetesType] = useState("");
-    
+
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [date, setDate] = useState(new Date());
 
@@ -132,32 +134,7 @@ export default function editProfile() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <ScrollView>
-                <View
-                    style={{ 
-                        paddingTop: 25,
-                        paddingHorizontal: 16,
-                        backgroundColor: '#DA6E35',
-                    }}
-                >
-                    <TouchableOpacity
-                        style={{ width: 50 }}
-                        onPress={() => router.back()}
-                    >
-                        <Image
-                            source={require('../../assets/images/arrow-back.png')}
-                            style={{
-                                marginBottom: 8,
-                                marginLeft: 8,
-                                width: 40,
-                                height: 40,
-                                objectFit: 'cover',
-                                tintColor: 'white'
-                            }}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Edit Profil</Text>
-                    <Text style={styles.subTitle}>Perubahan data diri terkait akunmu</Text>
-                </View>
+                <CustomHeader title='Edit Profile' />
                 <Formik
                     enableReinitialize={true}
                     initialValues={initialFormValues}
@@ -176,8 +153,8 @@ export default function editProfile() {
                             gender: values.gender,
                             is_descendant_diabetes: values.descendant,
                             medical_history: values.diseaseHistory,
-                            is_diabetes: values.isDiabetes? values.isDiabetes : isDiabetes,
-                            diabetes_type: values.diabetesType? values.diabetesType : diabetesType,
+                            is_diabetes: values.isDiabetes ? values.isDiabetes : isDiabetes,
+                            diabetes_type: values.diabetesType ? values.diabetesType : diabetesType,
                         };
 
                         console.log("updated data: ", mappedValues)
@@ -189,7 +166,7 @@ export default function editProfile() {
                 >
                     {({ handleChange, handleBlur, handleSubmit, values, errors, setFieldValue, setFieldTouched, touched }) => (
                         <View
-                            style={{ 
+                            style={{
                                 paddingHorizontal: 16,
                                 paddingVertical: 16,
                             }}
@@ -408,8 +385,8 @@ export default function editProfile() {
                                                     styles.selectionButton,
                                                     {
                                                         marginRight: index === 0 ? 5 : "",
-                                                        marginLeft: index === 1 ? 5 : "" ,
-                                                        backgroundColor: descendant == item.value? "#EC8F5E" : "transparent",
+                                                        marginLeft: index === 1 ? 5 : "",
+                                                        backgroundColor: descendant == item.value ? "#EC8F5E" : "transparent",
                                                     },
                                                 ]}
                                                 onPress={() => {
@@ -469,7 +446,7 @@ export default function editProfile() {
                                             style={[
                                                 styles.selectionButtonTriplet,
                                                 {
-                                                    backgroundColor: !isDiabetes? "#EC8F5E" : "transparent",
+                                                    backgroundColor: !isDiabetes ? "#EC8F5E" : "transparent",
                                                 },
                                             ]}
                                             onPress={() => {
@@ -498,7 +475,7 @@ export default function editProfile() {
                                             style={[
                                                 styles.selectionButtonTriplet,
                                                 {
-                                                    backgroundColor: diabetesType==1? "#EC8F5E" : "transparent",
+                                                    backgroundColor: diabetesType == 1 ? "#EC8F5E" : "transparent",
                                                 },
                                             ]}
                                             onPress={() => {
@@ -512,7 +489,7 @@ export default function editProfile() {
                                             <Text
                                                 style={{
                                                     color:
-                                                        diabetesType==1
+                                                        diabetesType == 1
                                                             ? "#ffffff"
                                                             : "#EC8F5E",
                                                     fontSize: 12,
@@ -527,7 +504,7 @@ export default function editProfile() {
                                             style={[
                                                 styles.selectionButtonTriplet,
                                                 {
-                                                    backgroundColor: diabetesType==2? "#EC8F5E" : "transparent",
+                                                    backgroundColor: diabetesType == 2 ? "#EC8F5E" : "transparent",
                                                 },
                                             ]}
                                             onPress={() => {
@@ -541,7 +518,7 @@ export default function editProfile() {
                                             <Text
                                                 style={{
                                                     color:
-                                                        diabetesType==2
+                                                        diabetesType == 2
                                                             ? "#ffffff"
                                                             : "#EC8F5E",
                                                     fontSize: 12,
@@ -565,13 +542,13 @@ export default function editProfile() {
                             </View>
 
                             {setDisabledButton((Object.keys(errors).length > 0 || Object.keys(touched).length == 0) ? true : false)}
-                            
+
                             <View style={{ marginTop: 'auto' }}>
                                 <TouchableOpacity
                                     style={{
                                         marginTop: 20,
                                         paddingVertical: 12,
-                                        backgroundColor: disabledButton? '#D8D8D8' : '#DA6E35',
+                                        backgroundColor: disabledButton ? '#D8D8D8' : '#DA6E35',
                                         borderRadius: 8,
                                         display: 'flex',
                                         alignItems: 'center',
@@ -580,8 +557,8 @@ export default function editProfile() {
                                     disabled={disabledButton}
                                 >
                                     <Text
-                                        style={{ 
-                                            color: disabledButton? '#969696' : 'white',
+                                        style={{
+                                            color: disabledButton ? '#969696' : 'white',
                                             fontSize: 18,
                                             fontFamily: 'Helvetica-Bold',
                                         }}
@@ -598,7 +575,7 @@ export default function editProfile() {
                                     }}
                                 >
                                     <Text
-                                        style={{ 
+                                        style={{
                                             paddingVertical: 10,
                                             color: '#FE3F11',
                                             fontSize: 18,
@@ -636,7 +613,7 @@ export default function editProfile() {
         </TouchableWithoutFeedback>
     )
 }
- 
+
 const styles = StyleSheet.create({
     title: {
         marginBottom: -6,

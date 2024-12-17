@@ -92,12 +92,12 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
     // Wheel Time Picker
     const { width, height } = Dimensions.get('window');
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedHour, setSelectedHour] = useState(formValue.time.split(":")[0] ?? '00');
-    const [selectedMinute, setSelectedMinute] = useState(formValue.time.split(":")[1] ?? '00');
+    const [selectedHour, setSelectedHour] = useState(formValue.time.split(":")[0]);
+    const [selectedMinute, setSelectedMinute] = useState(formValue.time.split(":")[1]);
 
     useEffect(() => {
-        setSelectedHour(formValue.time.split(":")[0] ?? '00')
-        setSelectedMinute(formValue.time.split(":")[1] ?? '00')
+        setSelectedHour(formValue.time.split(":")[0])
+        setSelectedMinute(formValue.time.split(":")[1])
     }, [formValue])
 
     const hours = Array.from({ length: 24 }, (_, i) => (i).toString().padStart(2, '0'));

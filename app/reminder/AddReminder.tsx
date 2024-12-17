@@ -194,7 +194,7 @@ export default function AddReminder() {
     id: '',
     notificationId: [],
     reminderType: [],
-    time: '',
+    time: '00:00',
     repeatDays: [],
     notes: '',
     isEnabled: true,

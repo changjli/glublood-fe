@@ -6,6 +6,7 @@ import useAsyncStorage from '@/hooks/useAsyncStorage';
 import * as Notifications from 'expo-notifications';
 import { FontSize } from '@/constants/Typography';
 import { useIsFocused } from '@react-navigation/native';
+import { Colors } from '@/constants/Colors';
 
 export default function ReminderPage() {
   const { getAllKeys, getAllObjectData, storeObjectData } = useAsyncStorage()
@@ -223,7 +224,7 @@ export default function ReminderPage() {
           <TouchableOpacity
             onPress={() => router.back()}
           >
-            <Ionicons name='arrow-back' size={40} color={'white'} />
+            <Ionicons name='arrow-back' size={FontSize['2xl']} color={'white'} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => router.navigate('/reminder/AddReminder')}
@@ -234,7 +235,7 @@ export default function ReminderPage() {
               borderRadius: 5,
             }}
           >
-            <FontAwesome name="plus" size={24} color="#DA6E35" />
+            <FontAwesome name="plus" size={FontSize.lg} color="#DA6E35" />
           </TouchableOpacity>
         </View>
         <Text style={styles.headerTitle}>Pengingat</Text>
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    backgroundColor: '#d0663e',
+    backgroundColor: Colors.light.primary,
   },
   buttonNavigate: {
     marginBottom: 5,
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 32,
+    fontSize: FontSize.lg,
     fontFamily: 'Helvetica-Bold',
   },
   subtitle: {
