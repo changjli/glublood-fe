@@ -45,7 +45,7 @@ export default function AddGlucoseLog() {
         date: '',
         glucose_rate: 0,
         time: '',
-        time_selection: '',
+        time_selection: 'Sesudah Makan',
         notes: '',
         type: 'manual',
     })
@@ -75,6 +75,7 @@ export default function AddGlucoseLog() {
                             title='Simpan Catatan'
                             onPress={handleSubmit((data) => handleStoreGlucoseLog(data))}
                             disabled={disabled}
+                            loading={storeLoading}
                         />
                     )}
                 </GlucoseLogForm>

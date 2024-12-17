@@ -114,7 +114,7 @@ export default function MedicineLogForm({ formValue, setFormValue, children, ...
                 />
 
             </View>
-            {children({ handleSubmit, disabled: !isDirty || !isValid })}
+            {children({ handleSubmit, disabled: !(isDirty || formValue.type != type) || !isValid })}
         </View>
     )
 }

@@ -13,31 +13,25 @@ export default function ReminderDetail() {
     const { id } = useLocalSearchParams();
     const { getObjectData, getAllKeys, storeObjectData, deleteDataByKey } = useAsyncStorage()
 
-    const [updateLoading, setUpdateLoading] = useState(false);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [getLoading, setGetLoading] = useState(false)
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [deleteLoading, setDeleteLoading] = useState(false)
     const [reminder, setReminder] = useState<ReminderFormValues>();
 
     const handleGetReminderDetail = async (id: string) => {
-        setUpdateLoading(false);
+        setGetLoading(false);
         try {
             const res = await getObjectData(id)
             setReminder(res)
         } catch (err) {
             console.log('Error get reminder:', err);
         } finally {
-            setUpdateLoading(false);
+            setGetLoading(false);
         }
     }
 
     useEffect(() => {
-        if (reminder) {
-            console.log("Updated reminder: ", reminder);
-        }
-    }, [reminder]);
-
-    useEffect(() => {
         handleGetReminderDetail(String(id))
-        console.log("id: ", id)
     }, [])
 
     const generateUniqueKey = (values: ReminderFormValues): string => {
@@ -114,10 +108,8 @@ export default function ReminderDetail() {
         return notificationId
     };
 
-    const [storeLoading, setStoreLoading] = useState(false)
-
     const handleSaveReminder = async (values: ReminderFormValues) => {
-        setStoreLoading(true);
+        setUpdateLoading(true);
         try {
             const data = await getObjectData(values.id)
 
@@ -127,7 +119,7 @@ export default function ReminderDetail() {
 
             values.notificationId = [],
 
-            await deleteDataByKey(values.id)
+                await deleteDataByKey(values.id)
 
             var uniqueKey = generateUniqueKey(values);
 
@@ -223,17 +215,18 @@ export default function ReminderDetail() {
         } catch (err) {
             console.log('Error saving reminder:', err);
         } finally {
-            setStoreLoading(false);
+            setUpdateLoading(false);
         }
     };
 
     const handleDeleteReminder = async (key: string) => {
+        setDeleteLoading(true)
         try {
             await deleteDataByKey(key)
         } catch (err) {
             console.log('Error saving reminder:', err);
         } finally {
-            setStoreLoading(false);
+            setDeleteLoading(false);
         }
     }
 
@@ -259,6 +252,7 @@ export default function ReminderDetail() {
                             disabled={disabled}
                             onPress={handleSubmit((values) => handleSaveReminder(values))}
                             style={{ marginBottom: 4 }}
+                            loading={updateLoading}
                         />
                         <CustomButton
                             title='Hapus log'
@@ -267,6 +261,7 @@ export default function ReminderDetail() {
                                 handleDeleteReminder(values.id)
                                 router.push('/reminder')
                             })}
+                            loading={deleteLoading}
                         />
                     </View>
                 )}

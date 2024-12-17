@@ -214,6 +214,7 @@ export default function AddReminder() {
               disabled={disabled}
               onPress={handleSubmit((values) => handleSaveReminder(values))}
               style={{ marginBottom: 16 }}
+              loading={storeLoading}
             />
           </View>
         )}

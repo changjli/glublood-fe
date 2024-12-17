@@ -158,7 +158,7 @@ export default function GlucoseLogDetailPage() {
                                 size="sm"
                                 style={{ color: Colors.light.red500 }}
                             >
-                                Gula darahmu melebihi batas normal
+                                Gula darahmu diluar batas normal
                             </CustomText>
                         </View>
                     )}

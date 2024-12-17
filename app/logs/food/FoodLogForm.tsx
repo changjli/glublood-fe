@@ -85,6 +85,14 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
         return qtyData
     }
 
+    const getSizeData = (type: string) => {
+        if (type == 'manual') {
+            return ["gram", "kilogram", "piring", "mangkok", "sendok", "cup", "potong", "buah"]
+        } else {
+            return []
+        }
+    }
+
     const calculateNutrition = (nutrition: number) => {
         if (formValue.serving_qty == 1) {
             return nutrition * serving_qty
@@ -346,7 +354,7 @@ export default function FoodLogForm({ formValue, children, ...rest }: FoodLogFor
                             qty={value}
                             size={serving_size}
                             qtyData={getQtyData()}
-                            sizeData={formValue.serving_size != '' ? [formValue.serving_size] : []}
+                            sizeData={formValue.serving_size != '' ? [formValue.serving_size, ...getSizeData(formValue.type)] : []}
                             onChangeQty={onChange}
                             onChangeSize={(v) => setValue('serving_size', v)}
                             label='Pilih porsi'

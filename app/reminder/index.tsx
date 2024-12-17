@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: FontSize.lg,
+    fontSize: FontSize.xl,
     fontFamily: 'Helvetica-Bold',
   },
   subtitle: {

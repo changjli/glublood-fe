@@ -14,6 +14,7 @@ import CustomModal from '@/components/CustomModal';
 import { FontSize } from '@/constants/Typography';
 import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import CustomButton from '@/components/CustomButton';
 
 interface ReminderFormRenderProps {
     handleSubmit: UseFormHandleSubmit<ReminderFormValues, undefined>
@@ -110,12 +111,12 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
         setFieldValue('time', `${selectedHour}:${selectedMinute}`)
     }
 
-    const handleSortRepeatDays = (values: ReminderFormValues) => {
-        const sortedDays = values.repeatDays.sort((a: number, b: number) => a - b)
+    const handleSortRepeatDays = () => {
+        const sortedDays = repeatDays.sort((a: number, b: number) => a - b)
 
         if (sortedDays[0] == 1 && sortedDays.length > 1) {
             const rotatedList = sortedDays.slice(1).concat(sortedDays[0]);
-            values.repeatDays = rotatedList
+            setValue('repeatDays', rotatedList)
         }
     }
 
@@ -143,8 +144,6 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
 
     return (
         <View style={styles.container}>
-            {/* Header */}
-
             <View style={{ paddingHorizontal: 20 }}>
                 {/* Time Selection */}
                 <View style={styles.timePickerContainer}>
@@ -205,15 +204,13 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                             style={{ paddingHorizontal: 12 }}
                         />
 
-                        <TouchableOpacity
-                            style={styles.closeButton}
+                        <CustomButton
+                            title='Simpan'
                             onPress={() => {
                                 setModalWeeklyReminderVisible(false)
-                                // handleSortRepeatDays(values)
+                                handleSortRepeatDays()
                             }}
-                        >
-                            <Text style={styles.closeButtonText}>Simpan</Text>
-                        </TouchableOpacity>
+                        />
                     </CustomModal>
                 </View>
 
@@ -238,20 +235,20 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                         isVisible={modalNotesVisible}
                         toggleModal={() => setModalNotesVisible(false)}
                     >
-                        <CustomTextInput
-                            style={styles.textInput}
-                            label='Catatan'
-                            placeholder='Masukkan catatan di bagian ini'
-                            value={notes}
-                            onChangeText={(value) => setValue('notes', value)}
-                        />
+                        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                            <CustomTextInput
+                                style={styles.textInput}
+                                label='Catatan'
+                                placeholder='Masukkan catatan di bagian ini'
+                                value={notes}
+                                onChangeText={(value) => setValue('notes', value)}
+                            />
 
-                        <TouchableOpacity
-                            style={styles.closeButton}
-                            onPress={() => setModalNotesVisible(false)}
-                        >
-                            <Text style={styles.closeButtonText}>Simpan</Text>
-                        </TouchableOpacity>
+                            <CustomButton
+                                title='Simpan'
+                                onPress={() => setModalNotesVisible(false)}
+                            />
+                        </View>
                     </CustomModal>
                 </View>
 
