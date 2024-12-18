@@ -379,7 +379,7 @@ export default function HomePage() {
 
                     {/* remainder */}
                     <View style={{ marginBottom: 16 }}>
-                        {reminders.length > 0 ? (
+                        {reminders && reminders.length > 0 ? (
                             <View>
                                 <View
                                     style={{
