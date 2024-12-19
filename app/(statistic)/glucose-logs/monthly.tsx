@@ -30,7 +30,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
 
     const handleGetGlucoseLogReport = async () => {
         try {
-            const res = await getGlucoseLogReportByMonth(() => setLoading({ ...loading, getGlucoseLogReport: true }), month, year)
+            const res = await getGlucoseLogReportByMonth(() => setLoading({ ...loading, getGlucoseLogReport: true }), month + 1, year)
             setGlucoseLogReport(res.data)
         } catch (err) {
             setGlucoseLogReport([])

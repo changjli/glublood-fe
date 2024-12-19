@@ -16,6 +16,7 @@ import { Controller, useForm, UseFormHandleSubmit } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CustomButton from '@/components/CustomButton';
 import { Reminder, ReminderStorage } from '@/hooks/useReminder';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface ReminderFormRenderProps {
     handleSubmit: UseFormHandleSubmit<ReminderStorage, undefined>
@@ -48,6 +49,27 @@ const dayMapping: { [key: number]: string } = {
     1: 'Minggu',
 };
 
+const reminderTypesMapping = [
+    {
+        title: 'Olahraga',
+        label: 'exercise_log',
+        value: 3,
+        imgPath: require('@/assets/images/reminder/karakter-olahraga.png'),
+    },
+    {
+        title: 'Gula darah',
+        label: 'glucose_log',
+        value: 1,
+        imgPath: require('@/assets/images/reminder/indikasi-terkena.png'),
+    },
+    {
+        title: 'Obat',
+        label: 'medicine',
+        value: 2,
+        imgPath: require('@/assets/images/reminder/karakter-obat.png'),
+    },
+]
+
 const validationSchema = Yup.object().shape({
     reminderTypes: Yup.array().of(Yup.number()).min(1, 'Reminder type is required!'),
     time: Yup.string().required('Time selection is required!'),
@@ -55,6 +77,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function ReminderForm({ formValue, setFormValue, children, ...rest }: ReminderFormProps) {
+    const { profile } = useUserProfile()
+
     const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ReminderStorage>({
         defaultValues: formValue,
         resolver: yupResolver(validationSchema),
@@ -63,26 +87,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
 
     const [repeatDays, notes, reminderTypes] = watch(['repeatDays', 'notes', 'reminderTypes'])
 
-    const [reminderTypeData, setReminderTypeData] = useState([
-        {
-            title: 'Olahraga',
-            label: 'exercise_log',
-            value: 3,
-            imgPath: require('@/assets/images/reminder/karakter-olahraga.png'),
-        },
-        {
-            title: 'Gula darah',
-            label: 'glucose_log',
-            value: 1,
-            imgPath: require('@/assets/images/reminder/indikasi-terkena.png'),
-        },
-        {
-            title: 'Obat',
-            label: 'medicine',
-            value: 2,
-            imgPath: require('@/assets/images/reminder/karakter-obat.png'),
-        },
-    ]);
+    const [reminderTypeData, setReminderTypeData] = useState(reminderTypesMapping);
 
     // Wheel Time Picker
     const { width, height } = Dimensions.get('window');
@@ -135,6 +140,15 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
     useEffect(() => {
         reset(formValue)
     }, [formValue])
+
+    useEffect(() => {
+        if (!profile?.is_diabetes) {
+            const fitleredReminderTypes = reminderTypesMapping.filter(reminderType => reminderType.title != 'Gula darah')
+            setReminderTypeData(fitleredReminderTypes)
+        } else {
+            setReminderTypeData(reminderTypesMapping)
+        }
+    }, [profile])
 
     return (
         <View style={styles.container}>
@@ -309,11 +323,11 @@ const styles = StyleSheet.create({
     },
     reminderTypeButtonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        gap: 8,
     },
     reminderTypeButton: {
         paddingTop: 20,
-        width: '32%',
+        flexGrow: 1,
         height: 130,
         borderWidth: 1,
         borderColor: '#DA6E35',

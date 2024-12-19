@@ -45,7 +45,7 @@ export default function PredictionPage() {
     }
 
     const resolveDiabetesResult = (result: number) => {
-        if (result == 0) {
+        if (result == 1) {
             return "Terindikasi Diabetes"
         } else {
             return "Terindikasi Non Diabetes"

@@ -17,6 +17,7 @@ import useProfile from '@/hooks/api/profile/useProfile';
 import generateHtml from '@/utils/generateHtml';
 import Loader from './Loader';
 import { useCustomAlert } from '@/app/context/CustomAlertProvider';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface SelectedOptions {
     [key: string]: boolean
@@ -27,35 +28,39 @@ interface ReportFormProps {
     endDate: string,
 }
 
+const optionData = [
+    {
+        title: 'Gula Darah',
+        label: 'glucose_log',
+        value: false,
+    },
+    // {
+    //     title: 'Obat',
+    //     label: 'medicine_log',
+    //     value: false
+    // },
+    {
+        title: 'Olahraga',
+        label: 'exercise_log',
+        value: false
+    },
+    {
+        title: 'Nutrisi',
+        label: 'food_log',
+        value: false
+    }
+]
+
 export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
+
+    const { profile } = useUserProfile()
 
     const { getLogReportByDate } = useReport()
     const { fetchUserProfile } = useProfile()
     const { showAlert } = useCustomAlert()
 
     const [selectedDate, setSelectedDate] = useState<string | string[]>([])
-    const [options, setOptions] = useState([
-        {
-            title: 'Gula darah',
-            label: 'glucose_log',
-            value: false,
-        },
-        // {
-        //     title: 'Obat',
-        //     label: 'medicine_log',
-        //     value: false
-        // },
-        {
-            title: 'Olahraga',
-            label: 'exercise_log',
-            value: false
-        },
-        {
-            title: 'Nutrisi',
-            label: 'food_log',
-            value: false
-        }
-    ])
+    const [options, setOptions] = useState(optionData)
     const [selectedOptions, setSelectedOptions] = useState(options.reduce((acc, option) => {
         acc[option.label] = option.value
         return acc
@@ -139,6 +144,15 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
             setDisabled(true)
         }
     }, [selectedOptions, startDate, endDate])
+
+    useEffect(() => {
+        if (!profile?.is_diabetes) {
+            const filteredOptions = optionData.filter(option => option.title != 'Gula Darah')
+            setOptions(filteredOptions)
+        } else {
+            setOptions(optionData)
+        }
+    }, [profile])
 
     return (
         <>

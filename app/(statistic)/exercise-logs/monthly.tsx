@@ -30,7 +30,7 @@ export default function MonthlyExerciseLogStatisticPage() {
 
     const handleGetExerciseLogReport = async () => {
         try {
-            const res = await getExerciseLogReportByMonth(() => setLoading({ ...loading, getExerciseLogReport: true }), month, year)
+            const res = await getExerciseLogReportByMonth(() => setLoading({ ...loading, getExerciseLogReport: true }), month + 1, year)
             setExerciseLogReport(res.data)
         } catch (err) {
             setExerciseLogReport([])

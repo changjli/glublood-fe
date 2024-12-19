@@ -30,7 +30,7 @@ export default function MonthlyFoodLogStatisticPage() {
 
     const handleGetFoodLogReport = async () => {
         try {
-            const res = await getFoodLogReportByMonth(() => setLoading({ ...loading, getFoodLogReport: true }), month, year)
+            const res = await getFoodLogReportByMonth(() => setLoading({ ...loading, getFoodLogReport: true }), month + 1, year)
             setFoodLogReport(res.data)
         } catch (err) {
             setFoodLogReport([])
