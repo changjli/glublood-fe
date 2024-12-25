@@ -33,22 +33,20 @@ export default function MonthlyReportPage() {
     const [year, setyear] = useState(date.getFullYear())
 
     return (
-        <ScrollView style={{ backgroundColor: 'white' }}>
-
-            <Wrapper>
+        <Wrapper style={{ flex: 1, backgroundColor: 'white' }}>
+            <View>
                 <CustomMonthYearPicker
                     month={month}
                     year={year}
                     setMonth={setMonth}
                     setyear={setyear}
                 />
-                <LogReportForm
-                    startDate={formatDatetoStringYmd(new Date(year, month - 1, 1))}
-                    endDate={formatDatetoStringYmd(new Date(year, month, 0))}
-                />
-            </Wrapper>
-
-        </ScrollView>
+            </View>
+            <LogReportForm
+                startDate={formatDatetoStringYmd(new Date(year, month, 1))}
+                endDate={formatDatetoStringYmd(new Date(year, month + 1, 0))}
+            />
+        </Wrapper>
     )
 }
 

@@ -13,7 +13,7 @@ import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 export default function CreateExerciseLogPage() {
     const { storeExerciseLog } = useExerciseLog()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
     const { showAlert } = useCustomAlert()
 
     const [formValue, setFormValue] = useState<StoreExerciseLogReq>({
@@ -50,7 +50,8 @@ export default function CreateExerciseLogPage() {
     }
 
     const handlePopulateFormValue = async () => {
-        const date = await getData('foodLogDate')
+        const date = await getData('exerciseLogDate')
+        // await deleteDataByKey('exerciseLogDate')
         setFormValue({
             ...formValue,
             date: date ?? '',

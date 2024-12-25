@@ -28,7 +28,6 @@ export default function BarcodeScanner() {
     }
 
     const handleBarcodeScanned = ({ cornerPoints, data, type }: BarcodeScanningResult) => {
-        if (scanned) return;
 
         const { width, height } = Dimensions.get('window');
 
@@ -53,7 +52,6 @@ export default function BarcodeScanner() {
                 centroidY < centralArea.maxY;
 
             if (isCentroidInCenter) {
-                setScanned(true);
                 // alert(`Barcode with type ${type} and data ${data} has been scanned!`);
                 // showAlert(`Barcode with type ${type} and data ${data} has been scanned!`, 'success')
                 // Do something with the scanned data
@@ -66,35 +64,26 @@ export default function BarcodeScanner() {
         <View style={{ flex: 1 }}>
             <CameraView
                 style={{ flex: 1, justifyContent: 'center' }}
-                onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+                onBarcodeScanned={handleBarcodeScanned}
             />
             <View style={styles.overlay}>
                 <View style={styles.guideBox}>
                 </View>
             </View>
-            {scanned ? (
-                <TouchableOpacity
-                    style={styles.scanAgainButton}
-                    onPress={() => setScanned(false)}
-                >
-                    <Text style={styles.scanAgainText}>Tap to Scan Again</Text>
-                </TouchableOpacity>
-            ) : (
-                <View style={{
-                    position: 'absolute',
-                    width: '100%',
-                    bottom: 0,
-                    backgroundColor: 'white',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 16,
-                    borderTopLeftRadius: 20,
-                    borderTopRightRadius: 20,
-                }}>
-                    <CustomText weight='heavy'>Tips</CustomText>
-                    <CustomText size='sm' style={{ textAlign: 'center' }}>Arahkan kode batang makanan sesuai dengan tempat yang telah disediakan</CustomText>
-                </View>
-            )}
+            <View style={{
+                position: 'absolute',
+                width: '100%',
+                bottom: 0,
+                backgroundColor: 'white',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 16,
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+            }}>
+                <CustomText weight='heavy'>Tips</CustomText>
+                <CustomText size='sm' style={{ textAlign: 'center' }}>Arahkan kode batang makanan sesuai dengan tempat yang telah disediakan</CustomText>
+            </View>
         </View>
     );
 }

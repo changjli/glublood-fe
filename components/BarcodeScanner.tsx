@@ -1,11 +1,12 @@
 import { Colors } from '@/constants/Colors';
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function BarcodeScanner() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false)
+    const cameraRef = useRef<CameraView>(null)
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -57,9 +58,19 @@ export default function BarcodeScanner() {
         }
     }
 
+    useEffect(() => {
+        return () => {
+            if (cameraRef.current) {
+                cameraRef.current.pausePreview()
+                cameraRef.current.stopRecording()
+            }
+        };
+    }, []);
+
     return (
         <View style={{ flex: 1 }}>
             <CameraView
+                ref={cameraRef}
                 style={{ flex: 1, justifyContent: 'center' }}
                 onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
             />

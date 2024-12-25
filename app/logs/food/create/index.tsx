@@ -19,7 +19,7 @@ import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 export default function Create() {
 
     const { storeFoodLog } = useFoodLog()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
     const { showAlert } = useCustomAlert()
 
     const [formValue, setFormValue] = useState<PostFoodLogRequest>({
@@ -78,6 +78,7 @@ export default function Create() {
 
     const handlePopulateFormValue = async () => {
         const date = await getData('foodLogDate')
+        // await deleteDataByKey('foodLogDate')
         setFormValue({
             ...formValue,
             date: date ?? '',

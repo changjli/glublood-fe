@@ -15,7 +15,7 @@ import { FlatList } from 'react-native-reanimated/lib/typescript/Animated'
 import useAsyncStorage from '@/hooks/useAsyncStorage'
 import Wrapper from '@/components/Layout/Wrapper'
 import FoodLogForm from '../../FoodLogForm'
-import { formatDatetoStringYmd } from '@/utils/formatDatetoString'
+import { formatDatetoStringYmd, getTimeFromDate } from '@/utils/formatDatetoString'
 import Loader from '@/components/Loader'
 import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
@@ -25,7 +25,7 @@ const storeFoodLogSchema = object({
 
 export default function CreateBarcodePage() {
     const { barcode } = useLocalSearchParams()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
     const { getFoodByBarcode, storeFoodLog } = useFoodLog()
     const { showAlert } = useCustomAlert()
 
@@ -109,12 +109,20 @@ export default function CreateBarcodePage() {
     }
 
     const handlePopulateFormValue = async () => {
-        const date = formatDatetoStringYmd(new Date())
+        let date = await getData('foodLogDate')
+        let time = ''
+        // await deleteDataByKey('foodLogDate')
+        let barcodeDate = await getData('barcodeDate')
+        if (barcodeDate == 'now') {
+            date = formatDatetoStringYmd(new Date())
+            time = getTimeFromDate(new Date())
+        }
+
         const food = await handleGetMasterFoodDetail(String(barcode))
 
         setFormValue({
             ...formValue,
-            calories: food.product.nutriments.energy,
+            calories: food.product.nutriments.energy * 0.239,
             carbohydrate: food.product.nutriments.carbohydrates,
             fat: food.product.nutriments.fat,
             protein: food.product.nutriments.proteins,
@@ -125,6 +133,7 @@ export default function CreateBarcodePage() {
             // serving_size: food.product.nutrition_data_per == '100g' ? 'g' : 'serving',
             serving_qty: 1,
             serving_size: 'serving',
+            time: time ?? '',
         })
     }
 

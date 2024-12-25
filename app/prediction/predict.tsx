@@ -122,13 +122,15 @@ export default function PredictionPage() {
             question: 'Apakah Anda memiliki semacam asuransi kesehatan?',
             description: '',
             answers: []
-        }, {
-            group: 'yes_no',
-            key: 'no_doc',
-            question: 'Apakah Anda merasa ingin bertemu dengan dokter dalam 12 bulan ini, tetapi tidak memiliki uang?',
-            description: '',
-            answers: []
-        }, {
+        },
+        // {
+        //     group: 'yes_no',
+        //     key: 'no_doc',
+        //     question: 'Apakah Anda merasa ingin bertemu dengan dokter dalam 12 bulan ini, tetapi tidak memiliki uang?',
+        //     description: '',
+        //     answers: []
+        // }, 
+        {
             group: 'mcq',
             key: 'gen_health',
             question: 'Bagaimana Anda merasakan kesehatan Anda secara umum?',
@@ -260,6 +262,18 @@ export default function PredictionPage() {
         setResult(-1)
     }
 
+    const resolveBmi = (bmi: number) => {
+        if (bmi <= 18.49) {
+            return "kurang (underweight)"
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            return "normal"
+        } else if (bmi >= 25 && bmi <= 29.9) {
+            return "berlebih (overweight)"
+        } else if (bmi >= 30) {
+            return "obesitas"
+        }
+    }
+
     return (
         <>
             {<Loader visible={predictionLoading} />}
@@ -338,6 +352,7 @@ export default function PredictionPage() {
                                                         <Text style={{ textAlign: 'center', fontSize: 32, fontFamily: FontFamily.heavy, color: Colors.light.primary }}>
                                                             {String(values.bmi)}
                                                         </Text>
+                                                        <CustomText size='sm'>Kondisi berat badan <CustomText size='sm' weight='heavy'>{resolveBmi(values.bmi)}</CustomText></CustomText>
                                                     </View>
                                                 </View>
                                             </View>

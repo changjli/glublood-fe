@@ -16,7 +16,7 @@ import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 export default function AddMedicineLog() {
     const { storeMedicineLog } = useMedicine()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
     const [storeLoading, setStoreLoading] = useState(false)
     const { showAlert } = useCustomAlert()
 
@@ -54,6 +54,7 @@ export default function AddMedicineLog() {
 
     const handlePopulateFormValue = async () => {
         const date = await getData('medicineLogDate')
+        // await deleteDataByKey('medicineLogDate')
         setFormValue({
             ...formValue,
             date: date ?? '',

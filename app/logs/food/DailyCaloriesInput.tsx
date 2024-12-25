@@ -10,8 +10,10 @@ import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, Button, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ProgressBar from './ProgressBar';
 import CustomText from '@/components/CustomText';
-import { formatDatetoStringYmd } from '@/utils/formatDatetoString';
+import { formatDateToAge, formatDatetoStringYmd } from '@/utils/formatDatetoString';
 import { useCustomAlert } from '@/app/context/CustomAlertProvider';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import WithKeyboard from '@/components/Layout/WithKeyboard';
 
 type DailyCaloriesInputProps = {
     selectedDate: Date,
@@ -21,6 +23,8 @@ type DailyCaloriesInputProps = {
 }
 
 export default function DailyCaloriesInput({ selectedDate, dailyCalories, loading, fetchDailyCalories }: DailyCaloriesInputProps) {
+    const { profile } = useUserProfile()
+
     const [modalVisible, setModalVisible] = useState(false)
     const [dailyCaloriesInput, setDailyCaloriesInput] = useState("")
 
@@ -66,38 +70,75 @@ export default function DailyCaloriesInput({ selectedDate, dailyCalories, loadin
         setModalVisible(!modalVisible)
     }
 
-    useEffect(() => {
-        setDailyCaloriesInput(String(dailyCalories?.target_calories ?? ''))
-    }, [dailyCalories])
+    const getRecommendedDailyCalories = () => {
+        if (profile) {
+            let calories = 0
 
+            const bbi = 90 / 100 * (profile?.height - 100) * 1
+
+            if (profile?.gender == 'male') {
+                calories = bbi * 30
+            } else {
+                calories = bbi * 25
+            }
+
+            const age = formatDateToAge(profile.DOB)
+            if (age >= 40 && age <= 59) {
+                calories -= calories * 5 / 100
+            } else if (age >= 60 && age <= 69) {
+                calories -= calories * 10 / 100
+            } else if (age >= 70) {
+                calories -= calories * 20 / 100
+            }
+
+            return calories
+        }
+    }
+
+    useEffect(() => {
+        setDailyCaloriesInput(String(dailyCalories?.target_calories ?? getRecommendedDailyCalories()))
+    }, [dailyCalories, profile, modalVisible])
 
     return (
         <>
             {/* modal */}
             <CustomModal
                 isVisible={modalVisible}
-                toggleModal={() => setModalVisible(false)}
+                toggleModal={handleCloseModal}
             >
-                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <View>
-                        <CustomText size='xl' weight='heavy' style={{ marginBottom: 5 }}>Atur kalori harian</CustomText>
-                        <CustomTextInput
-                            label='Target kalori'
-                            placeholder='Contoh: 98'
-                            postfix={<Text style={{ color: Colors.light.primary, fontFamily: FontFamily.heavy }}>Kkal</Text>}
-                            value={dailyCaloriesInput}
-                            onChangeText={setDailyCaloriesInput}
-                            keyboardType='number-pad'
-                        />
+                <WithKeyboard>
+                    <View style={{ minHeight: 400, flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <View>
+                            <CustomText size='xl' weight='heavy' style={{ marginBottom: 5 }}>Atur kalori harian</CustomText>
+                            <CustomTextInput
+                                label='Target kalori'
+                                placeholder='Contoh: 98'
+                                postfix={<Text style={{ color: Colors.light.primary, fontFamily: FontFamily.heavy }}>Kkal</Text>}
+                                value={dailyCaloriesInput}
+                                onChangeText={setDailyCaloriesInput}
+                                keyboardType='number-pad'
+                            />
+                            {Number(dailyCaloriesInput) == getRecommendedDailyCalories() && (
+                                <CustomText size='sm' style={{ color: Colors.light.green500 }}>Rekomendasi kalori harian</CustomText>
+                            )}
+                        </View>
+                        <View style={{ gap: 8 }}>
+                            <CustomButton
+                                title='Rekomendasi'
+                                size='md'
+                                onPress={() => setDailyCaloriesInput(String(getRecommendedDailyCalories()))}
+                                disabled={Number(dailyCaloriesInput) == getRecommendedDailyCalories() || storeDailyCaloriesLoading}
+                            />
+                            <CustomButton
+                                title='Tambahkan target'
+                                size='md'
+                                onPress={handleStoreDailyCalories}
+                                disabled={dailyCaloriesInput == ''}
+                                loading={storeDailyCaloriesLoading}
+                            />
+                        </View>
                     </View>
-                    <CustomButton
-                        title='Tambahkan target'
-                        size='md'
-                        onPress={handleStoreDailyCalories}
-                        disabled={dailyCaloriesInput == ''}
-                        loading={storeDailyCaloriesLoading}
-                    />
-                </View>
+                </WithKeyboard>
             </CustomModal>
             {/* view */}
             <View style={styles.dailyContainer}>

@@ -14,7 +14,7 @@ import { useCustomAlert } from '@/app/context/CustomAlertProvider';
 
 export default function AddGlucoseLog() {
     const { storeGlucoseLog } = useGlucoseLog()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
     const [storeLoading, setStoreLoading] = useState(false)
     const { showAlert } = useCustomAlert()
 
@@ -52,6 +52,7 @@ export default function AddGlucoseLog() {
 
     const handlePopulateFormValue = async () => {
         const date = await getData('glucoseLogDate')
+        // await deleteDataByKey('glucoseLogDate')
         setFormValue({
             ...formValue,
             date: date ?? '',

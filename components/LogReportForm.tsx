@@ -161,13 +161,18 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
                 <CustomText weight='heavy'>Pilih Data yang Diinginkan</CustomText>
                 <View style={styles.checkBoxContainer}>
                     {options.map((option, idx) => (
-                        <View
+                        <TouchableOpacity
                             style={[
                                 styles.checkboxItemContainer,
                                 idx == 0 && { borderTopLeftRadius: 20, borderTopRightRadius: 20 },
                                 idx == options.length - 1 && { borderBottomLeftRadius: 20, borderBottomRightRadius: 20, borderBottomWidth: 0 }
                             ]}
                             id={String(idx)}
+                            onPress={() => {
+                                const temp = { ...selectedOptions }
+                                temp[option.label] = !selectedOptions[option.label]
+                                setSelectedOptions(temp)
+                            }}
                         >
                             <CustomText>{option.title}</CustomText>
                             <Checkbox
@@ -180,7 +185,7 @@ export default function LogReportForm({ startDate, endDate }: ReportFormProps) {
                                 }}
                                 color={selectedOptions[option.label] ? Colors.light.primary : undefined}
                             />
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
             </View>

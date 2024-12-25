@@ -40,6 +40,7 @@ import { useCustomAlert } from "../context/CustomAlertProvider";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import Avatar from "@/components/Avatar";
 import useReminder, { ReminderStorage } from "@/hooks/useReminder";
+import { formatDecimalToFixed } from "@/utils/formatNumber";
 
 export default function HomePage() {
     const { signOut, session } = useSession();
@@ -62,6 +63,7 @@ export default function HomePage() {
     const dailyCaloriesCircularProgressRef = useRef(null)
     const dailyBurnedCaloriesCircularProgressRef = useRef(null)
     const [reminders, setReminders] = useState<ReminderStorage[]>([]);
+    const [focusSummary, setFocusSummary] = useState('all')
 
     const handleGetAllFoodMenu = async () => {
         try {
@@ -253,6 +255,33 @@ export default function HomePage() {
         </TouchableOpacity>
     );
 
+    const resolveFocusSummary = (focus: string) => {
+        if (focus == 'food') {
+            return (
+                <CustomText size="sm" weight="heavy">
+                    {dailyCalories && dailyBurnedCalories ?
+                        `${formatDecimalToFixed(dailyCalories.consumed_calories)} /\n ${formatDecimalToFixed(dailyCalories.target_calories)}`
+                        : ''}
+                </CustomText>
+            )
+        } else if (focus == 'exercise') {
+            return (
+                <CustomText size="sm" weight="heavy">
+                    {dailyCalories && dailyBurnedCalories ?
+                        `${formatDecimalToFixed(dailyBurnedCalories.avg_burned_calories)} /\n ${formatDecimalToFixed(dailyCalories.target_calories)}`
+                        : ''}
+                </CustomText>
+            )
+        } else {
+            return (
+                <CustomText size="lg" weight="heavy">
+                    {dailyCalories && dailyBurnedCalories ?
+                        formatDecimalToFixed((dailyBurnedCalories.avg_burned_calories / dailyCalories.consumed_calories) * 100) : 0} %
+                </CustomText>
+            )
+        }
+    }
+
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -324,13 +353,7 @@ export default function HomePage() {
                                     backgroundColor={"rgba(218,110,53,0.2)"}
                                     rotation={0}
                                     lineCap="round"
-                                    children={() => (
-                                        <Image
-                                            source={require("@/assets/images/icons/kembar.png")}
-                                            style={{ width: 60 }}
-                                            resizeMode="contain"
-                                        />
-                                    )}
+                                    children={() => resolveFocusSummary(focusSummary)}
                                 />
                             )}
                         />
@@ -342,7 +365,7 @@ export default function HomePage() {
                                 </CustomText>
                             </View>
                             <View>
-                                <View style={[FlexStyles.flexRow, { gap: 8 }]}>
+                                <TouchableOpacity style={[FlexStyles.flexRow, { gap: 8 }]} onPress={() => setFocusSummary('food')}>
                                     <View
                                         style={{
                                             width: 12,
@@ -357,8 +380,8 @@ export default function HomePage() {
                                     >
                                         Asupan kalori
                                     </CustomText>
-                                </View>
-                                <View style={[FlexStyles.flexRow, { gap: 8 }]}>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[FlexStyles.flexRow, { gap: 8 }]} onPress={() => setFocusSummary('exercise')}>
                                     <View
                                         style={{
                                             width: 12,
@@ -372,7 +395,13 @@ export default function HomePage() {
                                     >
                                         Pembakaran kalori
                                     </CustomText>
-                                </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[FlexStyles.flexRow, { gap: 8 }]} onPress={() => setFocusSummary('all')}>
+                                    <CustomText size="sm">
+                                        <CustomText weight="heavy" style={{ fontSize: 14 }}>%</CustomText>
+                                        {` = (Asupan Kalori / Pembakaran kalori)`}
+                                    </CustomText>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -664,6 +693,7 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     summaryInnerContainer: {
+        flex: 1,
         gap: 32,
     },
     todayContainer: {

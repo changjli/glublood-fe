@@ -27,16 +27,20 @@ export default function LogPage() {
     const { profile } = useUserProfile()
 
     const [tabList, setTabList] = useState(tabs)
-    const [selectedTab, setSelectedTab] = useState(tabs[0])
+    const [selectedTab, setSelectedTab] = useState<any>({})
 
     useEffect(() => {
         if (!profile?.is_diabetes) {
             const filteredTabs = tabs.filter(tab => tab.title != 'Gula Darah')
             setTabList(filteredTabs)
-            setSelectedTab(filteredTabs[0])
+            if (Object.keys(selectedTab).length == 0) {
+                setSelectedTab(filteredTabs[0])
+            }
         } else {
             setTabList(tabs)
-            setSelectedTab(tabs[0])
+            if (Object.keys(selectedTab).length == 0) {
+                setSelectedTab(tabs[0])
+            }
         }
     }, [profile])
 

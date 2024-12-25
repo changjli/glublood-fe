@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useProfile from "./api/profile/useProfile";
 import axios from "axios";
 import { useCustomAlert } from "@/app/context/CustomAlertProvider";
+import { useFocusEffect } from "expo-router";
 
 export type UserProfile = {
     'firstname': string,
@@ -24,9 +25,11 @@ export function useUserProfile() {
     const [profile, setProfile] = useState<UserProfile>()
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        handleGetUserProfile()
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            handleGetUserProfile()
+        }, [])
+    )
 
     const handleGetUserProfile = async () => {
         try {

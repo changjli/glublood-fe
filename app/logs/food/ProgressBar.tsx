@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { Colors } from '@/constants/Colors'
 import { formatDecimalToFixed } from '@/utils/formatNumber'
+import CustomText from '@/components/CustomText'
 
 type ProgressBarProps = {
     data: GetDailyCaloriesResponse
@@ -33,9 +34,18 @@ export default function ProgressBar({ data }: ProgressBarProps) {
 
     return (
         <View>
-            <Text>{formatDecimalToFixed(data.consumed_calories)} Kkal / {data.target_calories} Kkal</Text>
+            <CustomText>
+                <CustomText style={[{ color: Number(data.consumed_calories) > Number(data.target_calories) ? Colors.light.red500 : 'black' }]}>{formatDecimalToFixed(data.consumed_calories)}</CustomText> Kkal / {data.target_calories} Kkal
+            </CustomText>
             <View style={styles.progressContainer}>
-                <Animated.View style={[styles.innerProgressContainer, { width: widthInterpolated, borderRadius: progress == 1 ? 100 : 0 }]}></Animated.View>
+                <Animated.View
+                    style={[styles.innerProgressContainer, {
+                        width: widthInterpolated,
+                        borderRadius: progress == 1 ? 100 : 0,
+                        backgroundColor: Number(data.consumed_calories) > Number(data.target_calories) ? Colors.light.red500 : Colors.light.primary,
+                    }]}
+                >
+                </Animated.View>
             </View>
         </View>
     )
@@ -51,7 +61,6 @@ const styles = StyleSheet.create({
     innerProgressContainer: {
         width: '50%',
         height: 40,
-        backgroundColor: Colors.light.primary,
         borderTopLeftRadius: 100,
         borderBottomLeftRadius: 100,
     }

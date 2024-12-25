@@ -12,7 +12,7 @@ export default function WithKeyboard({ children, style }: WithKeyboardProps) {
             style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
             keyboardVerticalOffset={0}
         >
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 {children}
             </ScrollView>
         </KeyboardAvoidingView>

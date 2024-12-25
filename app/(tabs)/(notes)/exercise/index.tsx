@@ -55,7 +55,7 @@ export default function ExerciseLogPage() {
     }
 
     const handleNavigate = async () => {
-        await storeData('foodLogDate', formatDatetoStringYmd(selectedDate))
+        await storeData('exerciseLogDate', formatDatetoStringYmd(selectedDate))
         router.navigate('/logs/exercise/create')
     }
 

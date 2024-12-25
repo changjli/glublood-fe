@@ -67,6 +67,7 @@ export default function TabLayout() {
                     options={{
                         title: 'Pindai',
                         tabBarIcon: ({ color }) => <Ionicons name='scan' size={28} color={color} />,
+                        unmountOnBlur: true,
                     }}
                 />
             </Tabs>

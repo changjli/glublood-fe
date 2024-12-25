@@ -24,7 +24,7 @@ const storeFoodLogSchema = object({
 
 export default function Detail() {
     const { id } = useLocalSearchParams()
-    const { getData } = useAsyncStorage()
+    const { getData, deleteDataByKey } = useAsyncStorage()
 
     const { getMasterFoodDetail } = useMasterFood()
     const { storeFoodLog } = useFoodLog()
@@ -111,10 +111,11 @@ export default function Detail() {
 
     const handlePopulateFormValue = async () => {
         const date = await getData('foodLogDate')
+        // await deleteDataByKey('foodLogDate')
         const food = await handleGetMasterFoodDetail(String(id))
         setFormValue({
             ...formValue,
-            calories: food.calories,
+            calories: food.calories * 0.239,
             carbohydrate: food.carbohydrate,
             fat: food.fat,
             protein: food.protein,

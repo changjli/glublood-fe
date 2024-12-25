@@ -85,6 +85,10 @@ export default function FoodLogPage() {
     }
 
     const handleNavigate = async () => {
+        if (dailyCalories && Number(dailyCalories.consumed_calories) > Number(dailyCalories.target_calories)) {
+            showAlert('Kamu sudah melebihi kalori harian!', 'warning')
+            return
+        }
         await storeData('foodLogDate', formatDatetoStringYmd(selectedDate))
         router.navigate('/logs/food/search')
     }

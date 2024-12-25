@@ -45,26 +45,26 @@ export default function useAsyncStorage() {
 
     const getAllKeys = async () => {
         try {
-          const keys = await AsyncStorage.getAllKeys();
-          console.log('All keys:', keys);
-          return keys;
+            const keys = await AsyncStorage.getAllKeys();
+            console.log('All keys:', keys);
+            return keys;
         } catch (error) {
-          console.error('Error fetching keys:', error);
-          return [];
+            console.error('Error fetching keys:', error);
+            return [];
         }
     };
 
     const getAllObjectData = async (keys: string[]) => {
         try {
             const allItems = await AsyncStorage.multiGet(keys);
-            
+
             const data = allItems.reduce<StoredData>((acc, [key, value]) => {
                 if (value != null) {
                     acc[key] = JSON.parse(value);
                 }
                 return acc;
             }, {});
-            
+
             return data;
         } catch (err) {
             console.log('[useAuth][getAllObjectData] Error:', err);
@@ -73,10 +73,19 @@ export default function useAsyncStorage() {
 
     const deleteDataByKey = async (key: string) => {
         try {
-          await AsyncStorage.removeItem(key);
-          console.log(`Data with key ${key} deleted successfully.`);
+            await AsyncStorage.removeItem(key);
+            console.log(`Data with key ${key} deleted successfully.`);
         } catch (error) {
-          console.error('Error deleting data:', error);
+            console.error('Error deleting data:', error);
+        }
+    };
+
+    const deleteAllData = async () => {
+        try {
+            await AsyncStorage.clear();
+            console.log(`All data deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting all data:', error);
         }
     };
 
@@ -88,5 +97,6 @@ export default function useAsyncStorage() {
         getAllKeys,
         getAllObjectData,
         deleteDataByKey,
+        deleteAllData,
     }
 }

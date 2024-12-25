@@ -11,11 +11,13 @@ import { FontFamily } from '@/constants/Typography';
 import Avatar from '@/components/Avatar';
 import { UserProfile, useUserProfile } from '@/hooks/useUserProfile';
 import { formatDateToAge } from '@/utils/formatDatetoString';
+import useAsyncStorage from '@/hooks/useAsyncStorage';
 
 export default function EditProfilePage() {
     const { signOut, session } = useSession();
     const { saveProfileImage, deleteProfileImage } = useProfile()
     const { profile, setProfile } = useUserProfile()
+    const { deleteAllData } = useAsyncStorage()
 
     const [saveProfileImageLoading, setSaveProfileImageLoading] = useState(false)
     const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -447,8 +449,9 @@ export default function EditProfilePage() {
                                 justifyContent: 'center',
                                 alignItems: 'center'
                             }}
-                            onPress={() => {
+                            onPress={async () => {
                                 signOut()
+                                await deleteAllData()
                                 router.replace('/(auth)/login')
                             }}
                         >
