@@ -89,7 +89,7 @@ export default function ReminderDetail() {
                             title='Hapus log'
                             type='delete'
                             onPress={handleSubmit((values) => {
-                                showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteReminder(values.id))
+                                showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', undefined, () => handleDeleteReminder(values.id))
                             })}
                             loading={deleteLoading}
                         />

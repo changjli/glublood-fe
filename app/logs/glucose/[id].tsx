@@ -169,7 +169,7 @@ export default function GlucoseLogDetailPage() {
                                 disabled={updateLoading}
                                 loading={deleteLoading}
                                 onPress={() => {
-                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteGlucoseLog(Number(id)))
+                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', undefined, () => handleDeleteGlucoseLog(Number(id)))
                                 }}
                             />
                         </View>

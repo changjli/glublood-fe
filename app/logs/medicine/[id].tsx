@@ -126,7 +126,7 @@ export default function MedicineLogDetailPage() {
                                 disabled={updateLoading}
                                 loading={deleteLoading}
                                 onPress={() => {
-                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteMedicineLog(Number(id)))
+                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', undefined, () => handleDeleteMedicineLog(Number(id)))
                                 }}
                             />
                         </View>

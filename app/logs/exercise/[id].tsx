@@ -129,7 +129,7 @@ export default function ExerciseLogDetailPage() {
                                 disabled={updateLoading}
                                 loading={deleteLoading}
                                 onPress={() => {
-                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteExerciseLog(Number(id)))
+                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', undefined, () => handleDeleteExerciseLog(Number(id)))
                                 }}
                             />
                         </View>

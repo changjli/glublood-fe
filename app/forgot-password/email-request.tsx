@@ -53,25 +53,14 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
       if (res.status === 200) {
         setCredentials({ email: id.email, password: '', code: '' });
         setPage(2)
+      } else if (res.status == 400) {
+        console.log(res.message);
+        showAlert(res.message, "error");
       }
-      console.log("[ForgotPasswordRequest]: ", id)
       return res.data
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const status = err.response?.status;
-
-        if (status === 400) {
-          showAlert('Invalid request. Please check your input.', 'error');
-        } else if (status === 500) {
-          showAlert('A server error occurred. Please try again later.', 'error');
-        } else {
-          // showAlert(`An error occurred: ${status}. Please try again later.`, 'error');
-        }
-      } else {
-        console.log('Unexpected Error:', err);
-        showAlert('Please check your internet connection.', 'error');
-      }
-
+      console.log("Axios Error:", err);
+      showAlert("Error: Please try again later", "error");
       return null
     }
   }

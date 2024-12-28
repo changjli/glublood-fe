@@ -86,7 +86,7 @@ export const CustomAlertProvider = ({ children }: CustomAlertProviderProps) => {
             <Modal
                 isVisible={alertState.visible}
                 customBackdrop={(
-                    <TouchableWithoutFeedback onPress={closeAlert}>
+                    <TouchableWithoutFeedback onPress={() => closeAlert(alertState.onClose)}>
                         <View style={styles.modalBackdrop} />
                     </TouchableWithoutFeedback>
                 )}
@@ -101,14 +101,14 @@ export const CustomAlertProvider = ({ children }: CustomAlertProviderProps) => {
                         </View>
                         <CustomText size='sm'>{alertState.message}</CustomText>
                         <View style={[FlexStyles.flexRow, { justifyContent: 'flex-end', gap: 8 }]}>
-                            <TouchableOpacity onPress={() => closeAlert(alertState.onClose)}>
-                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>Kembali</CustomText>
-                            </TouchableOpacity>
                             {alertState.onNext && (
                                 <TouchableOpacity onPress={() => closeAlert(alertState.onNext)}>
                                     <CustomText size='sm' weight='heavy' style={{ color: Colors.light.red500 }}>Lanjutkan</CustomText>
                                 </TouchableOpacity>
                             )}
+                            <TouchableOpacity onPress={() => closeAlert(alertState.onClose)}>
+                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>Kembali</CustomText>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
