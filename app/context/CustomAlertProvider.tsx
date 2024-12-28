@@ -9,7 +9,7 @@ import Modal, { ModalProps } from "react-native-modal";
 type AlertType = 'success' | 'warning' | 'error'
 
 interface CustomAlertContextType {
-    showAlert: (message: string, type: AlertType, onClose?: () => void) => void;
+    showAlert: (message: string, type: AlertType, onClose?: () => void, onNext?: () => void) => void;
 }
 
 const CustomAlertContext = createContext<CustomAlertContextType>({
@@ -21,6 +21,7 @@ interface AlertState {
     message: string;
     type: AlertType,
     onClose?: () => void;
+    onNext?: () => void;
 }
 
 interface CustomAlertProviderProps {
@@ -33,16 +34,17 @@ export const CustomAlertProvider = ({ children }: CustomAlertProviderProps) => {
         message: '',
         type: 'success',
         onClose: undefined,
+        onNext: undefined,
     });
 
-    const showAlert = (message: string, type: AlertType, onClose?: () => void) => {
-        setAlertState({ visible: true, type, message, onClose });
+    const showAlert = (message: string, type: AlertType, onClose?: () => void, onNext?: () => void) => {
+        setAlertState({ visible: true, type, message, onClose, onNext });
     };
 
-    const closeAlert = () => {
+    const closeAlert = (action: any) => {
         setAlertState((prevState) => ({ ...prevState, visible: false }));
-        if (alertState.onClose) {
-            alertState.onClose();
+        if (action) {
+            action()
         }
     };
 
@@ -98,10 +100,15 @@ export const CustomAlertProvider = ({ children }: CustomAlertProviderProps) => {
                             <CustomText weight='heavy'>{resolveTypeText(alertState.type)}!</CustomText>
                         </View>
                         <CustomText size='sm'>{alertState.message}</CustomText>
-                        <View style={[FlexStyles.flexRow, { justifyContent: 'flex-end' }]}>
-                            <TouchableOpacity onPress={closeAlert}>
-                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>OK</CustomText>
+                        <View style={[FlexStyles.flexRow, { justifyContent: 'flex-end', gap: 8 }]}>
+                            <TouchableOpacity onPress={() => closeAlert(alertState.onClose)}>
+                                <CustomText size='sm' weight='heavy' style={{ color: Colors.light.primary }}>Kembali</CustomText>
                             </TouchableOpacity>
+                            {alertState.onNext && (
+                                <TouchableOpacity onPress={() => closeAlert(alertState.onNext)}>
+                                    <CustomText size='sm' weight='heavy' style={{ color: Colors.light.red500 }}>Lanjutkan</CustomText>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                 </View>

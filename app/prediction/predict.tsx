@@ -19,6 +19,7 @@ import DiabetesPedigree from '@/components/DiabetesPedigree'
 import Loader from '@/components/Loader'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import CustomHeader from '@/components/CustomHeader'
+import { useCustomAlert } from '../context/CustomAlertProvider'
 
 export type Prediction = {
     "high_bp": number,
@@ -43,6 +44,7 @@ export type Prediction = {
 }
 
 export default function PredictionPage() {
+    const { showAlert } = useCustomAlert()
     const { session } = useSession()
     const { doPrediction, storePrediction } = usePrediction()
     const { profile } = useUserProfile()
@@ -231,11 +233,11 @@ export default function PredictionPage() {
                 setResult(data.result)
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
@@ -248,11 +250,11 @@ export default function PredictionPage() {
                 setResult(data.result)
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 

@@ -20,8 +20,10 @@ import Personalization2 from "./personalization_2";
 import Personalization3_1 from "./personalization_3_1";
 import Personalization3_2 from "./personalization_3_2";
 import { router } from "expo-router";
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 export default function FirstTimeSetup() {
+    const { showAlert } = useCustomAlert()
     const { storeUserProfile } = useProfile();
     const [storeLoading, setStoreLoading] = useState(false);
 
@@ -31,14 +33,14 @@ export default function FirstTimeSetup() {
             const res = await storeUserProfile(setStoreLoading, data);
             if (res.status == 200) {
                 console.log(res.data);
-                Alert.alert("success", res.message);
+                showAlert(res.message, "success");
             } else if (res.status == 400) {
                 console.log(res.message);
-                Alert.alert("error", res.message);
+                showAlert(res.message, "error");
             }
         } catch (err) {
             console.log("Axios Error:", err);
-            Alert.alert("error", "Error: Please try again later");
+            showAlert("Error: Please try again later", "error");
         }
     };
 

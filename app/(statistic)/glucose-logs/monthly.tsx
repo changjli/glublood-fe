@@ -95,7 +95,7 @@ export default function MonthlyGlucoseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {filterReport.map((glucoseLog, index) => (
+                {glucoseLogReport.map((glucoseLog, index) => glucoseLog.avg_glucose_rate != 0 && (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(glucoseLog.avg_glucose_rate).toFixed(2)} mg/dL`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

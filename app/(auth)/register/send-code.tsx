@@ -16,6 +16,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Ionicons } from '@expo/vector-icons'
 import { FontSize } from '@/constants/Typography'
+import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 type SendCodeProps = {
     setPage: (value: number) => void
@@ -27,12 +28,17 @@ type SendCodeProps = {
 
 const sendCodeSchema = object({
     email: string().required('Email wajib diisi').email(),
-    password: string().required('Password wajib diisi'),
+    password: string().required("Password wajib diisi!")
+        .min(8, 'Password harus minimal 8 karakter!')
+        .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
+        .matches(/[0-9]/, 'Password harus mengandung setidaknya satu digit')
+        .matches(/[^a-zA-Z0-9]/, 'Password harus mengandung setidaknya satu karakter khusus'),
     password_confirmation: string()
         .oneOf([ref('password')], 'Konfirmasi password harus sama')
 })
 
 export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
+    const { showAlert } = useCustomAlert()
     const [formValue, setFormValue] = useState({
         email: '',
         password: '',
@@ -58,7 +64,7 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
             const res = await sendCode(setSendCodeLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
-                Alert.alert('success', res.message)
+                showAlert(res.message, 'success')
                 setCredentials(data)
                 setPage(2)
                 // await storeObjectData('credentials', data)
@@ -68,12 +74,12 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                 if (String(res.errors.email) == 'The email has already been taken.') {
                     setError('email', { message: 'Email telah digunakan!' })
                 } else {
-                    Alert.alert('error', res.message)
+                    showAlert(res.message, 'error')
                 }
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 

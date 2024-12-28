@@ -10,10 +10,12 @@ import { router } from 'expo-router';
 import CustomButtonNew from '@/components/CustomButtonNew';
 import CustomHeader from '@/components/CustomHeader';
 import useReminder, { Reminder } from '@/hooks/useReminder';
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 export default function AddReminder() {
   const [storeLoading, setStoreLoading] = useState(false)
   const { createReminder } = useReminder()
+  const { showAlert } = useCustomAlert()
 
   const [formValue, setFormValue] = useState<Reminder>({
     reminderTypes: [],
@@ -24,11 +26,12 @@ export default function AddReminder() {
   })
 
   const handleCreateReminder = async (value: Reminder) => {
-    setStoreLoading(false);
+    setStoreLoading(true);
     try {
       const res = await createReminder(value)
       router.navigate('/reminder')
     } catch (err) {
+      showAlert('Error creating reminder', 'error')
       console.log('Error create reminder:', err);
     } finally {
       setStoreLoading(false);

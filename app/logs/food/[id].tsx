@@ -181,7 +181,7 @@ export default function FoodLogDetailPage() {
                         size='md'
                         type='delete'
                         onPress={() => {
-                            handleDeleteFoodLog(Number(id))
+                            showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteFoodLog(Number(id)))
                         }}
                         disabled={updateLoading}
                         loading={deleteLoading}

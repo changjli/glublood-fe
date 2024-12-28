@@ -28,7 +28,11 @@ type ResetPasswordProps = {
 }
 
 const passwordSchema = Yup.object({
-    password: Yup.string().required('Password wajib diisi'),
+    password: Yup.string().required('Password wajib diisi')
+        .min(8, 'Password harus minimal 8 karakter!')
+        .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
+        .matches(/[0-9]/, 'Password harus mengandung setidaknya satu digit')
+        .matches(/[^a-zA-Z0-9]/, 'Password harus mengandung setidaknya satu karakter khusus'),
     confirmPassword: Yup.string().required('Confirm Password wajib diisi').oneOf([Yup.ref('password')], 'Konfirmasi password tidak sama'),
 });
 

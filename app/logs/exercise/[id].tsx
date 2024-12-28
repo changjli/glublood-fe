@@ -128,7 +128,9 @@ export default function ExerciseLogDetailPage() {
                                 type='delete'
                                 disabled={updateLoading}
                                 loading={deleteLoading}
-                                onPress={() => handleDeleteExerciseLog(Number(id))}
+                                onPress={() => {
+                                    showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteExerciseLog(Number(id)))
+                                }}
                             />
                         </View>
                     )}

@@ -15,7 +15,7 @@ const data = [
 export default function LogReportPage() {
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader title='Rekam Data' />
+            <CustomHeader title='Laporan Data' />
             <SegmentedControl
                 segmentedControls={data}
             />

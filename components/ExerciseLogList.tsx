@@ -2,6 +2,7 @@ import CustomText from '@/components/CustomText';
 import { Colors } from '@/constants/Colors';
 import { FontSize, FontFamily } from '@/constants/Typography';
 import { getDuration } from '@/utils/formatDatetoString';
+import { formatDecimalToFixed } from '@/utils/formatNumber';
 import { FontAwesome } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
@@ -43,7 +44,7 @@ export default function ExerciseLogList({ data, loading }: ExerciseLogListProps)
                         <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{getDuration(item.start_time, item.end_time)} menit</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                        <Text style={{ fontSize: FontSize.sm }}>Estimasi kalori terbakar  <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{item.burned_calories} Kkal</Text></Text>
+                        <Text style={{ fontSize: FontSize.sm }}>Estimasi kalori terbakar  <Text style={[styles.cardBodyText, { fontFamily: FontFamily.heavy }]}>{formatDecimalToFixed(item.burned_calories)} Kkal</Text></Text>
                     </View>
                 </TouchableOpacity>
             </View>

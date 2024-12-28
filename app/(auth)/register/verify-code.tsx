@@ -13,6 +13,7 @@ import { useSession } from '@/app/context/AuthenticationProvider'
 import Wrapper from '@/components/Layout/Wrapper'
 import Loader from '@/components/Loader'
 import axios from 'axios'
+import { useCustomAlert } from '@/app/context/CustomAlertProvider'
 
 type VerifyCodeProps = {
     credentials: {
@@ -50,6 +51,7 @@ const Timer = ({ time, flag }: { time: number, flag: boolean }) => {
 }
 
 export default function VerifyCode({ credentials }: VerifyCodeProps) {
+    const { showAlert } = useCustomAlert()
     const [innerCredentials, setInnerCredentials] = useState(credentials)
     const [timeFlag, setTimeFlag] = useState(false)
 
@@ -99,11 +101,11 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
             } else if (res.status == 400) {
                 console.log(res.message)
                 setVerificationCode('')
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
@@ -120,11 +122,11 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
                 router.push('/userProfile/first_time_setup')
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
@@ -133,17 +135,17 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
             const res = await sendCode(setSendCodeLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
-                Alert.alert('success', res.message)
+                showAlert(res.message, 'success')
                 // await storeObjectData('credentials', data)
                 // router.replace('(auth)/verify-code')
                 setTimeFlag(prev => !prev)
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 

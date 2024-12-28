@@ -6,6 +6,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, LayoutAnimation, Ac
 import CustomText from './CustomText';
 import { FontAwesome } from '@expo/vector-icons';
 import { isGlucoseDanger } from '@/utils/isGlucoseDanger';
+import { formatDecimalToFixed } from '@/utils/formatNumber';
 
 interface GlucoseLogListProps {
     data: GetGlucoseLogRes[];
@@ -37,7 +38,7 @@ export default function GlucoseLogList({ data, loading, age }: GlucoseLogListPro
 
                 <TouchableOpacity style={styles.cardContainer} onPress={() => router.navigate(`/logs/glucose/${item.id}`)}>
                     <View style={styles.cardHeader}>
-                        <Text style={styles.glucoseRateText}>{item.glucose_rate} mg/dL</Text>
+                        <Text style={styles.glucoseRateText}>{formatDecimalToFixed(item.glucose_rate)} mg/dL</Text>
                         {isGlucoseDanger(age, item.time_selection, item.glucose_rate) && (
                             <FontAwesome name='warning' style={{ color: Colors.light.red500 }} />
                         )}

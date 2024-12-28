@@ -107,7 +107,7 @@ export default function DailyCaloriesInput({ selectedDate, dailyCalories, loadin
                 toggleModal={handleCloseModal}
             >
                 <WithKeyboard>
-                    <View style={{ minHeight: 400, flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
                         <View>
                             <CustomText size='xl' weight='heavy' style={{ marginBottom: 5 }}>Atur kalori harian</CustomText>
                             <CustomTextInput

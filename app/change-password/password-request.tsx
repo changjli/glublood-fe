@@ -33,7 +33,11 @@ type SendCodeProps = {
 
 const passwordSchema = Yup.object({
   oldPassword: Yup.string().required('Password lama wajib diisi'),
-  newPassword: Yup.string().required('Password baru wajib diisi'),
+  newPassword: Yup.string().required('Password baru wajib diisi')
+    .min(8, 'Password harus minimal 8 karakter!')
+    .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
+    .matches(/[0-9]/, 'Password harus mengandung setidaknya satu digit')
+    .matches(/[^a-zA-Z0-9]/, 'Password harus mengandung setidaknya satu karakter khusus'),
 })
 
 const { width, height } = Dimensions.get("window");
@@ -133,7 +137,7 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
             name="newPassword"
             render={({ field: { onChange, value } }) => (
               <CustomTextInput
-                label='Kata sandi saat ini'
+                label='Kata sandi baru'
                 placeholder='Masukkan kata sandi lama'
                 value={value}
                 onChangeText={onChange}

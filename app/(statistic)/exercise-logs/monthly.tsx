@@ -95,7 +95,7 @@ export default function MonthlyExerciseLogStatisticPage() {
             <Wrapper>
                 <CustomText size='lg' weight='heavy'>Detail log</CustomText>
 
-                {filterReport.map((exerciseLog, index) => (
+                {exerciseLogReport.map((exerciseLog, index) => exerciseLog.avg_burned_calories != 0 && (
                     <View style={{ borderBottomWidth: 1, marginBottom: 10 }} id={String(index)}>
                         <CustomText size='md' weight='heavy'>{`Rata-rata: ${Number(exerciseLog.avg_burned_calories).toFixed(2)} Kkal`}</CustomText>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

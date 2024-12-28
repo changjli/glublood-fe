@@ -34,13 +34,15 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { FontSize } from "@/constants/Typography";
+import { useCustomAlert } from "../context/CustomAlertProvider";
 
 const loginSchema = object({
     email: string().required("Email wajib diisi!").email(),
-    password: string().required("Password wajib diisi!"),
+    password: string().required("Password wajib diisi!")
 });
 
 export default function LoginPage() {
+    const { showAlert } = useCustomAlert()
     const [formValue, setFormValue] = useState({
         email: "",
         password: "",
@@ -72,16 +74,16 @@ export default function LoginPage() {
             const res = await login(setLoginLoading, data);
             if (res.status == 200) {
                 console.log(res.data);
-                Alert.alert("success", res.message);
+                showAlert(res.message, "success");
                 signIn(res);
                 router.replace("/");
             } else if (res.status == 400) {
                 console.log(res.message);
-                Alert.alert("error", res.message);
+                showAlert(res.message, "error");
             }
         } catch (err) {
             console.log("Axios Error:", err);
-            Alert.alert("error", "Error: Please try again later");
+            showAlert("Error: Please try again later", "error");
         }
     };
 

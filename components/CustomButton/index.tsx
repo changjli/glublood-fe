@@ -48,7 +48,7 @@ export default function CustomButton({
             {...rest}
         >
             {type == 'delete' && (
-                <FontAwesome name="trash" size={FontSize.md} color={Colors.light.red500} />
+                <FontAwesome name="trash" size={FontSize.md} color={disabled ? Colors.light.gray300 : Colors.light.red500} />
             )}
             {loading ? (
                 <ActivityIndicator color="white" />
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     },
     buttonDelete: {
         backgroundColor: 'white',
-        borderWidth: 0,
+        borderColor: Colors.light.red500,
     },
     buttonText: {
         fontFamily: FontFamily.heavy,

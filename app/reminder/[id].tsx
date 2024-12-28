@@ -9,8 +9,10 @@ import CustomButtonNew from '@/components/CustomButtonNew';
 import CustomHeader from '@/components/CustomHeader';
 import Wrapper from '@/components/Layout/Wrapper';
 import useReminder, { Reminder, ReminderStorage } from '@/hooks/useReminder';
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 export default function ReminderDetail() {
+    const { showAlert } = useCustomAlert()
     const { id } = useLocalSearchParams();
     const { getReminderById, updateReminder, clearReminderById } = useReminder()
 
@@ -86,7 +88,9 @@ export default function ReminderDetail() {
                         <CustomButton
                             title='Hapus log'
                             type='delete'
-                            onPress={handleSubmit((values) => handleDeleteReminder(values.id))}
+                            onPress={handleSubmit((values) => {
+                                showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', () => { }, () => handleDeleteReminder(values.id))
+                            })}
                             loading={deleteLoading}
                         />
                     </View>

@@ -70,11 +70,11 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
             const res = await forgotPassword(setSendCodeLoading, data)
             if (res.status == 200) {
                 console.log(res.data)
-                Alert.alert('success', res.message)
+                showAlert(res.message, 'success')
                 setTimeFlag(prev => !prev)
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)

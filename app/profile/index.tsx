@@ -12,8 +12,10 @@ import Avatar from '@/components/Avatar';
 import { UserProfile, useUserProfile } from '@/hooks/useUserProfile';
 import { formatDateToAge } from '@/utils/formatDatetoString';
 import useAsyncStorage from '@/hooks/useAsyncStorage';
+import { useCustomAlert } from '../context/CustomAlertProvider';
 
 export default function EditProfilePage() {
+    const { showAlert } = useCustomAlert()
     const { signOut, session } = useSession();
     const { saveProfileImage, deleteProfileImage } = useProfile()
     const { profile, setProfile } = useUserProfile()
@@ -37,11 +39,11 @@ export default function EditProfilePage() {
             if (res.status === 200) {
             } else if (res.status === 400) {
                 console.log(res.message);
-                Alert.alert('Error', res.message);
+                showAlert(res.message, 'error');
             }
         } catch (err) {
             console.log('Axios Error:', err);
-            Alert.alert('Error', 'Please try again later');
+            showAlert('Please try again later', 'error');
         }
     }
 
@@ -51,11 +53,11 @@ export default function EditProfilePage() {
             if (res.status === 200) {
             } else if (res.status === 400) {
                 console.log(res.message);
-                Alert.alert('Error', res.message);
+                showAlert(res.message, 'error');
             }
         } catch (err) {
             console.log('Axios Error:', err);
-            Alert.alert('Error', 'Please try again later');
+            showAlert('Please try again later', 'error');
         }
     }
 
@@ -67,16 +69,12 @@ export default function EditProfilePage() {
 
     return (
         profile ?
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <ScrollView
-                    style={{
-                        backgroundColor: 'white',
-                    }}
-                >
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <ScrollView style={{ flexGrow: 1 }}>
                     <View
                         style={{
                             width: '100%',
-                            paddingBottom: 100,
+                            paddingBottom: 20,
                             display: 'flex',
                         }}
                     >
@@ -480,7 +478,7 @@ export default function EditProfilePage() {
                         </Text>
                     </View>
                 </ScrollView>
-            </TouchableWithoutFeedback>
+            </View>
             :
             null
     )

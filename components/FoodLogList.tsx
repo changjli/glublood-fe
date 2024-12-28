@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import CustomText from './CustomText';
+import { formatDecimalToFixed } from '@/utils/formatNumber';
 
 type FoodLogListProps = {
     data: GetFoodLogResponse[]
@@ -36,7 +37,7 @@ export default function FoodLogList({ data, loading }: FoodLogListProps) {
                     <View>
                         <Text style={styles.cardHeaderText}>{item.food_name}</Text>
                     </View>
-                    <Text style={styles.cardBodyText}>{item.calories} Kkal</Text>
+                    <Text style={styles.cardBodyText}>{formatDecimalToFixed(item.calories)} Kkal</Text>
                     <Text style={styles.cardBodyText}>{item.serving_qty} {item.serving_size}</Text>
                 </TouchableOpacity>
             </View>

@@ -9,6 +9,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { router } from 'expo-router';
 import CustomHeader from '@/components/CustomHeader';
+import useReminder, { ReminderStorage } from "@/hooks/useReminder";
+import { useCustomAlert } from '../context/CustomAlertProvider'
 
 // Selection button state (gender)
 const isGender = [
@@ -23,6 +25,8 @@ const isDescendant = [
 ];
 
 export default function editProfile() {
+    const { showAlert } = useCustomAlert()
+    const { clearAllReminder } = useReminder()
     const { fetchUserProfile, updateUserProfile } = useProfile()
     const [fetchLoading, setFetchLoading] = useState(false)
     const [updateLoading, setUpdateLoading] = useState(false)
@@ -68,11 +72,11 @@ export default function editProfile() {
                     // Alert.alert('Success', res.message);
                 } else if (res.status === 400) {
                     console.log(res.message);
-                    // Alert.alert('Error', res.message);
+                    // showAlert(res.message, 'error');
                 }
             } catch (err) {
                 console.log('Axios Error:', err);
-                Alert.alert('Error', 'Please try again later');
+                showAlert('Please try again later', 'Error');
             }
         };
 
@@ -84,14 +88,14 @@ export default function editProfile() {
             const res = await updateUserProfile(setUpdateLoading, data)
             if (res.status == 200) {
                 console.log("Update Data:", res.data)
-                Alert.alert('success', res.message)
+                showAlert(res.message, 'success')
             } else if (res.status == 400) {
                 console.log(res.message)
-                Alert.alert('error', res.message)
+                showAlert(res.message, 'error')
             }
         } catch (err) {
             console.log('Axios Error:', err)
-            Alert.alert('error', 'Error: Please try again later')
+            showAlert('Error: Please try again later', 'error')
         }
     }
 
@@ -553,7 +557,12 @@ export default function editProfile() {
                                         display: 'flex',
                                         alignItems: 'center',
                                     }}
-                                    onPress={() => handleSubmit()}
+                                    onPress={() => {
+                                        if (values.diabetesType != initialFormValues.diabetesType) {
+                                            showAlert('Jika kamu ingin mengganti status user, maka seluruh data pengingat akan dihapus', 'warning', () => { }, handleSubmit)
+                                            clearAllReminder()
+                                        }
+                                    }}
                                     disabled={disabledButton}
                                 >
                                     <Text

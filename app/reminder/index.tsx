@@ -21,7 +21,7 @@ export default function ReminderPage() {
 
   const handleGetAllReminder = async () => {
     const res = await getAllReminder(setGetLoading)
-    setReminders(res)
+    setReminders(res ?? [])
   }
 
   useEffect(() => {
@@ -67,9 +67,7 @@ export default function ReminderPage() {
   // Render each reminder item
   const renderItem = ({ item }: { item: ReminderStorage }) => (
     <TouchableOpacity
-      style={
-        styles.reminderContainer
-      }
+      style={styles.reminderContainer}
       onPress={() => router.navigate(`/reminder/${item.id}`)}
     >
       <View style={[
@@ -102,12 +100,14 @@ export default function ReminderPage() {
         )}
       </View>
 
-      <Switch
-        value={item.isEnabled}
-        onValueChange={(value) => handleToggleReminder(item)}
-        trackColor={{ false: '#767577', true: '#da6e35' }}
-        thumbColor={false ? '#ff9800' : '#f4f3f4'}
-      />
+      <View style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}>
+        <Switch
+          value={item.isEnabled}
+          onValueChange={(value) => handleToggleReminder(item)}
+          trackColor={{ false: '#767577', true: '#da6e35' }}
+          thumbColor={false ? '#ff9800' : '#f4f3f4'}
+        />
+      </View>
     </TouchableOpacity>
   );
 
@@ -129,7 +129,7 @@ export default function ReminderPage() {
               borderRadius: 5,
             }}
           >
-            <FontAwesome name="plus" size={FontSize.lg} color="#DA6E35" />
+            <FontAwesome name="plus" size={FontSize.lg} color={Colors.light.primary} />
           </TouchableOpacity>
         </View>
         <Text style={styles.headerTitle}>Pengingat</Text>
@@ -142,10 +142,14 @@ export default function ReminderPage() {
         renderItem={renderItem}
         keyExtractor={(item) => item.time}
       />
-      <CustomButton title='Hapus semua' onPress={async () => {
-        await clearAllReminder()
-        handleGetAllReminder()
-      }}
+      <CustomButton
+        title='Hapus semua'
+        type='delete'
+        disabled={reminders.length == 0}
+        onPress={async () => {
+          await clearAllReminder()
+          handleGetAllReminder()
+        }}
         style={{ marginHorizontal: 16, marginBottom: 8 }}
       />
     </View>
@@ -156,7 +160,7 @@ export default function ReminderPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f8f9',
+    backgroundColor: 'white',
   },
   header: {
     paddingTop: 30,
@@ -186,7 +190,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#e9f1f3',
+    backgroundColor: 'white',
+    elevation: 3,
     marginHorizontal: 20,
     marginVertical: 5,
     paddingVertical: 15,
@@ -201,7 +206,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   category: {
-    backgroundColor: '#f4a261',
+    backgroundColor: Colors.light.primary,
     color: 'white',
     fontWeight: 'bold',
     paddingHorizontal: 8,
