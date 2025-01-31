@@ -48,7 +48,7 @@ export default function AddReminder() {
         {({ handleSubmit, disabled }) => (
           <View style={{ marginHorizontal: 15 }}>
             <CustomButton
-              title='Simpan Catatan'
+              title='Simpan Pengingat'
               disabled={disabled}
               onPress={handleSubmit((values) => handleCreateReminder(values))}
               style={{ marginBottom: 16 }}

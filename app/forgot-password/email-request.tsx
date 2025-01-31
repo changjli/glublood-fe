@@ -25,7 +25,7 @@ type SendCodeProps = {
 }
 
 const emailSchema = Yup.object({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
 })
 
 export default function EmailRequest({ setPage, setCredentials }: SendCodeProps) {
@@ -48,7 +48,7 @@ export default function EmailRequest({ setPage, setCredentials }: SendCodeProps)
 
   const handleForgotPasswword = async (id: ForgotPasswordRequest) => {
     try {
-      const res = await forgotPassword(setForgotPasswordLoading, id)
+      const res = await forgotPassword(setForgotPasswordLoading, { email: id.email.toLowerCase() })
       const data: ForgotPasswordRequest = res.data
       if (res.status === 200) {
         setCredentials({ email: id.email, password: '', code: '' });
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 30,
     flex: 1,
+    backgroundColor: 'white',
   },
   contentContainer: {
     backgroundColor: 'white',

@@ -98,6 +98,7 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
             const res = await register(setRegisterLoading, payload)
             if (res.status == 200) {
                 console.log(res.data)
+                await handleLogin()
             } else if (res.status == 400) {
                 console.log(res.message)
                 setVerificationCode('')
@@ -151,7 +152,6 @@ export default function VerifyCode({ credentials }: VerifyCodeProps) {
 
     const handleSubmit = async () => {
         await handleRegister()
-        await handleLogin()
     }
 
     // useEffect(() => {

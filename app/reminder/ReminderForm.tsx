@@ -79,7 +79,7 @@ const validationSchema = Yup.object().shape({
 export default function ReminderForm({ formValue, setFormValue, children, ...rest }: ReminderFormProps) {
     const { profile } = useUserProfile()
 
-    const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ReminderStorage>({
+    const { control, handleSubmit, reset, watch, setValue, trigger, formState: { errors, isDirty, isValid } } = useForm<ReminderStorage>({
         defaultValues: formValue,
         resolver: yupResolver(validationSchema),
         mode: 'onChange',
@@ -149,6 +149,18 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
             setReminderTypeData(reminderTypesMapping)
         }
     }, [profile])
+
+    useEffect(() => {
+        if (repeatDays) {
+            trigger('repeatDays')
+        }
+        if (notes) {
+            trigger('notes')
+        }
+        if (reminderTypes) {
+            trigger('reminderTypes')
+        }
+    }, [repeatDays, notes, reminderTypes])
 
     return (
         <View style={styles.container}>
@@ -299,7 +311,7 @@ export default function ReminderForm({ formValue, setFormValue, children, ...res
                     </View>
                 </View>
             </View>
-            {children({ handleSubmit, disabled: false })}
+            {children({ handleSubmit, disabled: !isValid })}
         </View>
     );
 }

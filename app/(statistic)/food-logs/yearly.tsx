@@ -88,6 +88,7 @@ export default function YearlyFoodLogStatisticPage() {
                     y='avg_calories'
                     average={averageCalories}
                     renderLabel={(value) => [value.slice(0, 3)]}
+                    key={`${selectedYear}`}
                 />
             }
 

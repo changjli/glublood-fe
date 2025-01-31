@@ -88,6 +88,7 @@ export default function YearlyGlucoseLogStatisticPage() {
                     y='avg_glucose_rate'
                     average={averageGlucoseRate}
                     renderLabel={(value, index) => [value.slice(0, 3)]}
+                    key={`${selectedYear}`}
                 />
             }
 

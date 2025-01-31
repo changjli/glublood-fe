@@ -1,6 +1,7 @@
 type SearchMasterFoodResponse = {
     id: number
     food_name: string
+    brand: string
 }
 
 type GetMasterFoodDetailResponse = {

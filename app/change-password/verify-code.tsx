@@ -132,7 +132,7 @@ export default function VerifyCode({ setPage, credentials }: VerifyCodeProps) {
     }, [verificationCode])
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
             <Wrapper>
                 <CustomText size='3xl' weight='heavy'>Verifikasi kode</CustomText>
                 <CustomText size='md' style={{ color: Colors.light.gray400, marginTop: -5, marginBottom: 10 }}>Masukkan 6 kode yang telah dikirim ke {credentials.email}</CustomText>

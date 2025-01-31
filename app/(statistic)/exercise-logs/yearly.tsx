@@ -88,6 +88,7 @@ export default function YearlyExerciseLogStatisticPage() {
                     y='avg_burned_calories'
                     average={averageBurnedCalories}
                     renderLabel={(value, index) => [value.slice(0, 3)]}
+                    key={`${selectedYear}`}
                 />
             }
 

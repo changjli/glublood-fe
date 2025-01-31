@@ -16,10 +16,12 @@ import Wrapper from '@/components/Layout/Wrapper';
 import CustomTextInput from '@/components/CustomInput/CustomTextInput';
 import { Colors } from '@/constants/Colors';
 import CustomButton from '@/components/CustomButton';
+import WithKeyboard from '@/components/Layout/WithKeyboard';
 
 type ChangePassword = {
   oldPassword: string,
   newPassword: string,
+  passwordConfirmation: string,
 }
 
 type SendCodeProps = {
@@ -38,6 +40,7 @@ const passwordSchema = Yup.object({
     .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
     .matches(/[0-9]/, 'Password harus mengandung setidaknya satu digit')
     .matches(/[^a-zA-Z0-9]/, 'Password harus mengandung setidaknya satu karakter khusus'),
+  passwordConfirmation: Yup.string().required('Konfirmasi password wajib diisi').oneOf([Yup.ref('newPassword')], 'Konfirmasi password harus sama')
 })
 
 const { width, height } = Dimensions.get("window");
@@ -48,12 +51,14 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState<boolean>(false);
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+  const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] = useState(false)
   const { showAlert } = useCustomAlert()
 
   const { control, handleSubmit, reset, watch, setValue, formState: { errors, isDirty, isValid } } = useForm<ChangePassword>({
     defaultValues: {
       oldPassword: '',
       newPassword: '',
+      passwordConfirmation: '',
     },
     resolver: yupResolver(passwordSchema),
     mode: 'onChange',
@@ -61,7 +66,7 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
 
   const handleForgotPasswword = async (id: ForgotPasswordRequest) => {
     try {
-      const res = await forgotPassword(setForgotPasswordLoading, id)
+      const res = await forgotPassword(setForgotPasswordLoading, { email: id.email.toLowerCase() })
       if (res.status == 200) {
         setPage(2)
       } else if (res.status == 400) {
@@ -96,98 +101,129 @@ export default function PasswordRequest({ setPage, setCredentials }: SendCodePro
     <View style={styles.container}>
       <CustomHeader title='Ubah kata sandi' />
 
-      <Wrapper style={{ backgroundColor: 'white', justifyContent: 'space-between' }}>
-        <View>
-          <Image
-            source={require('@/assets/images/forgot-password/forgot.png')}
-            style={styles.img}
-          />
+      <WithKeyboard>
+        <Wrapper style={{ backgroundColor: 'white', justifyContent: 'space-between' }}>
+          <View>
+            <Image
+              source={require('@/assets/images/forgot-password/forgot.png')}
+              style={styles.img}
+            />
 
-          <Controller
-            control={control}
-            name="oldPassword"
-            render={({ field: { onChange, value } }) => (
-              <CustomTextInput
-                label='Kata sandi saat ini'
-                placeholder='Masukkan kata sandi lama'
-                value={value}
-                onChangeText={onChange}
-                postfix={
-                  <TouchableOpacity
-                    onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
-                  >
-                    {
-                      isOldPasswordVisible ?
-                        <Ionicons name='eye-off' size={20} color='#969696' />
-                        :
-                        <Ionicons name='eye' size={20} color='#969696' />
-                    }
-                  </TouchableOpacity>
-                }
-                error={
-                  errors.oldPassword ? errors.oldPassword.message : ""
-                }
-                secureTextEntry={!isOldPasswordVisible}
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="oldPassword"
+              render={({ field: { onChange, value } }) => (
+                <CustomTextInput
+                  label='Kata sandi saat ini'
+                  placeholder='Masukkan kata sandi lama'
+                  value={value}
+                  onChangeText={onChange}
+                  postfix={
+                    <TouchableOpacity
+                      onPress={() => setIsOldPasswordVisible(!isOldPasswordVisible)}
+                    >
+                      {
+                        isOldPasswordVisible ?
+                          <Ionicons name='eye-off' size={20} color='#969696' />
+                          :
+                          <Ionicons name='eye' size={20} color='#969696' />
+                      }
+                    </TouchableOpacity>
+                  }
+                  error={
+                    errors.oldPassword ? errors.oldPassword.message : ""
+                  }
+                  secureTextEntry={!isOldPasswordVisible}
+                />
+              )}
+            />
 
-          <Controller
-            control={control}
-            name="newPassword"
-            render={({ field: { onChange, value } }) => (
-              <CustomTextInput
-                label='Kata sandi baru'
-                placeholder='Masukkan kata sandi lama'
-                value={value}
-                onChangeText={onChange}
-                postfix={
-                  <TouchableOpacity
-                    onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
-                  >
-                    {
-                      isNewPasswordVisible ?
-                        <Ionicons name='eye-off' size={20} color='#969696' />
-                        :
-                        <Ionicons name='eye' size={20} color='#969696' />
-                    }
-                  </TouchableOpacity>
-                }
-                error={
-                  errors.newPassword ? errors.newPassword.message : ""
-                }
-                secureTextEntry={!isNewPasswordVisible}
-              />
-            )}
-          />
+            <Controller
+              control={control}
+              name="newPassword"
+              render={({ field: { onChange, value } }) => (
+                <CustomTextInput
+                  label='Kata sandi baru'
+                  placeholder='Masukkan kata sandi lama'
+                  value={value}
+                  onChangeText={onChange}
+                  postfix={
+                    <TouchableOpacity
+                      onPress={() => setIsNewPasswordVisible(!isNewPasswordVisible)}
+                    >
+                      {
+                        isNewPasswordVisible ?
+                          <Ionicons name='eye-off' size={20} color='#969696' />
+                          :
+                          <Ionicons name='eye' size={20} color='#969696' />
+                      }
+                    </TouchableOpacity>
+                  }
+                  error={
+                    errors.newPassword ? errors.newPassword.message : ""
+                  }
+                  secureTextEntry={!isNewPasswordVisible}
+                />
+              )}
+            />
 
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-            }}
-            onPress={() => router.push("/forgot-password/")}
-          >
-            <CustomText
-              size="sm"
-              weight="heavy"
+            <Controller
+              control={control}
+              name="passwordConfirmation"
+              render={({ field: { onChange, value } }) => (
+                <CustomTextInput
+                  label='Konfirmasi Kata sandi baru'
+                  placeholder='Masukkan kata sandi lama'
+                  value={value}
+                  onChangeText={onChange}
+                  postfix={
+                    <TouchableOpacity
+                      onPress={() => setIsPasswordConfirmationVisible(!isPasswordConfirmationVisible)}
+                    >
+                      {
+                        isPasswordConfirmationVisible ?
+                          <Ionicons name='eye-off' size={20} color='#969696' />
+                          :
+                          <Ionicons name='eye' size={20} color='#969696' />
+                      }
+                    </TouchableOpacity>
+                  }
+                  error={
+                    errors.passwordConfirmation ? errors.passwordConfirmation.message : ""
+                  }
+                  secureTextEntry={!isPasswordConfirmationVisible}
+                />
+              )}
+            />
+
+            <TouchableOpacity
               style={{
-                color: Colors.light.primary,
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
               }}
+              onPress={() => router.push("/forgot-password/")}
             >
-              Lupa kata sandi?
-            </CustomText>
-          </TouchableOpacity>
-        </View>
+              <CustomText
+                size="sm"
+                weight="heavy"
+                style={{
+                  color: Colors.light.primary,
+                }}
+              >
+                Lupa kata sandi?
+              </CustomText>
+            </TouchableOpacity>
+          </View>
 
-        <CustomButton
-          size='md'
-          title='Konfirmasi'
-          onPress={handleSubmit((data) => handleChangePassword({ password: data.oldPassword }, data.newPassword))}
-          style={{ marginBottom: 20 }}
-          loading={getUserLoading || forgotPasswordLoading}
-        />
-      </Wrapper>
+          <CustomButton
+            size='md'
+            title='Konfirmasi'
+            onPress={handleSubmit((data) => handleChangePassword({ password: data.oldPassword }, data.newPassword))}
+            style={{ marginBottom: 20 }}
+            loading={getUserLoading || forgotPasswordLoading}
+          />
+        </Wrapper>
+      </WithKeyboard>
     </View>
   );
 };

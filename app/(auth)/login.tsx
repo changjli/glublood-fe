@@ -37,7 +37,7 @@ import { FontSize } from "@/constants/Typography";
 import { useCustomAlert } from "../context/CustomAlertProvider";
 
 const loginSchema = object({
-    email: string().required("Email wajib diisi!").email(),
+    email: string().required("Email wajib diisi!").email("Email tidak valid"),
     password: string().required("Password wajib diisi!")
 });
 
@@ -238,7 +238,7 @@ export default function LoginPage() {
                             <CustomButton
                                 title="Masuk"
                                 onPress={handleSubmit((data) =>
-                                    handleLogin(data)
+                                    handleLogin({ ...data, email: data.email.toLowerCase() })
                                 )}
                                 size="md"
                                 loading={loginLoading}

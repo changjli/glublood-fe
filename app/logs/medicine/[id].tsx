@@ -120,7 +120,7 @@ export default function MedicineLogDetailPage() {
                                 }))}
                             />
                             <CustomButton
-                                title='Hapus log'
+                                title='Hapus catatan'
                                 size='md'
                                 type='delete'
                                 disabled={updateLoading}

@@ -94,6 +94,7 @@ export default function WeeklyFoodLogStatisticPage() {
                     y='avg_calories'
                     average={averageCalories}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
+                    key={`${selectedDate}`}
                 />) : (<Wrapper>
                     <View style={styles.notFoundContainer}>
                         <CustomText weight='heavy'>Diagram batang</CustomText>

@@ -94,6 +94,7 @@ export default function WeeklyGlucoseLogStatisticPage() {
                     y='avg_glucose_rate'
                     average={averageGlucoseRate}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
+                    key={`${selectedDate}`}
                 />) : (<Wrapper>
                     <View style={styles.notFoundContainer}>
                         <CustomText weight='heavy'>Diagram batang</CustomText>

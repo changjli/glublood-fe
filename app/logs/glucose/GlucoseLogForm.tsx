@@ -124,6 +124,7 @@ export default function GlucoseLogForm({
                                 onChangeSize={onChange}
                                 sizeData={doseTypes}
                                 showQty={false}
+                                others={true}
                             />
                         </View>
                     )}

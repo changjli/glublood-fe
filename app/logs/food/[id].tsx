@@ -177,7 +177,7 @@ export default function FoodLogDetailPage() {
                     />
 
                     <CustomButton
-                        title='Hapus log'
+                        title='Hapus catatan'
                         size='md'
                         type='delete'
                         onPress={() => {

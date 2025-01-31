@@ -25,7 +25,7 @@ const CustomBarChart = ({ data, x, y, average, renderLabel }: CustomBarChartProp
                 width={width}
                 containerComponent={
                     <VictoryZoomContainer
-                        zoomDimension='x'
+                        // zoomDimension='x'
                         zoomDomain={data.length > 10 ? { x: [0, 10] } : undefined}
                     />
                 }

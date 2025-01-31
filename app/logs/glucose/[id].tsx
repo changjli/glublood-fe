@@ -163,7 +163,7 @@ export default function GlucoseLogDetailPage() {
                                 }))}
                             />
                             <CustomButton
-                                title='Hapus log'
+                                title='Hapus catatan'
                                 size='md'
                                 type="delete"
                                 disabled={updateLoading}

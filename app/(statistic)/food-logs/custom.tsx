@@ -90,6 +90,7 @@ export default function CustomFoodLogStatisticPage() {
                     y='avg_calories'
                     average={averageCalories}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
+                    key={`${selectedDate}`}
                 />
             ) : (
                 <Wrapper>

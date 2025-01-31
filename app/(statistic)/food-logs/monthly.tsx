@@ -89,6 +89,7 @@ export default function MonthlyFoodLogStatisticPage() {
 
                         return [formatDateStripToSlash(dateRange[0])]
                     }}
+                    key={`${month}-${year}`}
                 />
             }
 

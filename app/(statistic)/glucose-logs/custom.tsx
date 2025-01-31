@@ -90,6 +90,7 @@ export default function CustomGlucoseLogStatisticPage() {
                     y='avg_glucose_rate'
                     average={averageGlucoseRate}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
+                    key={`${selectedDate}`}
                 />) : (
                 <Wrapper>
                     <View style={styles.notFoundContainer}>

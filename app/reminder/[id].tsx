@@ -86,10 +86,10 @@ export default function ReminderDetail() {
                             loading={updateLoading}
                         />
                         <CustomButton
-                            title='Hapus log'
+                            title='Hapus pengingat'
                             type='delete'
                             onPress={handleSubmit((values) => {
-                                showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus catatan ini', 'warning', undefined, () => handleDeleteReminder(values.id))
+                                showAlert('Apakah kamu ingin tetap melanjutkan untuk menghapus pengingat ini', 'warning', undefined, () => handleDeleteReminder(values.id))
                             })}
                             loading={deleteLoading}
                         />

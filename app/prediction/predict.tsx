@@ -20,6 +20,7 @@ import Loader from '@/components/Loader'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import CustomHeader from '@/components/CustomHeader'
 import { useCustomAlert } from '../context/CustomAlertProvider'
+import { formatDateToAge } from '@/utils/formatDatetoString'
 
 export type Prediction = {
     "high_bp": number,
@@ -140,19 +141,19 @@ export default function PredictionPage() {
             answers: [
                 {
                     label: 'Sangat Sehat',
-                    value: 25,
+                    value: 1,
                 }, {
                     label: 'Sehat',
-                    value: 75,
+                    value: 2,
                 }, {
                     label: 'Biasa Saja',
-                    value: 125,
+                    value: 3,
                 }, {
                     label: 'Kurang Sehat',
-                    value: 175,
+                    value: 4,
                 }, {
                     label: 'Tidak Sehat',
-                    value: 200,
+                    value: 5,
                 }
             ]
         }, {
@@ -163,19 +164,19 @@ export default function PredictionPage() {
             answers: [
                 {
                     label: 'Sangat Sehat',
-                    value: 25,
+                    value: 3,
                 }, {
                     label: 'Sehat',
-                    value: 75,
+                    value: 9,
                 }, {
                     label: 'Biasa Saja',
-                    value: 125,
+                    value: 15,
                 }, {
                     label: 'Kurang Sehat',
-                    value: 175,
+                    value: 21,
                 }, {
                     label: 'Tidak Sehat',
-                    value: 200,
+                    value: 27,
                 }
             ]
         }, {
@@ -186,19 +187,19 @@ export default function PredictionPage() {
             answers: [
                 {
                     label: 'Sangat Cepat',
-                    value: 25,
+                    value: 3,
                 }, {
                     label: 'Cepat',
-                    value: 75,
+                    value: 9,
                 }, {
                     label: 'Biasa Saja',
-                    value: 125,
+                    value: 15,
                 }, {
                     label: 'Kurang Cepat',
-                    value: 175,
+                    value: 21,
                 }, {
                     label: 'Lambat',
-                    value: 200,
+                    value: 27,
                 }
             ]
         }, {
@@ -225,6 +226,7 @@ export default function PredictionPage() {
     }
 
     const handlePredict = async (data: Prediction) => {
+        console.log(data)
         try {
             const res = await doPrediction(setPredictionLoading, data)
             if (res.status == 200) {
@@ -276,6 +278,42 @@ export default function PredictionPage() {
         }
     }
 
+    const resolveAge = () => {
+        if (profile) {
+            const age = formatDateToAge(profile.DOB)
+            if (age >= 18 && age <= 24) {
+                return 1;
+            } else if (age >= 25 && age <= 29) {
+                return 2;
+            } else if (age >= 30 && age <= 34) {
+                return 3;
+            } else if (age >= 35 && age <= 39) {
+                return 4;
+            } else if (age >= 40 && age <= 44) {
+                return 5;
+            } else if (age >= 45 && age <= 49) {
+                return 6;
+            } else if (age >= 50 && age <= 54) {
+                return 7;
+            } else if (age >= 55 && age <= 59) {
+                return 8;
+            } else if (age >= 60 && age <= 64) {
+                return 9;
+            } else if (age >= 65 && age <= 69) {
+                return 10;
+            } else if (age >= 70 && age <= 74) {
+                return 11;
+            } else if (age >= 75 && age <= 79) {
+                return 12;
+            } else if (age >= 80) {
+                return 13;
+            } else {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
     return (
         <>
             {<Loader visible={predictionLoading} />}
@@ -305,11 +343,11 @@ export default function PredictionPage() {
                                     "phys_health": -1,
                                     "diff_walk": -1,
                                     "sex": 0,
-                                    "age": 21
+                                    "age": 1
                                 }}
                                 onSubmit={async (values) => {
                                     formRef.current = values
-                                    await handlePredict(values)
+                                    await handlePredict({ ...values, age: resolveAge() })
                                 }}
                             >
                                 {({ handleChange, setFieldValue, handleSubmit, values, errors }) => (

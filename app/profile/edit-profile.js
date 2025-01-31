@@ -558,9 +558,13 @@ export default function editProfile() {
                                         alignItems: 'center',
                                     }}
                                     onPress={() => {
-                                        if (values.diabetesType != initialFormValues.diabetesType) {
-                                            showAlert('Jika kamu ingin mengganti status user, maka seluruh data pengingat akan dihapus', 'warning', () => { }, handleSubmit)
-                                            clearAllReminder()
+                                        if (values.diabetesType != initialFormValues.diabetesType && values.diabetesType == 0) {
+                                            showAlert('Jika kamu ingin mengganti status user, maka seluruh data pengingat akan dihapus', 'warning', () => { }, () => {
+                                                clearAllReminder()
+                                                handleSubmit()
+                                            })
+                                        } else {
+                                            handleSubmit()
                                         }
                                     }}
                                     disabled={disabledButton}

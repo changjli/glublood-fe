@@ -27,7 +27,7 @@ type SendCodeProps = {
 }
 
 const sendCodeSchema = object({
-    email: string().required('Email wajib diisi').email(),
+    email: string().required('Email wajib diisi').email('Email tidak valid'),
     password: string().required("Password wajib diisi!")
         .min(8, 'Password harus minimal 8 karakter!')
         .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
@@ -119,7 +119,7 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                                 render={({ field: { onChange, onBlur, value, ref } }) => (
                                     <CustomTextInput
                                         label='Kata sandi'
-                                        placeholder='Masukkan minimal 6 karakter'
+                                        placeholder='Masukkan minimal 8 karakter'
                                         labelStyle={{ color: Colors.light.primary }}
                                         value={value}
                                         onChangeText={onChange}
@@ -166,7 +166,7 @@ export default function SendCode({ setPage, setCredentials }: SendCodeProps) {
                         </View>
                         <View>
                             {/* bug */}
-                            <CustomButton title='Daftar' onPress={handleSubmit(data => handleSendCode(data))} size='md' loading={sendCodeLoading} />
+                            <CustomButton title='Daftar' onPress={handleSubmit(data => handleSendCode({ ...data, email: data.email.toLowerCase() }))} size='md' loading={sendCodeLoading} />
                             <View className='flex flex-row justify-center'>
                                 <CustomText size='sm' weight='heavy' style={{ color: Colors.light.gray500, marginRight: 4 }}>
                                     Sudah memiliki akun?

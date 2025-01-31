@@ -89,6 +89,7 @@ export default function MonthlyExerciseLogStatisticPage() {
 
                         return [formatDateStripToSlash(dateRange[0])]
                     }}
+                    key={`${month}-${year}`}
                 />
             }
 

@@ -90,6 +90,7 @@ export default function CustomExerciseLogStatisticPage() {
                     y='avg_burned_calories'
                     average={averageBurnedCalories}
                     renderLabel={(value) => [formatDateStripToSlash(value), formatDateToDay(value)]}
+                    key={`${selectedDate}`}
                 />) : (
                 <Wrapper>
                     <View style={styles.notFoundContainer}>

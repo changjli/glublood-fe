@@ -14,6 +14,7 @@ import { Colors } from '@/constants/Colors';
 import { CustomAlertProvider } from './context/CustomAlertProvider';
 import { requestPermissionsAsync } from 'expo-notifications';
 import useNotification from '@/hooks/useNotification';
+import { LogBox } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 

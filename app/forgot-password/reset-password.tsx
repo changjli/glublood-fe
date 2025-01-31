@@ -33,7 +33,7 @@ const passwordSchema = Yup.object({
         .matches(/[A-Z]/, 'Password harus mengandung setidaknya satu huruf kapital')
         .matches(/[0-9]/, 'Password harus mengandung setidaknya satu digit')
         .matches(/[^a-zA-Z0-9]/, 'Password harus mengandung setidaknya satu karakter khusus'),
-    confirmPassword: Yup.string().required('Confirm Password wajib diisi').oneOf([Yup.ref('password')], 'Konfirmasi password tidak sama'),
+    confirmPassword: Yup.string().required('Konfirmasi Password wajib diisi').oneOf([Yup.ref('password')], 'Konfirmasi password tidak sama'),
 });
 
 export default function ResetPassword({ setPage, credentials }: ResetPasswordProps) {

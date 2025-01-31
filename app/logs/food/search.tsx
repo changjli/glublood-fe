@@ -67,7 +67,7 @@ export default function Search() {
                 }}
                 style={styles.itemContainer}
             >
-                <Text>{item.food_name}</Text>
+                <Text>{item.food_name} {item.brand != 'umum' && `(${item.brand})`}</Text>
             </Link>
         );
     };
